@@ -1,16 +1,17 @@
 package org.example.story.domain.portfolio.entity;
 
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 import org.example.story.domain.user.entity.UserJpaEntity;
 
 import java.time.Instant;
 
 @Getter
-@Setter
 @Entity
 @Table(name = "portfolio_comment")
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class PortfolioCommentJpaEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

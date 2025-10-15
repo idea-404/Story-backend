@@ -1,17 +1,18 @@
 package org.example.story.domain.portfolio.entity;
 
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 import org.example.story.domain.user.entity.UserJpaEntity;
 import org.hibernate.annotations.ColumnDefault;
 
 import java.time.Instant;
 
 @Getter
-@Setter
 @Entity
 @Table(name = "portfolio")
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class PortfolioJpaEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
