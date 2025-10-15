@@ -3,6 +3,7 @@ package org.example.story.domain.portfolio.entity;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+import org.example.story.domain.user.entity.UserJpaEntity;
 import org.hibernate.annotations.ColumnDefault;
 
 import java.time.Instant;
@@ -17,8 +18,9 @@ public class PortfolioJpaEntity {
     @Column(name = "id", nullable = false)
     private Long id;
 
-    @Column(name = "user_id", nullable = false)
-    private Long userId;
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "user_id", nullable = false)
+    private UserJpaEntity user;
 
     @Column(name = "title", nullable = false, length = 12)
     private String title;

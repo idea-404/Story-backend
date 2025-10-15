@@ -3,6 +3,7 @@ package org.example.story.domain.portfolio.entity;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+import org.example.story.domain.user.entity.UserJpaEntity;
 
 @Getter
 @Setter
@@ -14,10 +15,12 @@ public class PortfolioLikeJpaEntity {
     @Column(name = "like_id", nullable = false)
     private Long id;
 
-    @Column(name = "portfolio_id", nullable = false)
-    private Long portfolioId;
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "portfolio_id", nullable = false)
+    private PortfolioJpaEntity portfolio;
 
-    @Column(name = "user_id", nullable = false)
-    private Long userId;
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "user_id", nullable = false)
+    private UserJpaEntity user;
 
 }

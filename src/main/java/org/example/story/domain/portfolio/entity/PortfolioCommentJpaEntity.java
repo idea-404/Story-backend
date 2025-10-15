@@ -3,6 +3,7 @@ package org.example.story.domain.portfolio.entity;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+import org.example.story.domain.user.entity.UserJpaEntity;
 
 import java.time.Instant;
 
@@ -16,11 +17,13 @@ public class PortfolioCommentJpaEntity {
     @Column(name = "comment_id", nullable = false)
     private Long id;
 
-    @Column(name = "portfolio_id", nullable = false)
-    private Long portfolioId;
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "portfolio_id", nullable = false)
+    private PortfolioJpaEntity portfolio;
 
-    @Column(name = "user_id", nullable = false)
-    private Long userId;
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "user_id", nullable = false)
+    private UserJpaEntity user;
 
     @Column(name = "content", nullable = false, length = 512)
     private String content;
