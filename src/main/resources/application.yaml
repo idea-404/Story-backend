@@ -1,0 +1,11 @@
+spring:
+  application:
+    name: story
+  docker:
+    compose:
+      file: /absolute/path/to/docker-compose.yml
+  datasource:
+    url: jdbc:mysql://localhost:3306/story
+    username: root
+    password: ${DB_PASSWORD}
+    driver-class-name: com.mysql.cj.jdbc.Driver
