@@ -35,7 +35,7 @@ public class JwtTokenProvider {
     // 토큰 유효성 검사
     public boolean validateToken(String token) {
         if(token == null) {
-            throw new NullPointerException("토큰이 없습니다.");
+            throw new IllegalArgumentException("토큰이 없습니다.");
         }
         try {
             Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token);
@@ -47,10 +47,12 @@ public class JwtTokenProvider {
 
     // 토큰에서 유저 ID 파싱
     public Long getUserIdFromToken(String token) {
-        if(validateToken(token)) {
-            return Long.valueOf(Jwts.parserBuilder().setSigningKey(key)
-                    .build().parseClaimsJws(token).getBody().getSubject());
+        try {
+            String userId = Jwts.parserBuilder().setSigningKey(key)
+                    .build().parseClaimsJws(token).getBody().getSubject();
+            return Long.valueOf(userId);
+        } catch (JwtException | IllegalArgumentException e) {
+            return null;
         }
-        return null;
     }
 }
