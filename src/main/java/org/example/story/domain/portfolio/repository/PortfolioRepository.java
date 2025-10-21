@@ -5,6 +5,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface PortfolioRepository extends JpaRepository<PortfolioJpaEntity, Long> {
@@ -21,4 +22,5 @@ public interface PortfolioRepository extends JpaRepository<PortfolioJpaEntity, L
     // 조회수가 많은 순으로 정렬 조회
     List<PortfolioJpaEntity> findAllByOrderByViewDesc();
 
+    Optional<PortfolioJpaEntity> findByIdAndUserId(Long id, Long userId);
 }
