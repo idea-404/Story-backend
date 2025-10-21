@@ -1,13 +1,22 @@
 package org.example.story.global.config;
 
+import lombok.RequiredArgsConstructor;
+import org.example.story.global.security.jwt.JwtHeaderFilter;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
-
+@Configuration
+@EnableWebSecurity
+@RequiredArgsConstructor
 public class SecurityConfig {
+    private final JwtHeaderFilter jwtHeaderFilter;
+
     // Spring Security 필터 체인 설정
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -58,8 +67,8 @@ public class SecurityConfig {
 
                         // 나머지 모든 요청은 인증 필요
                         .anyRequest().authenticated()
-                );
-
+                )
+                .addFilterBefore(jwtHeaderFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }
