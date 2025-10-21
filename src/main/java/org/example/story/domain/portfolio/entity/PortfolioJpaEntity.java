@@ -8,6 +8,7 @@ import org.hibernate.annotations.ColumnDefault;
 import java.time.Instant;
 
 @Getter
+@Setter
 @Entity
 @Table(name = "portfolio")
 @Builder
