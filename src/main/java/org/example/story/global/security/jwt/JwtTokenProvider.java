@@ -4,7 +4,9 @@ import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
+import org.example.story.global.error.exception.ExpectedException;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 
 import java.nio.charset.StandardCharsets;
@@ -35,7 +37,7 @@ public class JwtTokenProvider {
     // 토큰 유효성 검사
     public boolean validateToken(String token) {
         if(token == null) {
-            throw new IllegalArgumentException("토큰이 없습니다.");
+            throw new ExpectedException(HttpStatus.NOT_FOUND, "토큰이 없습니다.");
         }
         try {
             Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token);
