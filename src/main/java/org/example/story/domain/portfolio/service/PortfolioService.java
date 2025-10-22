@@ -188,7 +188,7 @@ public class PortfolioService {
         UserJpaEntity user = userRepository.findById(userId)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 유저입니다."));
         PortfolioJpaEntity portfolio = portfolioRepository.findById(portfolioId)
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 포트폴리오입니다."));
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 댓글입니다."));
         PortfolioCommentJpaEntity comment = PortfolioCommentJpaEntity.builder()
                 .user(user)
                 .portfolio(portfolio)
