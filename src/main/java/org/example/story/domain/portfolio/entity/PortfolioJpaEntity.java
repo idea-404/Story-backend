@@ -8,7 +8,6 @@ import org.hibernate.annotations.ColumnDefault;
 import java.time.Instant;
 
 @Getter
-@Setter
 @Entity
 @Table(name = "portfolio")
 @Builder
@@ -49,5 +48,19 @@ public class PortfolioJpaEntity {
     @ColumnDefault("0")
     @Column(name = "comment")
     private Long comment;
+
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+    public void setContent(String content) {
+        this.content = content;
+    }
+    public void setLike(Long like) {
+        this.like = like;
+    }
+    public void setZerodog(Boolean zerodog) {
+        this.zerodog = zerodog;
+    }
 
 }
