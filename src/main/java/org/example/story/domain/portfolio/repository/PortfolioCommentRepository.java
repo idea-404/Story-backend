@@ -1,6 +1,6 @@
 package org.example.story.domain.portfolio.repository;
 
-import io.lettuce.core.dynamic.annotation.Param;
+import org.springframework.data.repository.query.Param;
 import org.example.story.domain.portfolio.entity.PortfolioCommentJpaEntity;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;

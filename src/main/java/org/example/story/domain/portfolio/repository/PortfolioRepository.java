@@ -1,7 +1,10 @@
 package org.example.story.domain.portfolio.repository;
 
+import org.springframework.data.repository.query.Param;
 import org.example.story.domain.portfolio.entity.PortfolioJpaEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -23,4 +26,8 @@ public interface PortfolioRepository extends JpaRepository<PortfolioJpaEntity, L
     List<PortfolioJpaEntity> findAllByOrderByViewDesc();
 
     Optional<PortfolioJpaEntity> findByIdAndUserId(Long id, Long userId);
+
+    @Modifying
+    @Query("UPDATE PortfolioJpaEntity p SET p.view = p.view + 1 WHERE p.id = :id")
+    void incrementView(@Param("id") Long id);
 }

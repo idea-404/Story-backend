@@ -1,5 +1,6 @@
 package org.example.story.domain.portfolio.service;
 
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.example.story.domain.portfolio.entity.PortfolioCommentJpaEntity;
 import org.example.story.domain.portfolio.entity.PortfolioJpaEntity;
@@ -105,8 +106,7 @@ public class PortfolioService {
         PortfolioJpaEntity portfolio = portfolioRepository.findById(portfolioId)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 포트폴리오입니다."));
 
-        portfolio.setView(portfolio.getView() + 1);
-        portfolioRepository.save(portfolio);
+        portfolioRepository.incrementView(portfolio.getId());
 
         return new PortfolioResponse(
                 portfolio.getId(),
@@ -127,6 +127,7 @@ public class PortfolioService {
         portfolioRepository.delete(portfolio);
     }
 
+    @Transactional
     public PortfolioLikeResponse likeUp(Long userId, Long portfolioId) {
         UserJpaEntity user = userRepository.findById(userId)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 유저입니다."));
@@ -186,11 +187,11 @@ public class PortfolioService {
     public PortfolioCommentResponse createComment(Long userId, PortfolioCommentRequest request, Long portfolioId) {
         UserJpaEntity user = userRepository.findById(userId)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 유저입니다."));
-        PortfolioJpaEntity protfolio = portfolioRepository.findById(portfolioId)
+        PortfolioJpaEntity portfolio = portfolioRepository.findById(portfolioId)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 포트폴리오입니다."));
         PortfolioCommentJpaEntity comment = PortfolioCommentJpaEntity.builder()
                 .user(user)
-                .portfolio(protfolio)
+                .portfolio(portfolio)
                 .content(request.content())
                 .createdAt(Instant.now())
                 .build();
