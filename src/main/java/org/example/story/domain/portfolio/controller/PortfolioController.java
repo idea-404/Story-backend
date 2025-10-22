@@ -23,20 +23,14 @@ public class PortfolioController {
     // 포트폴리오 작성
     @PostMapping("/write")
     public PortfolioResponse createPortfolio(@RequestBody PortfolioRequest request, @RequestParam String token) {
-        Long userId = null;
-        if(jwtTokenProvider.validateToken(token)) {
-            userId = jwtTokenProvider.getUserIdFromToken(token);
-        }// JWT에서 가져온 유저 ID
+        Long userId = extractUserId(token);// JWT에서 가져온 유저 ID
         return portfolioService.write(userId, request);
     }
 
     // 수정 준비
     @GetMapping("/edit/{portfolio_id}")
     public PortfolioResponse getPortfolio(@PathVariable Long portfolio_id, @RequestParam String token) {
-        Long userId = null;
-        if(jwtTokenProvider.validateToken(token)) {
-            userId = jwtTokenProvider.getUserIdFromToken(token);
-        }// JWT에서 가져온 유저 ID
+        Long userId = extractUserId(token);// JWT에서 가져온 유저 ID
         return portfolioService.st_edit(userId, portfolio_id);
     }
 
@@ -47,10 +41,7 @@ public class PortfolioController {
             @RequestBody PortfolioRequest request,
             @RequestParam String token
     ) {
-        Long userId = null;
-        if(jwtTokenProvider.validateToken(token)) {
-            userId = jwtTokenProvider.getUserIdFromToken(token);
-        } // JWT에서 가져온 유저 ID
+        Long userId = extractUserId(token); // JWT에서 가져온 유저 ID
         return portfolioService.edit(userId, portfolio_id, request);
     }
 
@@ -63,30 +54,21 @@ public class PortfolioController {
     // 포트폴리오 삭제
     @DeleteMapping("/delete/{portfolio_id}")
     public void deletePortfolio(@PathVariable Long portfolio_id, @RequestParam String token) {
-        Long userId = null;
-        if(jwtTokenProvider.validateToken(token)) {
-            userId = jwtTokenProvider.getUserIdFromToken(token);
-        } // JWT에서 가져온 유저 ID
+        Long userId = extractUserId(token); // JWT에서 가져온 유저 ID
         portfolioService.delete(userId, portfolio_id);
     }
 
     // 좋아요 변경
     @PatchMapping("/like/{portfolio_id}")
     public PortfolioLikeResponse likeUp(@PathVariable Long portfolio_id, @RequestParam String token) {
-        Long userId = null;
-        if(jwtTokenProvider.validateToken(token)) {
-            userId = jwtTokenProvider.getUserIdFromToken(token);
-        } // JWT에서 가져온 userId
+        Long userId = extractUserId(token); // JWT에서 가져온 userId
         return portfolioService.likeUp(userId, portfolio_id);
     }
 
     // 포트폴리오 공개 여부 토글
     @PatchMapping("/open/{portfolio_id}")
     public PortfolioResponse open(@PathVariable Long portfolio_id, @RequestParam String token) {
-        Long userId = null;
-        if(jwtTokenProvider.validateToken(token)) {
-            userId = jwtTokenProvider.getUserIdFromToken(token);
-        } // JWT에서 가져온 userId
+        Long userId = extractUserId(token); // JWT에서 가져온 userId
         return portfolioService.open(userId, portfolio_id);
     }
 
@@ -95,10 +77,7 @@ public class PortfolioController {
     public PortfolioCommentResponse comment(@PathVariable Long portfolio_id,
                                             @RequestBody PortfolioCommentRequest request,
                                             @RequestParam String token) {
-        Long userId = null;
-        if(jwtTokenProvider.validateToken(token)) {
-            userId = jwtTokenProvider.getUserIdFromToken(token);
-        }
+        Long userId = extractUserId(token);
         return portfolioService.createComment(userId, request, portfolio_id);
     }
 
@@ -107,10 +86,7 @@ public class PortfolioController {
     public void deleteComment(@PathVariable Long portfolio_id,
                               @PathVariable Long comment_id,
                               @RequestParam String token) {
-        Long userId = null;
-        if(jwtTokenProvider.validateToken(token)) {
-            userId = jwtTokenProvider.getUserIdFromToken(token);
-        }
+        Long userId = extractUserId(token);
         portfolioService.deleteComment(userId, portfolio_id, comment_id);
     }
 
@@ -122,5 +98,13 @@ public class PortfolioController {
             @RequestParam(defaultValue = "10") int size
     ) {
         return portfolioService.getComments(portfolio_id, lastId, size);
+    }
+
+    // 토큰 검증 절차
+    public Long extractUserId(String token) {
+        if(jwtTokenProvider.validateToken(token)) {
+            return jwtTokenProvider.getUserIdFromToken(token);
+        }
+        throw new IllegalArgumentException("토큰이 유효하지 않습니다.");
     }
 }
