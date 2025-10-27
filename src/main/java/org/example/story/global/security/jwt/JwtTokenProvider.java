@@ -37,7 +37,7 @@ public class JwtTokenProvider {
     // 토큰 유효성 검사
     public boolean validateToken(String token) {
         if(token == null) {
-            throw new ExpectedException(HttpStatus.UNAUTHORIZED, "토큰이 없습니다.");
+            throw new ExpectedException(HttpStatus.NOT_FOUND, "토큰이 없습니다.");
         }
         try {
             Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token);
