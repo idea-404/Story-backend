@@ -6,6 +6,8 @@ import org.example.story.domain.user.entity.UserJpaEntity;
 import org.hibernate.annotations.ColumnDefault;
 
 import java.time.Instant;
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 @Entity
@@ -48,6 +50,12 @@ public class PortfolioJpaEntity {
     @ColumnDefault("0")
     @Column(name = "comment")
     private Long comment;
+
+    @OneToMany(mappedBy = "portfolio", cascade = CascadeType.REMOVE, orphanRemoval = true)
+    private List<PortfolioLikeJpaEntity> likes = new ArrayList<>();
+
+    @OneToMany(mappedBy = "portfolio", cascade = CascadeType.REMOVE, orphanRemoval = true)
+    private List<PortfolioCommentJpaEntity> comments = new ArrayList<>();
 
 
     public void setTitle(String title) {
