@@ -34,7 +34,7 @@ public class PortfolioController {
             HttpServletRequest httpRequest
     ) {
         String token = (String) httpRequest.getAttribute("token");
-        Long userId = extractUserId(token);
+        Long userId = jwtTokenProvider.extractUserId(token);
         return portfolioService.write(userId, request);
     }
 
@@ -46,7 +46,7 @@ public class PortfolioController {
             HttpServletRequest httpRequest
     ) {
         String token = (String) httpRequest.getAttribute("token");
-        Long userId = extractUserId(token);
+        Long userId = jwtTokenProvider.extractUserId(token);
         return portfolioQueryService.st_edit(userId, portfolio_id);
     }
 
@@ -59,7 +59,7 @@ public class PortfolioController {
             HttpServletRequest httpRequest
     ) {
         String token = (String) httpRequest.getAttribute("token");
-        Long userId = extractUserId(token);
+        Long userId = jwtTokenProvider.extractUserId(token);
         return portfolioService.edit(userId, portfolio_id, request);
     }
 
@@ -79,7 +79,7 @@ public class PortfolioController {
             HttpServletRequest httpRequest
     ) {
         String token = (String) httpRequest.getAttribute("token");
-        Long userId = extractUserId(token);
+        Long userId = jwtTokenProvider.extractUserId(token);
         portfolioService.delete(userId, portfolio_id);
     }
 
@@ -91,7 +91,7 @@ public class PortfolioController {
             HttpServletRequest httpRequest
     ) {
         String token = (String) httpRequest.getAttribute("token");
-        Long userId = extractUserId(token);
+        Long userId = jwtTokenProvider.extractUserId(token);
         return portfolioService.likeUp(userId, portfolio_id);
     }
 
@@ -103,7 +103,7 @@ public class PortfolioController {
             HttpServletRequest httpRequest
     ) {
         String token = (String) httpRequest.getAttribute("token");
-        Long userId = extractUserId(token);
+        Long userId = jwtTokenProvider.extractUserId(token);
         return portfolioService.open(userId, portfolio_id);
     }
 
@@ -116,7 +116,7 @@ public class PortfolioController {
             HttpServletRequest httpRequest
     ) {
         String token = (String) httpRequest.getAttribute("token");
-        Long userId = extractUserId(token);
+        Long userId = jwtTokenProvider.extractUserId(token);
         return portfolioCommentService.createComment(userId, request, portfolio_id);
     }
 
@@ -129,7 +129,7 @@ public class PortfolioController {
             HttpServletRequest httpRequest
     ) {
         String token = (String) httpRequest.getAttribute("token");
-        Long userId = extractUserId(token);
+        Long userId = jwtTokenProvider.extractUserId(token);
         portfolioCommentService.deleteComment(userId, portfolio_id, comment_id);
     }
 
@@ -144,11 +144,4 @@ public class PortfolioController {
         return portfolioCommentService.getComments(portfolio_id, lastId, size);
     }
 
-    // 토큰 검증 절차
-    public Long extractUserId(String token) {
-        if(jwtTokenProvider.validateToken(token)) {
-            return jwtTokenProvider.getUserIdFromToken(token);
-        }
-        throw new IllegalArgumentException("토큰이 유효하지 않습니다.");
-    }
 }
