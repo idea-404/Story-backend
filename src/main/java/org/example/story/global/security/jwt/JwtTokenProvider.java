@@ -63,6 +63,6 @@ public class JwtTokenProvider {
         if(validateToken(token)) {
             return getUserIdFromToken(token);
         }
-        throw new IllegalArgumentException("토큰이 유효하지 않습니다.");
+        throw new ExpectedException(HttpStatus.UNAUTHORIZED, "토큰이 유효하지 않습니다.");
     }
 }
