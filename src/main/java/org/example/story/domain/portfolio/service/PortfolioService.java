@@ -16,9 +16,11 @@ import org.example.story.domain.portfolio.repository.PortfolioLikeRepository;
 import org.example.story.domain.portfolio.repository.PortfolioRepository;
 import org.example.story.domain.user.entity.UserJpaEntity;
 import org.example.story.domain.user.repository.UserRepository;
+import org.example.story.global.error.exception.ExpectedException;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
@@ -36,7 +38,7 @@ public class PortfolioService {
 
     public PortfolioResponse write(Long userId, PortfolioRequest request) {
         UserJpaEntity user = userRepository.findById(userId)
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 유저입니다."));
+                .orElseThrow(() -> new ExpectedException(HttpStatus.NOT_FOUND, "존재하지 않는 유저입니다."));
 
         PortfolioJpaEntity portfolio = PortfolioJpaEntity.builder()
                 .user(user)
@@ -66,7 +68,7 @@ public class PortfolioService {
 
     public PortfolioResponse st_edit(Long userId, Long portfolioId){
         PortfolioJpaEntity portfolio = portfolioRepository.findByIdAndUserId(portfolioId, userId)
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 포트폴리오입니다."));
+                .orElseThrow(() -> new ExpectedException(HttpStatus.NOT_FOUND, "존재하지 않는 포트폴리오입니다."));
         return new PortfolioResponse(
                 portfolio.getId(),
                 portfolio.getUser().getId(),
@@ -82,7 +84,7 @@ public class PortfolioService {
 
     public PortfolioResponse edit(Long userId, Long portfolioId, PortfolioRequest request) {
         PortfolioJpaEntity portfolio = portfolioRepository.findByIdAndUserId(portfolioId, userId)
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 포트폴리오입니다."));
+                .orElseThrow(() -> new ExpectedException(HttpStatus.NOT_FOUND, "존재하지 않는 포트폴리오입니다."));
 
         portfolio.setTitle(request.title());
         portfolio.setContent(request.content());
@@ -104,7 +106,7 @@ public class PortfolioService {
 
     public PortfolioResponse view(Long portfolioId){
         PortfolioJpaEntity portfolio = portfolioRepository.findById(portfolioId)
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 포트폴리오입니다."));
+                .orElseThrow(() -> new ExpectedException(HttpStatus.NOT_FOUND, "존재하지 않는 포트폴리오입니다."));
 
         portfolioRepository.incrementView(portfolio.getId());
 
@@ -123,16 +125,16 @@ public class PortfolioService {
 
     public void delete(Long userId, Long portfolioId) {
         PortfolioJpaEntity portfolio = portfolioRepository.findByIdAndUserId(portfolioId, userId)
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 포트폴리오입니다."));
+                .orElseThrow(() -> new ExpectedException(HttpStatus.NOT_FOUND, "존재하지 않는 포트폴리오입니다."));
         portfolioRepository.delete(portfolio);
     }
 
     @Transactional
     public PortfolioLikeResponse likeUp(Long userId, Long portfolioId) {
         UserJpaEntity user = userRepository.findById(userId)
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 유저입니다."));
+                .orElseThrow(() -> new ExpectedException(HttpStatus.NOT_FOUND, "존재하지 않는 유저입니다."));
         PortfolioJpaEntity portfolio = portfolioRepository.findById(portfolioId)
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 포트폴리오입니다."));
+                .orElseThrow(() -> new ExpectedException(HttpStatus.NOT_FOUND, "존재하지 않는 포트폴리오입니다."));
 
         boolean liked = portfolioLikeRepository.findByPortfolioAndUser(portfolio, user).isPresent();
 
@@ -166,7 +168,7 @@ public class PortfolioService {
 
     public PortfolioResponse open(Long userId, Long portfolioId) {
         PortfolioJpaEntity portfolio = portfolioRepository.findById(portfolioId)
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 포트폴리오입니다."));
+                .orElseThrow(() -> new ExpectedException(HttpStatus.NOT_FOUND, "존재하지 않는 포트폴리오입니다."));
 
         portfolio.setZerodog(!portfolio.getZerodog());
         portfolioRepository.save(portfolio);
@@ -186,9 +188,9 @@ public class PortfolioService {
 
     public PortfolioCommentResponse createComment(Long userId, PortfolioCommentRequest request, Long portfolioId) {
         UserJpaEntity user = userRepository.findById(userId)
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 유저입니다."));
+                .orElseThrow(() -> new ExpectedException(HttpStatus.NOT_FOUND, "존재하지 않는 유저입니다."));
         PortfolioJpaEntity portfolio = portfolioRepository.findById(portfolioId)
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 댓글입니다."));
+                .orElseThrow(() -> new ExpectedException(HttpStatus.NOT_FOUND, "존재하지 않는 댓글입니다."));
         PortfolioCommentJpaEntity comment = PortfolioCommentJpaEntity.builder()
                 .user(user)
                 .portfolio(portfolio)
@@ -207,7 +209,7 @@ public class PortfolioService {
 
     public void deleteComment(Long userId, Long portfolioId, Long commentId) {
         PortfolioCommentJpaEntity comment = portfolioCommentRepository.findByPortfolioIdAndId(portfolioId,commentId)
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 포트폴리오입니다."));
+                .orElseThrow(() -> new ExpectedException(HttpStatus.NOT_FOUND, "존재하지 않는 포트폴리오입니다."));
         portfolioCommentRepository.delete(comment);
     }
 
