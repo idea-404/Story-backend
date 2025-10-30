@@ -3,31 +3,40 @@ package org.example.story.global.aop;
 import io.github.bucket4j.Bandwidth;
 import io.github.bucket4j.Bucket;
 import io.github.bucket4j.Refill;
+import jakarta.servlet.http.HttpServletRequest;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
+import org.example.story.global.error.exception.ExpectedException;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
+import com.github.benmanes.caffeine.cache.Cache;
+import com.github.benmanes.caffeine.cache.Caffeine;
+import org.springframework.web.context.request.RequestAttributes;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
 
 import java.time.Duration;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 @Aspect
 @Component
 public class RateLimitAspect {
 
-    private final Map<String, Bucket> buckets = new ConcurrentHashMap<>();
+    private final Cache<String, Bucket> buckets = Caffeine.newBuilder()
+            .expireAfterAccess(Duration.ofMinutes(5)) // 5분간 접근 없으면 삭제
+            .maximumSize(10_000) // 캐시 최대 크기 제한
+            .build();
 
     @Around("@annotation(rateLimited)")
     public Object rateLimits(ProceedingJoinPoint joinPoint, RateLimited rateLimited) throws Throwable {
         String key = getKey(joinPoint);
-        Bucket bucket = buckets.computeIfAbsent(key, k -> createBucket(rateLimited));
+        Bucket bucket = buckets.get(key, k -> createBucket(rateLimited));
 
         if(bucket.tryConsume(1)){
             return joinPoint.proceed();
         } else {
-            throw new RuntimeException("요청 제한 초과: 잠시 후 다시 시도해주세요.");
+            throw new ExpectedException(HttpStatus.TOO_MANY_REQUESTS, "요청이 너무 많습니다");
         }
     }
 
@@ -42,17 +51,18 @@ public class RateLimitAspect {
     private String getKey(ProceedingJoinPoint joinPoint) {
         String methodName = joinPoint.getSignature().getName();
 
-        Object[] args = joinPoint.getArgs();
+        RequestAttributes requestAttributes = RequestContextHolder.getRequestAttributes();
+        if (requestAttributes instanceof ServletRequestAttributes) {
+            HttpServletRequest request = ((ServletRequestAttributes) requestAttributes).getRequest();
 
-        Long userId = null;
-        if (args != null && args.length > 0 && args[0] instanceof Long) {
-            userId = (Long) args[0];
+            String ip = request.getHeader("X-Forwarded-For");
+            if (ip == null || ip.isEmpty()) {
+                ip = request.getRemoteAddr();
+            }
+
+            return methodName + ":" + ip;
         }
 
-        if (userId == null) {
-            return methodName + ":ANONYMOUS";
-        }
-
-        return methodName + ":" + userId;
+        return methodName + ":UNKNOWN";
     }
 }
