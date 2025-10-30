@@ -52,17 +52,25 @@ public class RateLimitAspect {
         String methodName = joinPoint.getSignature().getName();
 
         RequestAttributes requestAttributes = RequestContextHolder.getRequestAttributes();
+        String ip = "UNKNOWN_IP";
         if (requestAttributes instanceof ServletRequestAttributes) {
             HttpServletRequest request = ((ServletRequestAttributes) requestAttributes).getRequest();
-
-            String ip = request.getHeader("X-Forwarded-For");
+            ip = request.getHeader("X-Forwarded-For");
             if (ip == null || ip.isEmpty()) {
                 ip = request.getRemoteAddr();
             }
-
-            return methodName + ":" + ip;
         }
 
-        return methodName + ":UNKNOWN";
+        Long userId = null;
+        Object[] args = joinPoint.getArgs();
+        if (args != null && args.length > 0 && args[0] instanceof Long) {
+            userId = (Long) args[0];
+        }
+
+        if (userId == null) {
+            return methodName + ":ANONYMOUS:" + ip;
+        } else {
+            return methodName + ":" + userId + ":" + ip;
+        }
     }
 }
