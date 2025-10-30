@@ -8,6 +8,8 @@ import org.example.story.domain.portfolio.record.request.PortfolioCommentRequest
 import org.example.story.domain.portfolio.record.response.PortfolioCommentListResponse;
 import org.example.story.domain.portfolio.record.response.PortfolioCommentResponse;
 import org.example.story.domain.portfolio.record.response.PortfolioLikeResponse;
+import org.example.story.domain.portfolio.service.PortfolioCommentService;
+import org.example.story.domain.portfolio.service.PortfolioQueryService;
 import org.example.story.domain.portfolio.service.PortfolioService;
 import org.example.story.global.aop.RateLimited;
 import org.example.story.global.security.jwt.JwtTokenProvider;
@@ -19,6 +21,8 @@ import org.springframework.web.bind.annotation.*;
 public class PortfolioController {
 
     private final PortfolioService portfolioService;
+    private final PortfolioQueryService portfolioQueryService;
+    private final PortfolioCommentService portfolioCommentService;
     private final JwtTokenProvider jwtTokenProvider;
 
 
@@ -43,7 +47,7 @@ public class PortfolioController {
     ) {
         String token = (String) httpRequest.getAttribute("token");
         Long userId = extractUserId(token);
-        return portfolioService.st_edit(userId, portfolio_id);
+        return portfolioQueryService.st_edit(userId, portfolio_id);
     }
 
     // 포트폴리오 수정
@@ -64,7 +68,7 @@ public class PortfolioController {
     @RateLimited(limit = 30, durationSeconds = 60)
     public PortfolioResponse view(@PathVariable Long portfolio_id,
                                   HttpServletRequest httpRequest) {
-        return portfolioService.view(portfolio_id);
+        return portfolioQueryService.view(portfolio_id);
     }
 
     // 포트폴리오 삭제
@@ -113,7 +117,7 @@ public class PortfolioController {
     ) {
         String token = (String) httpRequest.getAttribute("token");
         Long userId = extractUserId(token);
-        return portfolioService.createComment(userId, request, portfolio_id);
+        return portfolioCommentService.createComment(userId, request, portfolio_id);
     }
 
     // 댓글 삭제
@@ -126,7 +130,7 @@ public class PortfolioController {
     ) {
         String token = (String) httpRequest.getAttribute("token");
         Long userId = extractUserId(token);
-        portfolioService.deleteComment(userId, portfolio_id, comment_id);
+        portfolioCommentService.deleteComment(userId, portfolio_id, comment_id);
     }
 
     // 포트폴리오 댓글 조회 (커서 페이징)
@@ -137,7 +141,7 @@ public class PortfolioController {
             @RequestParam(required = false) Long lastId,
             @RequestParam(defaultValue = "10") int size
     ) {
-        return portfolioService.getComments(portfolio_id, lastId, size);
+        return portfolioCommentService.getComments(portfolio_id, lastId, size);
     }
 
     // 토큰 검증 절차

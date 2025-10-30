@@ -34,7 +34,6 @@ public class PortfolioService {
     private final PortfolioRepository portfolioRepository;
     private final UserRepository userRepository;
     private final PortfolioLikeRepository portfolioLikeRepository;
-    private final PortfolioCommentRepository portfolioCommentRepository;
 
     public PortfolioResponse write(Long userId, PortfolioRequest request) {
         UserJpaEntity user = userRepository.findById(userId)
@@ -66,21 +65,6 @@ public class PortfolioService {
         );
     }
 
-    public PortfolioResponse st_edit(Long userId, Long portfolioId){
-        PortfolioJpaEntity portfolio = portfolioRepository.findByIdAndUserId(portfolioId, userId)
-                .orElseThrow(() -> new ExpectedException(HttpStatus.NOT_FOUND, "존재하지 않는 포트폴리오입니다."));
-        return new PortfolioResponse(
-                portfolio.getId(),
-                portfolio.getUser().getId(),
-                portfolio.getTitle(),
-                portfolio.getContent(),
-                portfolio.getLike(),
-                portfolio.getView(),
-                portfolio.getComment(),
-                portfolio.getZerodog(),
-                portfolio.getCreatedAt()
-        );
-    }
 
     public PortfolioResponse edit(Long userId, Long portfolioId, PortfolioRequest request) {
         PortfolioJpaEntity portfolio = portfolioRepository.findByIdAndUserId(portfolioId, userId)
@@ -104,30 +88,13 @@ public class PortfolioService {
         );
     }
 
-    public PortfolioResponse view(Long portfolioId){
-        PortfolioJpaEntity portfolio = portfolioRepository.findById(portfolioId)
-                .orElseThrow(() -> new ExpectedException(HttpStatus.NOT_FOUND, "존재하지 않는 포트폴리오입니다."));
-
-        portfolioRepository.incrementView(portfolio.getId());
-
-        return new PortfolioResponse(
-                portfolio.getId(),
-                portfolio.getUser().getId(),
-                portfolio.getTitle(),
-                portfolio.getContent(),
-                portfolio.getLike(),
-                portfolio.getView(),
-                portfolio.getComment(),
-                portfolio.getZerodog(),
-                portfolio.getCreatedAt()
-        );
-    }
 
     public void delete(Long userId, Long portfolioId) {
         PortfolioJpaEntity portfolio = portfolioRepository.findByIdAndUserId(portfolioId, userId)
                 .orElseThrow(() -> new ExpectedException(HttpStatus.NOT_FOUND, "존재하지 않는 포트폴리오입니다."));
         portfolioRepository.delete(portfolio);
     }
+
 
     @Transactional
     public PortfolioLikeResponse likeUp(Long userId, Long portfolioId) {
@@ -166,6 +133,7 @@ public class PortfolioService {
         );
     }
 
+
     public PortfolioResponse open(Long userId, Long portfolioId) {
         PortfolioJpaEntity portfolio = portfolioRepository.findById(portfolioId)
                 .orElseThrow(() -> new ExpectedException(HttpStatus.NOT_FOUND, "존재하지 않는 포트폴리오입니다."));
@@ -184,51 +152,6 @@ public class PortfolioService {
                 portfolio.getZerodog(),
                 portfolio.getCreatedAt()
         );
-    }
-
-    public PortfolioCommentResponse createComment(Long userId, PortfolioCommentRequest request, Long portfolioId) {
-        UserJpaEntity user = userRepository.findById(userId)
-                .orElseThrow(() -> new ExpectedException(HttpStatus.NOT_FOUND, "존재하지 않는 유저입니다."));
-        PortfolioJpaEntity portfolio = portfolioRepository.findById(portfolioId)
-                .orElseThrow(() -> new ExpectedException(HttpStatus.NOT_FOUND, "존재하지 않는 댓글입니다."));
-        PortfolioCommentJpaEntity comment = PortfolioCommentJpaEntity.builder()
-                .user(user)
-                .portfolio(portfolio)
-                .content(request.content())
-                .createdAt(Instant.now())
-                .build();
-        portfolioCommentRepository.save(comment);
-        return new PortfolioCommentResponse(
-                comment.getId(),
-                comment.getUser().getId(),
-                comment.getPortfolio().getId(),
-                comment.getContent(),
-                comment.getCreatedAt()
-        );
-    }
-
-    public void deleteComment(Long userId, Long portfolioId, Long commentId) {
-        PortfolioCommentJpaEntity comment = portfolioCommentRepository.findByPortfolioIdAndId(portfolioId,commentId)
-                .orElseThrow(() -> new ExpectedException(HttpStatus.NOT_FOUND, "존재하지 않는 포트폴리오입니다."));
-        portfolioCommentRepository.delete(comment);
-    }
-
-    public PortfolioCommentListResponse getComments(Long portfolioId, Long lastId, int size) {
-        Pageable pageable = PageRequest.of(0, size, Sort.by("id").descending());
-        List<PortfolioCommentJpaEntity> comments =
-                portfolioCommentRepository.findCommentsAfterCursor(portfolioId, lastId, pageable);
-
-        List<PortfolioCommentResponse> responses = comments.stream()
-                .map(c -> new PortfolioCommentResponse(
-                        c.getId(),
-                        c.getPortfolio().getId(),
-                        c.getUser().getId(),
-                        c.getContent(),
-                        c.getCreatedAt()
-                ))
-                .collect(Collectors.toList());
-
-        return new PortfolioCommentListResponse(portfolioId, responses);
     }
 
 }
