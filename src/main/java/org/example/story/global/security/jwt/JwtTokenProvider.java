@@ -57,4 +57,12 @@ public class JwtTokenProvider {
             return null;
         }
     }
+
+    // 토큰 검증 절차
+    public Long extractUserId(String token) {
+        if(validateToken(token)) {
+            return getUserIdFromToken(token);
+        }
+        throw new ExpectedException(HttpStatus.UNAUTHORIZED, "토큰이 유효하지 않습니다.");
+    }
 }

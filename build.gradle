@@ -52,6 +52,18 @@ dependencies {
 	runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.11.5'
 	runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.11.5'
 
+	// AOP
+	implementation 'org.springframework.boot:spring-boot-starter-aop'
+
+	// Bucket4j (Rate limiting)
+	implementation 'com.bucket4j:bucket4j_jdk17-jcache:8.15.0'
+
+	// 캐시 또는 Redis 등 분산환경용
+	implementation 'org.ehcache:ehcache:3.10.8'
+
+	implementation 'com.github.ben-manes.caffeine:caffeine:3.1.8'
+
+
 
 }
 
