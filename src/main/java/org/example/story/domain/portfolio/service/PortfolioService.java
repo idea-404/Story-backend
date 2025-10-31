@@ -2,35 +2,24 @@ package org.example.story.domain.portfolio.service;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import org.example.story.domain.portfolio.entity.PortfolioCommentJpaEntity;
 import org.example.story.domain.portfolio.entity.PortfolioJpaEntity;
 import org.example.story.domain.portfolio.entity.PortfolioLikeJpaEntity;
 import org.example.story.domain.portfolio.record.common.PortfolioRequest;
 import org.example.story.domain.portfolio.record.common.PortfolioResponse;
-import org.example.story.domain.portfolio.record.request.PortfolioCommentRequest;
-import org.example.story.domain.portfolio.record.response.PortfolioCommentListResponse;
-import org.example.story.domain.portfolio.record.response.PortfolioCommentResponse;
 import org.example.story.domain.portfolio.record.response.PortfolioLikeResponse;
-import org.example.story.domain.portfolio.repository.PortfolioCommentRepository;
 import org.example.story.domain.portfolio.repository.PortfolioLikeRepository;
 import org.example.story.domain.portfolio.repository.PortfolioRepository;
 import org.example.story.domain.user.entity.UserJpaEntity;
 import org.example.story.domain.user.repository.UserRepository;
 import org.example.story.global.error.exception.ExpectedException;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
-import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 public class PortfolioService {
-
     private final PortfolioRepository portfolioRepository;
     private final UserRepository userRepository;
     private final PortfolioLikeRepository portfolioLikeRepository;

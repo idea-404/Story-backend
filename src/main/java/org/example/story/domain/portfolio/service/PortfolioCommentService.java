@@ -7,7 +7,6 @@ import org.example.story.domain.portfolio.record.request.PortfolioCommentRequest
 import org.example.story.domain.portfolio.record.response.PortfolioCommentListResponse;
 import org.example.story.domain.portfolio.record.response.PortfolioCommentResponse;
 import org.example.story.domain.portfolio.repository.PortfolioCommentRepository;
-import org.example.story.domain.portfolio.repository.PortfolioLikeRepository;
 import org.example.story.domain.portfolio.repository.PortfolioRepository;
 import org.example.story.domain.user.entity.UserJpaEntity;
 import org.example.story.domain.user.repository.UserRepository;
