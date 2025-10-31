@@ -1,0 +1,67 @@
+package org.example.story.domain.blog.entity;
+
+import jakarta.persistence.*;
+import lombok.*;
+import org.example.story.domain.portfolio.entity.PortfolioLikeJpaEntity;
+import org.example.story.domain.user.entity.UserJpaEntity;
+import org.hibernate.annotations.ColumnDefault;
+
+import java.time.Instant;
+import java.util.ArrayList;
+import java.util.List;
+
+@Getter
+@Entity
+@Table(name = "blog")
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+public class BlogJpaEntity {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id", nullable = false)
+    private Long id;
+
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "user_id", nullable = false)
+    private UserJpaEntity user;
+
+    @Column(name = "title", nullable = false)
+    private String title;
+
+    @Lob
+    @Column(name = "content", nullable = false)
+    private String content;
+
+    @ColumnDefault("0")
+    @Column(name = "`like`")
+    private Long like;
+
+    @ColumnDefault("0")
+    @Column(name = "view")
+    private Long view;
+
+    @Column(name = "createdAt", nullable = false)
+    private Instant createdAt;
+
+    @ColumnDefault("0")
+    @Column(name = "comment")
+    private Long comment;
+
+    @OneToMany(mappedBy = "blog", cascade = CascadeType.REMOVE, orphanRemoval = true)
+    private List<PortfolioLikeJpaEntity> likes = new ArrayList<>();
+
+    @OneToMany(mappedBy = "blog", cascade = CascadeType.REMOVE, orphanRemoval = true)
+    private List<BlogCommentJpaEntity> comments = new ArrayList<>();
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+    public void setContent(String content) {
+        this.content = content;
+    }
+    public void setLike(Long like) {
+        this.like = like;
+    }
+
+}
