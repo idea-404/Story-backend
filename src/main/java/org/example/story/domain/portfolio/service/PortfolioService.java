@@ -2,6 +2,7 @@ package org.example.story.domain.portfolio.service;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.example.story.domain.blog.entity.BlogLikeJpaEntity;
 import org.example.story.domain.portfolio.entity.PortfolioJpaEntity;
 import org.example.story.domain.portfolio.entity.PortfolioLikeJpaEntity;
 import org.example.story.domain.portfolio.record.common.PortfolioRequest;
@@ -59,8 +60,7 @@ public class PortfolioService {
         PortfolioJpaEntity portfolio = portfolioRepository.findByIdAndUserId(portfolioId, userId)
                 .orElseThrow(() -> new ExpectedException(HttpStatus.NOT_FOUND, "존재하지 않는 포트폴리오입니다."));
 
-        portfolio.setTitle(request.title());
-        portfolio.setContent(request.content());
+        portfolio.update(request.title(),request.content());
 
         PortfolioJpaEntity saved = portfolioRepository.save(portfolio);
 
@@ -95,18 +95,19 @@ public class PortfolioService {
         boolean liked = portfolioLikeRepository.findByPortfolioAndUser(portfolio, user).isPresent();
 
         if(liked) {
-            portfolio.setLike(portfolio.getLike() - 1);
-            portfolioLikeRepository.deleteByPortfolioIdAndUserId(portfolio.getId(), user.getId());
+            portfolio.decreaseLike();
+            PortfolioLikeJpaEntity like = portfolioLikeRepository.findByPortfolioAndUser(portfolio, user)
+                    .orElseThrow(() -> new ExpectedException(HttpStatus.NOT_FOUND, "존재하지 않는 기록입니다."));
+            portfolioLikeRepository.delete(like);
         } else {
             PortfolioLikeJpaEntity likerecord = PortfolioLikeJpaEntity.builder()
                     .portfolio(portfolio)
                     .user(user)
                     .build();
             portfolioLikeRepository.save(likerecord);
-            portfolio.setLike(portfolio.getLike() + 1);
+            portfolio.increaseLike();
         }
 
-        portfolioRepository.save(portfolio);
 
         return new PortfolioLikeResponse(
                 portfolio.getId(),

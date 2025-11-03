@@ -56,10 +56,9 @@ public class BlogService {
 
     public BlogResponse edit(Long userId, Long blogId, BlogRequest request) {
         BlogJpaEntity blog = blogRepository.findByIdAndUserId(blogId, userId)
-                .orElseThrow(() -> new ExpectedException(HttpStatus.NOT_FOUND, "존재하지 않는 포트폴리오입니다."));
+                .orElseThrow(() -> new ExpectedException(HttpStatus.NOT_FOUND, "존재하지 않는 블로그입니다."));
 
-        blog.setTitle(request.title());
-        blog.setContent(request.content());
+        blog.update(request.title(), request.content());
 
         BlogJpaEntity saved = blogRepository.save(blog);
 
@@ -78,33 +77,33 @@ public class BlogService {
 
     public void delete(Long userId, Long blogId) {
         BlogJpaEntity blog = blogRepository.findByIdAndUserId(blogId, userId)
-                .orElseThrow(() -> new ExpectedException(HttpStatus.NOT_FOUND, "존재하지 않는 포트폴리오입니다."));
+                .orElseThrow(() -> new ExpectedException(HttpStatus.NOT_FOUND, "존재하지 않는 블로그입니다."));
         blogRepository.delete(blog);
     }
 
 
     @Transactional
-    public BlogLikeResponse likeUp(Long userId, Long blogoId) {
+    public BlogLikeResponse likeUp(Long userId, Long blogId) {
         UserJpaEntity user = userRepository.findById(userId)
                 .orElseThrow(() -> new ExpectedException(HttpStatus.NOT_FOUND, "존재하지 않는 유저입니다."));
-        BlogJpaEntity blog = blogRepository.findById(blogoId)
-                .orElseThrow(() -> new ExpectedException(HttpStatus.NOT_FOUND, "존재하지 않는 포트폴리오입니다."));
+        BlogJpaEntity blog = blogRepository.findById(blogId)
+                .orElseThrow(() -> new ExpectedException(HttpStatus.NOT_FOUND, "존재하지 않는 블로그입니다."));
 
         boolean liked = blogLikeRepository.findByBlogAndUser(blog, user).isPresent();
 
         if(liked) {
-            blog.setLike(blog.getLike() - 1);
-            blogLikeRepository.deleteByBlogIdAndUserId(blog.getId(), user.getId());
+            blog.decreaseLike();
+            BlogLikeJpaEntity like = blogLikeRepository.findByBlogAndUser(blog, user)
+                    .orElseThrow(() -> new ExpectedException(HttpStatus.NOT_FOUND, "존재하지 않는 기록  ㅠ ㅕ ㅛㅛ ㅛ ㅛ ㅎ   퓨입니다."));
+            blogLikeRepository.delete(like);
         } else {
             BlogLikeJpaEntity likerecord = BlogLikeJpaEntity.builder()
                     .blog(blog)
                     .user(user)
                     .build();
             blogLikeRepository.save(likerecord);
-            blog.setLike(blog.getLike() + 1);
+            blog.increaseLike();
         }
-
-        blogRepository.save(blog);
 
         return new BlogLikeResponse(
                 blog.getId(),
