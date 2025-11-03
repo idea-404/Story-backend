@@ -1,9 +1,11 @@
 package org.example.story.global.config;
 
 import lombok.RequiredArgsConstructor;
+import org.example.story.global.error.exception.ExpectedException;
 import org.example.story.global.security.jwt.JwtHeaderFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
@@ -48,27 +50,16 @@ public class SecurityConfig {
                                 "/api/v1/auth/signup",
                                 "/api/v1/auth/verify",
                                 "/api/v1/auth/google",
-                                "/api/v1/auth/kakao",
-
-                                // 프로필 (다른 유저 공개 프로필 조회)
-                                "/api/v1/profile/**",
-
-                                // 블로그 (공개 조회 관련)
-                                "/api/v1/blog/list",
-                                "/api/v1/blog/view/**",
-
-                                // 포트폴리오 (공개 조회 관련)
-                                "/api/v1/portfolio/list",
-                                "/api/v1/portfolio/view/**",
-
-                                // MyPage (자기정보 외엔 대부분 보호, 기본 루트 공개 가능 여부 선택)
-                                "/api/v1/mypage/"
+                                "/api/v1/auth/kakao"
                         ).permitAll()
-
                         // 나머지 모든 요청은 인증 필요
-                        .anyRequest().authenticated()
+                        .anyRequest().hasAnyRole("VERIFIED", "ADMIN")
                 )
-                .addFilterBefore(jwtHeaderFilter, UsernamePasswordAuthenticationFilter.class);
+                .addFilterBefore(jwtHeaderFilter, UsernamePasswordAuthenticationFilter.class)
+                .exceptionHandling(ex -> ex
+                        .accessDeniedHandler((request, response, exception) -> {
+                            throw new ExpectedException(HttpStatus.FORBIDDEN, "접근 권한이 없는 주소입니다.");
+                        }));
 
         return http.build();
     }

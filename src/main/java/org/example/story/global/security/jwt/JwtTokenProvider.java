@@ -1,5 +1,6 @@
 package org.example.story.global.security.jwt;
 
+import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -23,11 +24,12 @@ public class JwtTokenProvider {
     }
 
     // 토큰 생성 로직
-    public String createToken(Long userId, Long expireTime) {
+    public String createToken(Long userId, String role,Long expireTime) {
         Date now = new Date();
         Date expiredAt = new Date(now.getTime() + expireTime * 60000);
         return Jwts.builder()
                 .setSubject(userId.toString())
+                .claim("role", role)
                 .setIssuedAt(now)
                 .setExpiration(expiredAt)
                 .signWith(key, SignatureAlgorithm.HS256)
@@ -47,22 +49,12 @@ public class JwtTokenProvider {
         }
     }
 
-    // 토큰에서 유저 ID 파싱
-    public Long getUserIdFromToken(String token) {
-        try {
-            String userId = Jwts.parserBuilder().setSigningKey(key)
-                    .build().parseClaimsJws(token).getBody().getSubject();
-            return Long.valueOf(userId);
-        } catch (JwtException | IllegalArgumentException e) {
-            return null;
-        }
-    }
-
-    // 토큰 검증 절차
-    public Long extractUserId(String token) {
-        if(validateToken(token)) {
-            return getUserIdFromToken(token);
-        }
-        throw new ExpectedException(HttpStatus.UNAUTHORIZED, "토큰이 유효하지 않습니다.");
+    // 토큰에서 유저 권한 파싱
+    public Claims getClaims(String token) {
+        return Jwts.parserBuilder()
+                .setSigningKey(key)
+                .build()
+                .parseClaimsJws(token)
+                .getBody();
     }
 }
