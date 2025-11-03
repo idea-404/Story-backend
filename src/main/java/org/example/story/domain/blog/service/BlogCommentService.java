@@ -51,7 +51,7 @@ public class BlogCommentService {
 
     public void deleteComment(Long userId, Long blogId, Long commentId) {
         BlogCommentJpaEntity comment = blogCommentRepository.findByBlogIdAndId(blogId,commentId)
-                .orElseThrow(() -> new ExpectedException(HttpStatus.NOT_FOUND, "존재하지 않는 포트폴리오입니다."));
+                .orElseThrow(() -> new ExpectedException(HttpStatus.NOT_FOUND, "존재하지 않는 댓글입니다."));
         blogCommentRepository.delete(comment);
     }
 
