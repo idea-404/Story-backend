@@ -47,7 +47,7 @@ public class PortfolioController {
     ) {
         String token = (String) httpRequest.getAttribute("token");
         Long userId = jwtTokenProvider.extractUserId(token);
-        return portfolioQueryService.st_edit(userId, portfolio_id);
+        return portfolioQueryService.getForEdit(userId, portfolio_id);
     }
 
     // 포트폴리오 수정

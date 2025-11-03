@@ -47,7 +47,7 @@ public class BlogController {
     ) {
         String token = (String) httpRequest.getAttribute("token");
         Long userId = jwtTokenProvider.extractUserId(token);
-        return blogQueryService.st_edit(userId, blog_id);
+        return blogQueryService.getForEdit(userId, blog_id);
     }
 
     // 포트폴리오 수정

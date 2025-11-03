@@ -13,9 +13,9 @@ import org.springframework.stereotype.Service;
 public class BlogQueryService {
     private final BlogRepository blogRepository;
 
-    public BlogResponse st_edit(Long userId, Long blogId){
+    public BlogResponse getForEdit(Long userId, Long blogId){
         BlogJpaEntity blog = blogRepository.findByIdAndUserId(blogId, userId)
-                .orElseThrow(() -> new ExpectedException(HttpStatus.NOT_FOUND, "존재하지 않는 포트폴리오입니다."));
+                .orElseThrow(() -> new ExpectedException(HttpStatus.NOT_FOUND, "존재하지 않는 블로그입니다."));
         return new BlogResponse(
                 blog.getId(),
                 blog.getUser().getId(),
@@ -30,7 +30,7 @@ public class BlogQueryService {
 
     public BlogResponse view(Long blogId){
         BlogJpaEntity blog = blogRepository.findById(blogId)
-                .orElseThrow(() -> new ExpectedException(HttpStatus.NOT_FOUND, "존재하지 않는 포트폴리오입니다."));
+                .orElseThrow(() -> new ExpectedException(HttpStatus.NOT_FOUND, "존재하지 않는 블로그입니다."));
 
         blogRepository.incrementView(blog.getId());
 
