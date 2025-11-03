@@ -13,7 +13,6 @@ import java.util.Optional;
 @Repository
 public interface BlogCommentRepository extends JpaRepository<BlogCommentJpaEntity, Long> {
 
-    List<BlogCommentJpaEntity> findByUserId(Long blogId);
 
     @Query("SELECT c FROM BlogCommentJpaEntity c " +
             "WHERE c.blog.id = :blogId " +
