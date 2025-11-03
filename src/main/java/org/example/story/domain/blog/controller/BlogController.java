@@ -66,8 +66,7 @@ public class BlogController {
     // 포트폴리오 조회 (토큰 필요 X)
     @GetMapping("/view/{blog_id}")
     @RateLimited(limit = 30, durationSeconds = 60)
-    public BlogResponse view(@PathVariable Long blog_id,
-                                  HttpServletRequest httpRequest) {
+    public BlogResponse view(@PathVariable Long blog_id) {
         return blogQueryService.view(blog_id);
     }
 
@@ -99,7 +98,7 @@ public class BlogController {
     // 댓글 작성
     @PostMapping("/comment/{blog_id}")
     @RateLimited(limit = 15, durationSeconds = 60)
-    public BlogCommentResponse comment(
+    public BlogCommentResponse createComment(
             @PathVariable Long blog_id,
             @RequestBody BlogCommentRequest request,
             HttpServletRequest httpRequest

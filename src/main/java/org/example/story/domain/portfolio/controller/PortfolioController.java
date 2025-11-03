@@ -66,8 +66,7 @@ public class PortfolioController {
     // 포트폴리오 조회 (토큰 필요 X)
     @GetMapping("/view/{portfolio_id}")
     @RateLimited(limit = 30, durationSeconds = 60)
-    public PortfolioResponse view(@PathVariable Long portfolio_id,
-                                  HttpServletRequest httpRequest) {
+    public PortfolioResponse view(@PathVariable Long portfolio_id) {
         return portfolioQueryService.view(portfolio_id);
     }
 
@@ -110,7 +109,7 @@ public class PortfolioController {
     // 댓글 작성
     @PostMapping("/comment/{portfolio_id}")
     @RateLimited(limit = 15, durationSeconds = 60)
-    public PortfolioCommentResponse comment(
+    public PortfolioCommentResponse createComment(
             @PathVariable Long portfolio_id,
             @RequestBody PortfolioCommentRequest request,
             HttpServletRequest httpRequest
