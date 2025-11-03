@@ -1,7 +1,8 @@
-package org.example.story.domain.portfolio.entity;
+package org.example.story.domain.blog.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.example.story.domain.portfolio.entity.PortfolioLikeJpaEntity;
 import org.example.story.domain.user.entity.UserJpaEntity;
 import org.hibernate.annotations.ColumnDefault;
 
@@ -11,11 +12,11 @@ import java.util.List;
 
 @Getter
 @Entity
-@Table(name = "portfolio")
+@Table(name = "blog")
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class PortfolioJpaEntity {
+public class BlogJpaEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
@@ -25,7 +26,7 @@ public class PortfolioJpaEntity {
     @JoinColumn(name = "user_id", nullable = false)
     private UserJpaEntity user;
 
-    @Column(name = "title", nullable = false, length = 12)
+    @Column(name = "title", nullable = false)
     private String title;
 
     @Lob
@@ -40,10 +41,6 @@ public class PortfolioJpaEntity {
     @Column(name = "view")
     private Long view;
 
-    @ColumnDefault("0")
-    @Column(name = "zerodog")
-    private Boolean zerodog;
-
     @Column(name = "createdAt", nullable = false)
     private Instant createdAt;
 
@@ -51,28 +48,19 @@ public class PortfolioJpaEntity {
     @Column(name = "comment")
     private Long comment;
 
-    @OneToMany(mappedBy = "portfolio", cascade = CascadeType.REMOVE, orphanRemoval = true)
-    private List<PortfolioLikeJpaEntity> likes = new ArrayList<>();
+    @OneToMany(mappedBy = "blog", cascade = CascadeType.REMOVE, orphanRemoval = true)
+    private List<BlogLikeJpaEntity> likes = new ArrayList<>();
 
-    @OneToMany(mappedBy = "portfolio", cascade = CascadeType.REMOVE, orphanRemoval = true)
-    private List<PortfolioCommentJpaEntity> comments = new ArrayList<>();
+    @OneToMany(mappedBy = "blog", cascade = CascadeType.REMOVE, orphanRemoval = true)
+    private List<BlogCommentJpaEntity> comments = new ArrayList<>();
 
-
-    public void update(String title, String content) {
+    public void update(String title,String content) {
         this.title = title;
         this.content = content;
     }
-
     public void increaseLike() {
         this.like++;
     }
-
     public void decreaseLike() {this.like--;}
-
-    public void changeZerodog() {
-        this.zerodog = !zerodog;
-    }
-
     public void increaseView(){this.view++;}
-
 }

@@ -13,8 +13,6 @@ import java.util.Optional;
 @Repository
 public interface PortfolioCommentRepository extends JpaRepository<PortfolioCommentJpaEntity, Long> {
 
-    List<PortfolioCommentJpaEntity> findByUserId(Long portfolioId);
-
     @Query("SELECT c FROM PortfolioCommentJpaEntity c " +
             "WHERE c.portfolio.id = :portfolioId " +
             "AND (:lastId IS NULL OR c.id < :lastId) " +
