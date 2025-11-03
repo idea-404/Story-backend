@@ -58,15 +58,14 @@ public class PortfolioJpaEntity {
     private List<PortfolioCommentJpaEntity> comments = new ArrayList<>();
 
 
-    public void setTitle(String title) {
+    public void update(String title, String content) {
         this.title = title;
-    }
-    public void setContent(String content) {
         this.content = content;
     }
-    public void setLike(Long like) {
-        this.like = like;
+    public void increaseLike() {
+        this.like++;
     }
+    public void decreaseLike() {this.like--;}
     public void setZerodog(Boolean zerodog) {
         this.zerodog = zerodog;
     }
