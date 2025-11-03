@@ -52,6 +52,9 @@ public class BlogCommentService {
     public void deleteComment(Long userId, Long blogId, Long commentId) {
         BlogCommentJpaEntity comment = blogCommentRepository.findByBlogIdAndId(blogId,commentId)
                 .orElseThrow(() -> new ExpectedException(HttpStatus.NOT_FOUND, "존재하지 않는 댓글입니다."));
+        if (!comment.getUser().getId().equals(userId)) {
+            throw new ExpectedException(HttpStatus.FORBIDDEN, "댓글을 삭제할 권한이 없습니다.");
+        }
         blogCommentRepository.delete(comment);
     }
 

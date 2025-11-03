@@ -52,6 +52,10 @@ public class PortfolioCommentService {
     public void deleteComment(Long userId, Long portfolioId, Long commentId) {
         PortfolioCommentJpaEntity comment = portfolioCommentRepository.findByPortfolioIdAndId(portfolioId,commentId)
                 .orElseThrow(() -> new ExpectedException(HttpStatus.NOT_FOUND, "존재하지 않는 포트폴리오입니다."));
+
+        if (!comment.getUser().getId().equals(userId)) {
+            throw new ExpectedException(HttpStatus.FORBIDDEN, "댓글을 삭제할 권한이 없습니다.");
+        }
         portfolioCommentRepository.delete(comment);
     }
 
