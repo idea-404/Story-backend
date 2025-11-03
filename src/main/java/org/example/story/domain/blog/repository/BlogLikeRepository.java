@@ -13,5 +13,4 @@ public interface BlogLikeRepository extends JpaRepository<BlogLikeJpaEntity, Lon
 
     Optional<BlogLikeJpaEntity> findByBlogAndUser(BlogJpaEntity blog, UserJpaEntity user);
 
-    void deleteByBlogIdAndUserId(Long blogId, Long userId);
 }
