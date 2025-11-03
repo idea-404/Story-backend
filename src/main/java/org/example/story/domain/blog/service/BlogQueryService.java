@@ -7,6 +7,7 @@ import org.example.story.domain.blog.repository.BlogRepository;
 import org.example.story.global.error.exception.ExpectedException;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -28,11 +29,12 @@ public class BlogQueryService {
         );
     }
 
+    @Transactional
     public BlogResponse view(Long blogId){
         BlogJpaEntity blog = blogRepository.findById(blogId)
                 .orElseThrow(() -> new ExpectedException(HttpStatus.NOT_FOUND, "존재하지 않는 블로그입니다."));
 
-        blogRepository.incrementView(blog.getId());
+        blog.increaseView();
 
         return new BlogResponse(
                 blog.getId(),

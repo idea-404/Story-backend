@@ -27,7 +27,5 @@ public interface PortfolioRepository extends JpaRepository<PortfolioJpaEntity, L
 
     Optional<PortfolioJpaEntity> findByIdAndUserId(Long id, Long userId);
 
-    @Modifying
-    @Query("UPDATE PortfolioJpaEntity p SET p.view = p.view + 1 WHERE p.id = :id")
-    void incrementView(@Param("id") Long id);
+
 }

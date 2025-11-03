@@ -62,12 +62,17 @@ public class PortfolioJpaEntity {
         this.title = title;
         this.content = content;
     }
+
     public void increaseLike() {
         this.like++;
     }
+
     public void decreaseLike() {this.like--;}
-    public void setZerodog(Boolean zerodog) {
-        this.zerodog = zerodog;
+
+    public void changeZerodog() {
+        this.zerodog = !zerodog;
     }
+
+    public void increaseView(){this.view++;}
 
 }

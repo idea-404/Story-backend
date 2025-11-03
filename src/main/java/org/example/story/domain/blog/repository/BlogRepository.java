@@ -24,7 +24,4 @@ public interface BlogRepository extends JpaRepository<BlogJpaEntity, Long> {
 
     Optional<BlogJpaEntity> findByIdAndUserId(Long id, Long userId);
 
-    @Modifying
-    @Query("UPDATE BlogJpaEntity p SET p.view = p.view + 1 WHERE p.id = :id")
-    void incrementView(@Param("id") Long id);
 }
