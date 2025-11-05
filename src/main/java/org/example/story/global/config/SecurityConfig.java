@@ -74,8 +74,15 @@ public class SecurityConfig {
                 )
                 .addFilterBefore(jwtHeaderFilter, UsernamePasswordAuthenticationFilter.class)
                 .exceptionHandling(ex -> ex
+                        .authenticationEntryPoint((request, response, exception) -> {
+                            response.setStatus(HttpStatus.UNAUTHORIZED.value());
+                            response.setContentType("application/json;charset=UTF-8");
+                            response.getWriter().write("{\"message\":\"로그인이 되어있지 않습니다.\"}");
+                        })
                         .accessDeniedHandler((request, response, exception) -> {
-                            throw new ExpectedException(HttpStatus.FORBIDDEN, "접근 권한이 없는 주소입니다.");
+                            response.setStatus(HttpStatus.FORBIDDEN.value());
+                            response.setContentType("application/json;charset=UTF-8");
+                            response.getWriter().write("{\"message\":\"접근 권한이 없습니다.\"}");
                         }));
 
         return http.build();
