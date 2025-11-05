@@ -6,7 +6,9 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import org.example.story.global.error.exception.ExpectedException;
 import org.example.story.global.security.jwt.custom.CustomPrincipal;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
@@ -31,22 +33,26 @@ public class JwtHeaderFilter extends OncePerRequestFilter {
             throws ServletException, IOException {
         String bearerToken = request.getHeader("Authorization");
         String token = null;
-        if(bearerToken != null && bearerToken.startsWith("Bearer ")) {
+        if (bearerToken != null && bearerToken.startsWith("Bearer ")) {
             token = bearerToken.substring(7);
-            if(jwtTokenProvider.validateToken(token)) {
-                Claims claims = jwtTokenProvider.getClaims(token);
-                Long userId = Long.parseLong(claims.getSubject());
-                String role = claims.get("role", String.class);
+            if (jwtTokenProvider.validateToken(token)) {
+                try {
+                    Claims claims = jwtTokenProvider.getClaims(token);
+                    Long userId = Long.parseLong(claims.getSubject());
+                    String role = claims.get("role", String.class);
 
-                if(role != null) {
-                    CustomPrincipal principal = new CustomPrincipal(userId, role);
+                    if (role != null) {
+                        CustomPrincipal principal = new CustomPrincipal(userId, role);
 
-                    GrantedAuthority authority = new SimpleGrantedAuthority("ROLE_" + role);
+                        GrantedAuthority authority = new SimpleGrantedAuthority("ROLE_" + role);
 
-                    Authentication auth = new UsernamePasswordAuthenticationToken(
-                            principal, null, List.of(authority));
+                        Authentication auth = new UsernamePasswordAuthenticationToken(
+                                principal, null, List.of(authority));
 
-                    SecurityContextHolder.getContext().setAuthentication(auth);
+                        SecurityContextHolder.getContext().setAuthentication(auth);
+                    }
+                } catch (ClassCastException | NumberFormatException e) {
+                    throw new ExpectedException(HttpStatus.BAD_REQUEST, "잘못된 claim 형식입니다.");
                 }
             }
         }
