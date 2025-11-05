@@ -8,12 +8,14 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class OpenAIConfig {
 
-    @Value("${AI_KEY}")
+    @Value("openai.api-key")
     private String apiKey;
+
+    @Value("openai.timeout-seconds")
+    private long timeoutSeconds;
 
     @Bean
     public OpenAiService openAiService() {
-        // 두 번째 인자는 타임아웃 (초 단위) — 예: 60초
-        return new OpenAiService(apiKey);
+        return new OpenAiService(apiKey, java.time.Duration.ofSeconds(timeoutSeconds));
     }
 }
