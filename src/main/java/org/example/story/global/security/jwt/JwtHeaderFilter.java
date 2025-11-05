@@ -38,14 +38,16 @@ public class JwtHeaderFilter extends OncePerRequestFilter {
                 Long userId = Long.parseLong(claims.getSubject());
                 String role = claims.get("role", String.class);
 
-                CustomPrincipal principal = new CustomPrincipal(userId, role);
+                if(role != null) {
+                    CustomPrincipal principal = new CustomPrincipal(userId, role);
 
-                GrantedAuthority authority = new SimpleGrantedAuthority(role);
+                    GrantedAuthority authority = new SimpleGrantedAuthority("ROLE_" + role);
 
-                Authentication auth = new UsernamePasswordAuthenticationToken(
-                        principal, null, List.of(authority));
+                    Authentication auth = new UsernamePasswordAuthenticationToken(
+                            principal, null, List.of(authority));
 
-                SecurityContextHolder.getContext().setAuthentication(auth);
+                    SecurityContextHolder.getContext().setAuthentication(auth);
+                }
             }
         }
         filterChain.doFilter(request, response);
