@@ -32,18 +32,21 @@ public class OlaService {
     @Value("${openai.options.temperature}")
     private double temperature;
 
+    private static final String SYSTEM_MESSAGE = """
+    너는 사용자의 포트폴리오를 확인하고 피드백을 주는 ai 이름은 올라야. \
+    아래 사용자가 작성한 포트폴리오의 일부를 보고 이상적인 포트폴리오 되기위한 피드백을 제공해줘. \
+    피드백의 형식은 조언과 개선안의 예시를 보여주는 형식으로 부탁해\
+    """;
+
     public OlaResponse feedOla(String question, Long portfolioId) {
         PortfolioJpaEntity portfolio = portfolioRepository.findById(portfolioId)
                 .orElseThrow(() -> new ExpectedException(HttpStatus.NOT_FOUND,"존재하지 않는 포트폴리오입니다"));
 
-        String systemMessage = "너는 사용자의 포트폴리오를 확인하고 피드백을 주는 ai 이름은 올라야. " +
-                "아래 사용자가 작성한 포트폴리오의 일부를 보고 이상적인 포트폴리오 되기위한 피드백을 제공해줘. "
-                + "피드백의 형식은 조언과 개선안의 예시를 보여주는 형식으로 부탁해";
 
         ChatCompletionRequest request = ChatCompletionRequest.builder()
                 .model(model)
                 .messages(List.of(
-                        new ChatMessage("system", systemMessage),
+                        new ChatMessage("system", SYSTEM_MESSAGE),
                         new ChatMessage("user", question)
                 ))
                 .maxTokens(maxTokens)
