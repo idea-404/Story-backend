@@ -1,16 +1,25 @@
 package org.example.story.global.security.jwt;
 
+import io.jsonwebtoken.Claims;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.example.story.global.error.exception.ExpectedException;
+import org.example.story.global.security.jwt.custom.CustomPrincipal;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
+import java.util.List;
+import java.util.Optional;
 
 
 @Component
@@ -24,18 +33,30 @@ public class JwtHeaderFilter extends OncePerRequestFilter {
                                     FilterChain filterChain)
             throws ServletException, IOException {
         String bearerToken = request.getHeader("Authorization");
-        if(bearerToken == null) {
-            throw new ExpectedException(HttpStatus.NOT_FOUND, "Bearer token이 없습니다.");
-        }
-        if(!bearerToken.startsWith("Bearer ")) {
-            throw new ExpectedException(HttpStatus.UNAUTHORIZED, "Bearer 형식이 올바르지 않습니다.");
-        }
         String token = null;
-        token = bearerToken.substring(7);
-        if(!jwtTokenProvider.validateToken(token)) {
-            throw new ExpectedException(HttpStatus.UNAUTHORIZED, "토큰이 유효하지 않습니다.");
+        if (bearerToken != null && bearerToken.startsWith("Bearer ")) {
+            token = bearerToken.substring(7);
+            Optional<Claims> claims = jwtTokenProvider.getClaimsFromToken(token);
+            if (claims.isPresent()) {
+                try {
+                    Long userId = Long.parseLong(claims.get().getSubject());
+                    String role = claims.get().get("role", String.class);
+
+                    if (role != null) {
+                        CustomPrincipal principal = new CustomPrincipal(userId, role);
+
+                        GrantedAuthority authority = new SimpleGrantedAuthority("ROLE_" + role);
+
+                        Authentication auth = new UsernamePasswordAuthenticationToken(
+                                principal, null, List.of(authority));
+
+                        SecurityContextHolder.getContext().setAuthentication(auth);
+                    }
+                } catch (ClassCastException | NumberFormatException e) {
+                    throw new ExpectedException(HttpStatus.BAD_REQUEST, "잘못된 claim 형식입니다.");
+                }
+            }
         }
-        request.setAttribute("token", token);
         filterChain.doFilter(request, response);
     }
 }
