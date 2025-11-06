@@ -14,13 +14,13 @@ public class OlaController {
     private final OlaService olaService;
 
     @PostMapping("/{portfolio_id}")
-    public OlaResponse feed(@PathVariable("portfolio_id") Long portfolioId,
+    public OlaResponse feed(@PathVariable("portfolio_id") Long portfolio_id,
                             @RequestBody OlaRequest request) {
-        return olaService.feedOla(request.question(), portfolioId);
+        return olaService.feedOla(request.question(), portfolio_id);
     }
 
     @GetMapping("/history/{portfolio_id}")
-    public OlaListResponse history(@PathVariable("portfolio_id") Long portfolioId){
-        return olaService.historyOla(portfolioId);
+    public OlaListResponse history(@PathVariable("portfolio_id") Long portfolio_id){
+        return olaService.historyOla(portfolio_id);
     }
 }

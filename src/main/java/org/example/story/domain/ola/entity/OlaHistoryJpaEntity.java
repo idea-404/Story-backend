@@ -27,5 +27,4 @@ public class OlaHistoryJpaEntity {
     @Lob
     @Column(name = "answer", nullable = false)
     private String answer;
-
 }
