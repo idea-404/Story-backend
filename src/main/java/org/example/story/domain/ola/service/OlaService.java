@@ -17,6 +17,8 @@ import com.theokanning.openai.completion.chat.ChatCompletionRequest;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.Executor;
 import java.util.stream.Collectors;
 
 @Service
@@ -25,6 +27,7 @@ public class OlaService {
     private final OpenAiService openAiService;
     private final PortfolioRepository portfolioRepository;
     private final OlaRepository olaRepository;
+    private final Executor openAiExecutor;
 
     @Value("${openai.models.chat}")
     private String model;
@@ -40,41 +43,44 @@ public class OlaService {
     """;
 
     @Transactional
-    public OlaResponse feedOla(String question, Long portfolioId) {
-        PortfolioJpaEntity portfolio = portfolioRepository.findById(portfolioId)
-                .orElseThrow(() -> new ExpectedException(HttpStatus.NOT_FOUND,"존재하지 않는 포트폴리오입니다"));
+    public CompletableFuture<OlaResponse> feedOla(String question, Long portfolioId) {
+        return CompletableFuture.supplyAsync(() -> {
+            PortfolioJpaEntity portfolio = portfolioRepository.findById(portfolioId)
+                    .orElseThrow(() -> new ExpectedException(HttpStatus.NOT_FOUND,"존재하지 않는 포트폴리오입니다"));
 
 
-        ChatCompletionRequest request = ChatCompletionRequest.builder()
-                .model(model)
-                .messages(List.of(
-                        new ChatMessage("system", SYSTEM_MESSAGE),
-                        new ChatMessage("user", question)
-                ))
-                .maxTokens(maxTokens)
-                .temperature(temperature)
-                .build();
+            ChatCompletionRequest request = ChatCompletionRequest.builder()
+                    .model(model)
+                    .messages(List.of(
+                            new ChatMessage("system", SYSTEM_MESSAGE),
+                            new ChatMessage("user", question)
+                    ))
+                    .maxTokens(maxTokens)
+                    .temperature(temperature)
+                    .build();
 
-        var response = openAiService.createChatCompletion(request);
-        var choices = response.getChoices();
-        if (choices == null || choices.isEmpty()) {
-            throw new ExpectedException(HttpStatus.INTERNAL_SERVER_ERROR, "AI로부터 응답을 받지 못했습니다.");
-        }
-        String feedback = choices.get(0).getMessage().getContent();
+            var response = openAiService.createChatCompletion(request);
+            var choices = response.getChoices();
+            if (choices == null || choices.isEmpty()) {
+                throw new ExpectedException(HttpStatus.INTERNAL_SERVER_ERROR, "AI로부터 응답을 받지 못했습니다.");
+            }
+            String feedback = choices.get(0).getMessage().getContent();
 
-        OlaHistoryJpaEntity saved = OlaHistoryJpaEntity.builder()
-                .portfolio(portfolio)
-                .question(question)
-                .answer(feedback)
-                .build();
-        olaRepository.save(saved);
+            OlaHistoryJpaEntity saved = OlaHistoryJpaEntity.builder()
+                    .portfolio(portfolio)
+                    .question(question)
+                    .answer(feedback)
+                    .build();
+            olaRepository.save(saved);
 
-        return new OlaResponse(
-                saved.getId(),
-                saved.getPortfolio().getId(),
-                saved.getQuestion(),
-                feedback
-        );
+            return new OlaResponse(
+                    saved.getId(),
+                    saved.getPortfolio().getId(),
+                    saved.getQuestion(),
+                    feedback
+            );
+        }, openAiExecutor);
+
     }
 
     @Transactional(readOnly = true)

@@ -7,6 +7,8 @@ import org.example.story.domain.ola.record.response.OlaResponse;
 import org.example.story.domain.ola.service.OlaService;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.concurrent.CompletableFuture;
+
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/ola")
@@ -14,8 +16,8 @@ public class OlaController {
     private final OlaService olaService;
 
     @PostMapping("/{portfolio_id}")
-    public OlaResponse feed(@PathVariable("portfolio_id") Long portfolio_id,
-                            @RequestBody OlaRequest request) {
+    public CompletableFuture<OlaResponse> feed(@PathVariable("portfolio_id") Long portfolio_id,
+                                               @RequestBody OlaRequest request) {
         return olaService.feedOla(request.question(), portfolio_id);
     }
 
