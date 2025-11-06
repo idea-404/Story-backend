@@ -1,12 +1,12 @@
 package org.example.story.global.config;
 
 import lombok.RequiredArgsConstructor;
-import org.example.story.global.error.exception.ExpectedException;
+import org.example.story.global.config.handler.CustomAccessDeniedHandler;
+import org.example.story.global.config.handler.CustomAuthenticationEntryPoint;
 import org.example.story.global.security.jwt.JwtHeaderFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
-import org.springframework.http.HttpStatus;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
@@ -19,6 +19,8 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @RequiredArgsConstructor
 public class SecurityConfig {
     private final JwtHeaderFilter jwtHeaderFilter;
+    private final CustomAuthenticationEntryPoint authenticationEntryPoint;
+    private final CustomAccessDeniedHandler accessDeniedHandler;
 
     // Spring Security 필터 체인 설정
     @Bean
@@ -74,16 +76,8 @@ public class SecurityConfig {
                 )
                 .addFilterBefore(jwtHeaderFilter, UsernamePasswordAuthenticationFilter.class)
                 .exceptionHandling(ex -> ex
-                        .authenticationEntryPoint((request, response, exception) -> {
-                            response.setStatus(HttpStatus.UNAUTHORIZED.value());
-                            response.setContentType("application/json;charset=UTF-8");
-                            response.getWriter().write("{\"message\":\"로그인이 되어있지 않습니다.\"}");
-                        })
-                        .accessDeniedHandler((request, response, exception) -> {
-                            response.setStatus(HttpStatus.FORBIDDEN.value());
-                            response.setContentType("application/json;charset=UTF-8");
-                            response.getWriter().write("{\"message\":\"접근 권한이 없습니다.\"}");
-                        }));
+                        .authenticationEntryPoint(authenticationEntryPoint)
+                        .accessDeniedHandler(accessDeniedHandler));
 
         return http.build();
     }
