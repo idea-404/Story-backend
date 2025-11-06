@@ -5,14 +5,13 @@ import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
-import org.example.story.global.error.exception.ExpectedException;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 
 import java.nio.charset.StandardCharsets;
 import java.security.Key;
 import java.util.Date;
+import java.util.Optional;
 
 @Component
 public class JwtTokenProvider {
@@ -36,25 +35,13 @@ public class JwtTokenProvider {
                 .compact();
     }
 
-    // 토큰 유효성 검사
-    public boolean validateToken(String token) {
-        if(token == null) {
-            throw new ExpectedException(HttpStatus.NOT_FOUND, "토큰이 없습니다.");
-        }
+    // 토큰 유효성 검사 후 권한 파싱
+    public Optional<Claims> getClaimsFromToken(String token) {
         try {
-            Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token);
-            return true;
+            return Optional.ofNullable(Jwts.parserBuilder()
+                    .setSigningKey(key).build().parseClaimsJws(token).getBody());
         } catch (JwtException | IllegalArgumentException e) {
-            return false;
+            return Optional.empty();
         }
-    }
-
-    // 토큰에서 유저 권한 파싱
-    public Claims getClaims(String token) {
-        return Jwts.parserBuilder()
-                .setSigningKey(key)
-                .build()
-                .parseClaimsJws(token)
-                .getBody();
     }
 }
