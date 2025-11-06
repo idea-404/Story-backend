@@ -14,6 +14,7 @@ import org.example.story.global.error.exception.ExpectedException;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import com.theokanning.openai.completion.chat.ChatCompletionRequest;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -38,6 +39,7 @@ public class OlaService {
     피드백의 형식은 조언과 개선안의 예시를 보여주는 형식으로 부탁해\
     """;
 
+    @Transactional
     public OlaResponse feedOla(String question, Long portfolioId) {
         PortfolioJpaEntity portfolio = portfolioRepository.findById(portfolioId)
                 .orElseThrow(() -> new ExpectedException(HttpStatus.NOT_FOUND,"존재하지 않는 포트폴리오입니다"));
@@ -75,6 +77,7 @@ public class OlaService {
         );
     }
 
+    @Transactional(readOnly = true)
     public OlaListResponse historyOla(Long portfolioId) {
         PortfolioJpaEntity portfolio = portfolioRepository.findById(portfolioId)
                 .orElseThrow(() -> new ExpectedException(HttpStatus.NOT_FOUND,"존재하지 않는 포트폴리오입니다"));
