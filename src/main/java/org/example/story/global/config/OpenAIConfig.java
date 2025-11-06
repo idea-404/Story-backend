@@ -8,10 +8,10 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class OpenAIConfig {
 
-    @Value("openai.api-key")
+    @Value("${openai.api-key}")
     private String apiKey;
 
-    @Value("openai.timeout-seconds")
+    @Value("${openai.timeout-seconds}")
     private long timeoutSeconds;
 
     @Bean

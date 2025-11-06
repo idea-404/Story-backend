@@ -25,7 +25,7 @@ public class OlaService {
     private final PortfolioRepository portfolioRepository;
     private final OlaRepository olaRepository;
 
-    @Value("openai.models")
+    @Value("${openai.models}")
     private String model;
     @Value("${openai.options.max-tokens}")
     private int maxTokens;
