@@ -13,5 +13,4 @@ public interface PortfolioLikeRepository extends JpaRepository<PortfolioLikeJpaE
 
     Optional<PortfolioLikeJpaEntity> findByPortfolioAndUser(PortfolioJpaEntity portfolio, UserJpaEntity user);
 
-    void deleteByPortfolioIdAndUserId(Long portfolioId, Long userId);
 }

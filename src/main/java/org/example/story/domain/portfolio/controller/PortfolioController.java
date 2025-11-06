@@ -98,7 +98,7 @@ public class PortfolioController {
     // 댓글 작성
     @PostMapping("/comment/{portfolio_id}")
     @RateLimited(limit = 15, durationSeconds = 60)
-    public PortfolioCommentResponse comment(
+    public PortfolioCommentResponse createComment(
             @PathVariable Long portfolio_id,
             @RequestBody PortfolioCommentRequest request
     ) {
