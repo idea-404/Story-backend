@@ -23,7 +23,7 @@ openai:
   base-url: https://api.openai.com/v1  # 고정 공식 주소
   timeout-seconds: 60
   models:
-    chat: gpt-5-mini                  # 대화용 (피드백 생성 등)
+    chat: gpt-4o-mini                  # 대화용 (피드백 생성 등)
     embedding: text-embedding-3-small
   options:
     max-tokens: 500
