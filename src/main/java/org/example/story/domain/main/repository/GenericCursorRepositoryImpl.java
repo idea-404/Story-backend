@@ -28,7 +28,7 @@ public class GenericCursorRepositoryImpl<T> implements GenericCursorRepository<T
         CriteriaQuery<T> cq = cb.createQuery(domainClass);
         Root<T> root = cq.from(domainClass);
 
-        List<Predicate> predicates = new ArrayList<Predicate>();
+        List<Predicate> predicates = new ArrayList<>();
 
         // User 테이블 nickname 검색용
         Join<Object, Object> userJoin = null;

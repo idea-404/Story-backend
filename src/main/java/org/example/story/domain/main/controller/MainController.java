@@ -7,6 +7,7 @@ import org.example.story.domain.main.record.SearchListResponse;
 import org.example.story.domain.main.service.BlogListService;
 import org.example.story.domain.main.service.PortfolioListService;
 import org.example.story.domain.main.service.SearchService;
+import org.example.story.global.aop.RateLimited;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -18,6 +19,7 @@ public class MainController {
     private final PortfolioListService portfolioListService;
 
     @GetMapping("/portfolio/{type}")
+    @RateLimited(limit = 30, durationSeconds = 30)
     public PortfolioListResponse getPortfolio(@PathVariable String type,
                                               @RequestParam(required = false) Long lastId,
                                               @RequestParam(defaultValue = "10") int size) {
@@ -25,6 +27,7 @@ public class MainController {
     }
 
     @GetMapping("/blog/{type}")
+    @RateLimited(limit = 30, durationSeconds = 30)
     public BlogListResponse getBlog(@PathVariable String type,
                                          @RequestParam(required = false) Long lastId,
                                          @RequestParam(defaultValue = "10") int size) {
@@ -32,6 +35,7 @@ public class MainController {
     }
 
     @GetMapping("/search")
+    @RateLimited(limit = 10, durationSeconds = 30)
     public SearchListResponse search(@RequestParam String keyword,
                                            @RequestParam(required = false) Long lastId,
                                            @RequestParam(defaultValue = "10") int size) {
