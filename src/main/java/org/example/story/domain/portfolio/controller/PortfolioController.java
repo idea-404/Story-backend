@@ -36,96 +36,96 @@ public class PortfolioController {
     }
 
     // 수정 준비
-    @GetMapping("/edit/{portfolio_id}")
+    @GetMapping("/edit/{portfolioId}")
     @RateLimited(limit = 10, durationSeconds = 60)
     public PortfolioResponse getPortfolio(
-            @PathVariable Long portfolio_id
+            @PathVariable("portfolioId") Long portfolioId
     ) {
         Long userId = authUtils.getCurrentUserId();
-        return portfolioQueryService.st_edit(userId, portfolio_id);
+        return portfolioQueryService.getForEdit(userId, portfolioId);
     }
 
     // 포트폴리오 수정
-    @PatchMapping("/edit/{portfolio_id}")
+    @PatchMapping("/edit/{portfolioId}")
     @RateLimited(limit = 10, durationSeconds = 60)
     public PortfolioResponse updatePortfolio(
-            @PathVariable Long portfolio_id,
+            @PathVariable("portfolioId") Long portfolioId,
             @RequestBody PortfolioRequest request
     ) {
         Long userId = authUtils.getCurrentUserId();
-        return portfolioService.edit(userId, portfolio_id, request);
+        return portfolioService.edit(userId, portfolioId, request);
     }
 
     // 포트폴리오 조회 (토큰 필요 X)
-    @GetMapping("/view/{portfolio_id}")
+    @GetMapping("/view/{portfolioId}")
     @RateLimited(limit = 30, durationSeconds = 60)
     public PortfolioResponse view(
-            @PathVariable Long portfolio_id
+            @PathVariable("portfolioId") Long portfolioId
     ) {
-        return portfolioQueryService.view(portfolio_id);
+        return portfolioQueryService.view(portfolioId);
     }
 
     // 포트폴리오 삭제
-    @DeleteMapping("/delete/{portfolio_id}")
+    @DeleteMapping("/delete/{portfolioId}")
     @RateLimited(limit = 3, durationSeconds = 60)
     public void deletePortfolio(
-            @PathVariable Long portfolio_id
+            @PathVariable("portfolioId") Long portfolioId
     ) {
         Long userId = authUtils.getCurrentUserId();
-        portfolioService.delete(userId, portfolio_id);
+        portfolioService.delete(userId, portfolioId);
     }
 
     // 좋아요 변경
-    @PatchMapping("/like/{portfolio_id}")
+    @PatchMapping("/like/{portfolioId}")
     @RateLimited(limit = 20, durationSeconds = 60)
     public PortfolioLikeResponse likeUp(
-            @PathVariable Long portfolio_id
+            @PathVariable("portfolioId") Long portfolioId
     ) {
         Long userId = authUtils.getCurrentUserId();
-        return portfolioService.likeUp(userId, portfolio_id);
+        return portfolioService.likeUp(userId, portfolioId);
     }
 
     // 포트폴리오 공개 여부 토글
-    @PatchMapping("/open/{portfolio_id}")
+    @PatchMapping("/open/{portfolioId}")
     @RateLimited(limit = 5, durationSeconds = 60)
     public PortfolioResponse open(
-            @PathVariable Long portfolio_id
+            @PathVariable("portfolioId") Long portfolioId
     ) {
         Long userId = authUtils.getCurrentUserId();
-        return portfolioService.open(userId, portfolio_id);
+        return portfolioService.open(userId, portfolioId);
     }
 
     // 댓글 작성
-    @PostMapping("/comment/{portfolio_id}")
+    @PostMapping("/comment/{portfolioId}")
     @RateLimited(limit = 15, durationSeconds = 60)
     public PortfolioCommentResponse createComment(
-            @PathVariable Long portfolio_id,
+            @PathVariable("portfolioId") Long portfolioId,
             @RequestBody PortfolioCommentRequest request
     ) {
         Long userId = authUtils.getCurrentUserId();
-        return portfolioCommentService.createComment(userId, request, portfolio_id);
+        return portfolioCommentService.createComment(userId, request, portfolioId);
     }
 
     // 댓글 삭제
-    @DeleteMapping("/comment/{portfolio_id}/{comment_id}")
+    @DeleteMapping("/comment/{portfolioId}/{commentId}")
     @RateLimited(limit = 10, durationSeconds = 60)
     public void deleteComment(
-            @PathVariable Long portfolio_id,
-            @PathVariable Long comment_id
+            @PathVariable("portfolioId") Long portfolioId,
+            @PathVariable("commentId") Long commentId
     ) {
         Long userId = authUtils.getCurrentUserId();
-        portfolioCommentService.deleteComment(userId, portfolio_id, comment_id);
+        portfolioCommentService.deleteComment(userId, portfolioId, commentId);
     }
 
     // 포트폴리오 댓글 조회 (커서 페이징)
-    @GetMapping("/comment/{portfolio_id}")
+    @GetMapping("/comment/{portfolioId}")
     @RateLimited(limit = 30, durationSeconds = 60)
     public PortfolioCommentListResponse comment(
-            @PathVariable Long portfolio_id,
+            @PathVariable("portfolioId") Long portfolioId,
             @RequestParam(required = false) Long lastId,
             @RequestParam(defaultValue = "10") int size
     ) {
-        return portfolioCommentService.getComments(portfolio_id, lastId, size);
+        return portfolioCommentService.getComments(portfolioId, lastId, size);
     }
 
 }
