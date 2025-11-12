@@ -2,6 +2,7 @@ package org.example.story.domain.portfolio.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.example.story.domain.ola.entity.OlaHistoryJpaEntity;
 import org.example.story.domain.user.entity.UserJpaEntity;
 import org.hibernate.annotations.ColumnDefault;
 
@@ -57,6 +58,9 @@ public class PortfolioJpaEntity {
     @OneToMany(mappedBy = "portfolio", cascade = CascadeType.REMOVE, orphanRemoval = true)
     private List<PortfolioCommentJpaEntity> comments = new ArrayList<>();
 
+    @OneToMany(mappedBy = "portfolio", cascade = CascadeType.REMOVE, orphanRemoval = true)
+    private List<OlaHistoryJpaEntity> ola = new ArrayList<>();
+
 
     public void update(String title, String content) {
         this.title = title;
@@ -74,5 +78,9 @@ public class PortfolioJpaEntity {
     }
 
     public void increaseView(){this.view++;}
+
+    public void increaseComment(){this.comment++;}
+
+    public void decreaseComment(){this.comment--;}
 
 }
