@@ -9,7 +9,7 @@ import org.springframework.stereotype.Repository;
 import java.util.ArrayList;
 import java.util.List;
 
-@Repository
+
 public class GenericCursorRepositoryImpl<T> implements GenericCursorRepository<T> {
 
     @PersistenceContext
@@ -34,7 +34,7 @@ public class GenericCursorRepositoryImpl<T> implements GenericCursorRepository<T
         Join<Object, Object> userJoin = null;
         try {
             userJoin = root.join("user", JoinType.LEFT);
-        } catch (Exception e) {
+        } catch (IllegalArgumentException e) {
             // user 관계 없는 엔티티는 무시
         }
 
@@ -76,7 +76,7 @@ public class GenericCursorRepositoryImpl<T> implements GenericCursorRepository<T
                             .otherwise(0);
                 }
 
-            } catch (Exception e) {
+            } catch (IllegalArgumentException e) {
                 // 기본 안전값으로 초기화
                 titleMatch = cb.literal(0);
                 contentMatch = cb.literal(0);
