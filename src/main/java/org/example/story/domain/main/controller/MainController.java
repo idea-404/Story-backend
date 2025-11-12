@@ -32,7 +32,7 @@ public class MainController {
     }
 
     @GetMapping("/search")
-    public SearchListResponse search(@RequestBody String keyword,
+    public SearchListResponse search(@RequestParam String keyword,
                                            @RequestParam(required = false) Long lastId,
                                            @RequestParam(defaultValue = "10") int size) {
         return searchService.search(lastId,size, keyword);
