@@ -1,31 +1,19 @@
 package org.example.story.domain.portfolio.repository;
 
-import org.springframework.data.repository.query.Param;
+
+import org.example.story.domain.main.repository.GenericCursorRepository;
 import org.example.story.domain.portfolio.entity.PortfolioJpaEntity;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Optional;
 
 @Repository
-public interface PortfolioRepository extends JpaRepository<PortfolioJpaEntity, Long> {
-
-    // 유저 아이디로 작성글 조회
-    List<PortfolioJpaEntity> findByUserId(Long userId);
-
-    // 제목으로 검색
-    List<PortfolioJpaEntity> findByTitleContaining(String keyword);
-
-    // 공개여부가 true인 포폴만 조회
-    List<PortfolioJpaEntity> findByZerodogTrue();
-
-    // 조회수가 많은 순으로 정렬 조회
-    List<PortfolioJpaEntity> findAllByOrderByViewDesc();
-
+public interface PortfolioRepository extends JpaRepository<PortfolioJpaEntity, Long>,
+        GenericCursorRepository<PortfolioJpaEntity> {
     Optional<PortfolioJpaEntity> findByIdAndUserId(Long id, Long userId);
-
-
 }
