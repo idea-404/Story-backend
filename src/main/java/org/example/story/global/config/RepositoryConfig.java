@@ -1,6 +1,5 @@
 package org.example.story.global.config;
 
-import jakarta.persistence.EntityManager;
 import org.example.story.domain.blog.entity.BlogJpaEntity;
 import org.example.story.domain.main.repository.GenericCursorRepository;
 import org.example.story.domain.main.repository.GenericCursorRepositoryImpl;
