@@ -27,7 +27,7 @@ public class PortfolioController {
 
     // 포트폴리오 작성
     @PostMapping("/write")
-    @RateLimited(limit = 5, durationSeconds = 60)
+    @RateLimited(limit = 5, durationSeconds = 30)
     public PortfolioResponse createPortfolio(
             @RequestBody PortfolioRequest request
     ) {
@@ -37,7 +37,7 @@ public class PortfolioController {
 
     // 수정 준비
     @GetMapping("/edit/{portfolioId}")
-    @RateLimited(limit = 10, durationSeconds = 60)
+    @RateLimited(limit = 5, durationSeconds = 30)
     public PortfolioResponse getPortfolio(
             @PathVariable("portfolioId") Long portfolioId
     ) {
@@ -47,7 +47,7 @@ public class PortfolioController {
 
     // 포트폴리오 수정
     @PatchMapping("/edit/{portfolioId}")
-    @RateLimited(limit = 10, durationSeconds = 60)
+    @RateLimited(limit = 5, durationSeconds = 30)
     public PortfolioResponse updatePortfolio(
             @PathVariable("portfolioId") Long portfolioId,
             @RequestBody PortfolioRequest request
@@ -58,7 +58,7 @@ public class PortfolioController {
 
     // 포트폴리오 조회 (토큰 필요 X)
     @GetMapping("/view/{portfolioId}")
-    @RateLimited(limit = 30, durationSeconds = 60)
+    @RateLimited(limit = 20, durationSeconds = 30)
     public PortfolioResponse view(
             @PathVariable("portfolioId") Long portfolioId
     ) {
@@ -67,7 +67,7 @@ public class PortfolioController {
 
     // 포트폴리오 삭제
     @DeleteMapping("/delete/{portfolioId}")
-    @RateLimited(limit = 3, durationSeconds = 60)
+    @RateLimited(limit = 3, durationSeconds = 30)
     public void deletePortfolio(
             @PathVariable("portfolioId") Long portfolioId
     ) {
@@ -77,7 +77,7 @@ public class PortfolioController {
 
     // 좋아요 변경
     @PatchMapping("/like/{portfolioId}")
-    @RateLimited(limit = 20, durationSeconds = 60)
+    @RateLimited(limit =10, durationSeconds = 30)
     public PortfolioLikeResponse likeUp(
             @PathVariable("portfolioId") Long portfolioId
     ) {
@@ -87,7 +87,7 @@ public class PortfolioController {
 
     // 포트폴리오 공개 여부 토글
     @PatchMapping("/open/{portfolioId}")
-    @RateLimited(limit = 5, durationSeconds = 60)
+    @RateLimited(limit = 5, durationSeconds = 30)
     public PortfolioResponse open(
             @PathVariable("portfolioId") Long portfolioId
     ) {
@@ -97,7 +97,7 @@ public class PortfolioController {
 
     // 댓글 작성
     @PostMapping("/comment/{portfolioId}")
-    @RateLimited(limit = 15, durationSeconds = 60)
+    @RateLimited(limit = 10, durationSeconds = 30)
     public PortfolioCommentResponse createComment(
             @PathVariable("portfolioId") Long portfolioId,
             @RequestBody PortfolioCommentRequest request
@@ -108,7 +108,7 @@ public class PortfolioController {
 
     // 댓글 삭제
     @DeleteMapping("/comment/{portfolioId}/{commentId}")
-    @RateLimited(limit = 10, durationSeconds = 60)
+    @RateLimited(limit = 5, durationSeconds = 30)
     public void deleteComment(
             @PathVariable("portfolioId") Long portfolioId,
             @PathVariable("commentId") Long commentId
@@ -119,7 +119,7 @@ public class PortfolioController {
 
     // 포트폴리오 댓글 조회 (커서 페이징)
     @GetMapping("/comment/{portfolioId}")
-    @RateLimited(limit = 30, durationSeconds = 60)
+    @RateLimited(limit = 20, durationSeconds = 30)
     public PortfolioCommentListResponse comment(
             @PathVariable("portfolioId") Long portfolioId,
             @RequestParam(required = false) Long lastId,
