@@ -43,14 +43,6 @@ public class GenericCursorRepositoryImpl<T> implements GenericCursorRepository<T
             predicates.add(cb.lessThan(root.get("id"), lastId));
         }
 
-        // 제목으로 검색 호출시 keyword값이 없으면 넘어감
-        try{
-            root.get("title");
-            if(keyword != null && !keyword.isEmpty()){
-                predicates.add(cb.like(root.get("title"), "%"+keyword+"%"));
-            }
-        }catch(IllegalArgumentException e){}
-
         // 포트폴리오에서만 사용 블로그에선 값을 누락시켜 넘김
         try{
             root.get("zerodog");
@@ -62,22 +54,33 @@ public class GenericCursorRepositoryImpl<T> implements GenericCursorRepository<T
         Expression<Integer> matchCount = cb.literal(0);
 
         if (keyword != null && !keyword.isEmpty()) {
-            // CASE WHEN title LIKE '%keyword%' THEN 1 ELSE 0 END
-            Expression<Integer> titleMatch = cb.<Integer>selectCase()
-                    .when(cb.like(root.get("title"), "%" + keyword + "%"), 1)
-                    .otherwise(0);
-
-            // CASE WHEN content LIKE '%keyword%' THEN 1 ELSE 0 END
-            Expression<Integer> contentMatch = cb.<Integer>selectCase()
-                    .when(cb.like(root.get("content"), "%" + keyword + "%"), 1)
-                    .otherwise(0);
-
-            // CASE WHEN nickname LIKE '%keyword%' THEN 1 ELSE 0 END (user가 있을 경우만)
+            Expression<Integer> titleMatch;
+            Expression<Integer> contentMatch;
             Expression<Integer> nicknameMatch = cb.literal(0);
-            if (userJoin != null) {
-                nicknameMatch = cb.<Integer>selectCase()
-                        .when(cb.like(userJoin.get("nickname"), "%" + keyword + "%"), 1)
+
+            try {
+                // CASE WHEN title LIKE '%keyword%' THEN 1 ELSE 0 END
+                titleMatch = cb.<Integer>selectCase()
+                        .when(cb.like(root.get("title"), "%" + keyword + "%"), 1)
                         .otherwise(0);
+
+                // CASE WHEN content LIKE '%keyword%' THEN 1 ELSE 0 END
+                contentMatch = cb.<Integer>selectCase()
+                        .when(cb.like(root.get("content"), "%" + keyword + "%"), 1)
+                        .otherwise(0);
+
+                // CASE WHEN nickname LIKE '%keyword%' THEN 1 ELSE 0 END (user가 있을 경우만)
+                if (userJoin != null) {
+                    nicknameMatch = cb.<Integer>selectCase()
+                            .when(cb.like(userJoin.get("nickname"), "%" + keyword + "%"), 1)
+                            .otherwise(0);
+                }
+
+            } catch (Exception e) {
+                // 기본 안전값으로 초기화
+                titleMatch = cb.literal(0);
+                contentMatch = cb.literal(0);
+                nicknameMatch = cb.literal(0);
             }
 
             // matchCount = titleMatch + contentMatch + nicknameMatch

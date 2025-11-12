@@ -11,11 +11,11 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class RepositoryConfig {
     @Bean
-    public GenericCursorRepository<PortfolioJpaEntity> portfolioCursorRepo(EntityManager em) {
+    public GenericCursorRepository<PortfolioJpaEntity> portfolioCursorRepo(){
         return new GenericCursorRepositoryImpl<>(PortfolioJpaEntity.class);
     }
     @Bean
-    public GenericCursorRepository<BlogJpaEntity> blogCursorRepo(EntityManager em) {
+    public GenericCursorRepository<BlogJpaEntity> blogCursorRepo(){
         return new GenericCursorRepositoryImpl<>(BlogJpaEntity.class);
     }
 
