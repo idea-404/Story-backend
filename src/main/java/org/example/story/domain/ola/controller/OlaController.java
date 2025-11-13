@@ -15,14 +15,14 @@ import java.util.concurrent.CompletableFuture;
 public class OlaController {
     private final OlaService olaService;
 
-    @PostMapping("/{portfolio_id}")
-    public CompletableFuture<OlaResponse> feed(@PathVariable("portfolio_id") Long portfolio_id,
+    @PostMapping("/{portfolioId}")
+    public CompletableFuture<OlaResponse> feed(@PathVariable("portfolioId") Long portfolioId,
                                                @RequestBody OlaRequest request) {
-        return olaService.feedOla(request.question(), portfolio_id);
+        return olaService.feedOla(request.question(), portfolioId);
     }
 
-    @GetMapping("/history/{portfolio_id}")
-    public OlaListResponse history(@PathVariable("portfolio_id") Long portfolio_id){
-        return olaService.historyOla(portfolio_id);
+    @GetMapping("/history/{portfolioId}")
+    public OlaListResponse history(@PathVariable("portfolioId") Long portfolioId){
+        return olaService.historyOla(portfolioId);
     }
 }

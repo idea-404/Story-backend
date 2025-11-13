@@ -63,4 +63,6 @@ public class BlogJpaEntity {
     }
     public void decreaseLike() {this.like--;}
     public void increaseView(){this.view++;}
+    public void increaseComment(){this.comment++;}
+    public void decreaseComment(){this.comment--;}
 }

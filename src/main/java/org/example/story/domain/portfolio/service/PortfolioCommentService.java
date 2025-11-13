@@ -16,6 +16,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
 import java.util.List;
@@ -28,11 +29,12 @@ public class PortfolioCommentService {
     private final UserRepository userRepository;
     private final PortfolioCommentRepository portfolioCommentRepository;
 
+    @Transactional
     public PortfolioCommentResponse createComment(Long userId, PortfolioCommentRequest request, Long portfolioId) {
         UserJpaEntity user = userRepository.findById(userId)
                 .orElseThrow(() -> new ExpectedException(HttpStatus.NOT_FOUND, "존재하지 않는 유저입니다."));
         PortfolioJpaEntity portfolio = portfolioRepository.findById(portfolioId)
-                .orElseThrow(() -> new ExpectedException(HttpStatus.NOT_FOUND, "존재하지 않는 댓글입니다."));
+                .orElseThrow(() -> new ExpectedException(HttpStatus.NOT_FOUND, "존재하지 않는 포트폴리오입니다."));
         PortfolioCommentJpaEntity comment = PortfolioCommentJpaEntity.builder()
                 .user(user)
                 .portfolio(portfolio)
@@ -40,6 +42,7 @@ public class PortfolioCommentService {
                 .createdAt(Instant.now())
                 .build();
         portfolioCommentRepository.save(comment);
+        portfolioRepository.incrementComment(portfolio.getId());
         return new PortfolioCommentResponse(
                 comment.getId(),
                 comment.getUser().getId(),
@@ -49,14 +52,19 @@ public class PortfolioCommentService {
         );
     }
 
+    @Transactional
     public void deleteComment(Long userId, Long portfolioId, Long commentId) {
-        PortfolioCommentJpaEntity comment = portfolioCommentRepository.findByPortfolioIdAndId(portfolioId,commentId)
+        PortfolioJpaEntity portfolio = portfolioRepository.findById(portfolioId)
                 .orElseThrow(() -> new ExpectedException(HttpStatus.NOT_FOUND, "존재하지 않는 포트폴리오입니다."));
+        PortfolioCommentJpaEntity comment = portfolioCommentRepository.findByPortfolioIdAndId(portfolioId,commentId)
+                .orElseThrow(() -> new ExpectedException(HttpStatus.NOT_FOUND, "존재하지 않는 댓글입니다."));
 
         if (!comment.getUser().getId().equals(userId)) {
             throw new ExpectedException(HttpStatus.FORBIDDEN, "댓글을 삭제할 권한이 없습니다.");
         }
         portfolioCommentRepository.delete(comment);
+        portfolioRepository.decrementComment(portfolio.getId());
+
     }
 
     public PortfolioCommentListResponse getComments(Long portfolioId, Long lastId, int size) {
