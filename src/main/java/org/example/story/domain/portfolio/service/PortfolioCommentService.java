@@ -42,7 +42,7 @@ public class PortfolioCommentService {
                 .createdAt(Instant.now())
                 .build();
         portfolioCommentRepository.save(comment);
-        portfolio.increaseComment();
+        portfolioRepository.incrementComment(portfolio.getId());
         return new PortfolioCommentResponse(
                 comment.getId(),
                 comment.getUser().getId(),
@@ -63,7 +63,7 @@ public class PortfolioCommentService {
             throw new ExpectedException(HttpStatus.FORBIDDEN, "댓글을 삭제할 권한이 없습니다.");
         }
         portfolioCommentRepository.delete(comment);
-        portfolio.decreaseComment();
+        portfolioRepository.decrementComment(portfolio.getId());
 
     }
 

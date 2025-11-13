@@ -79,6 +79,7 @@ public class PortfolioJpaEntity {
 
     public void increaseView(){this.view++;}
 
+
     public void increaseComment(){this.comment++;}
 
     public void decreaseComment(){this.comment--;}
