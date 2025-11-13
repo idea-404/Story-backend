@@ -24,7 +24,7 @@ public class SearchService {
                 portfolioRepository.findWithCursor(lastId, size, null, true, keyword, true);
         List<ListResponse> portfolioListResponses = portfolioListService.setList(portfolios);
         List<BlogJpaEntity> blogs =
-                blogRepository.findWithCursor(lastId, size, null, true, keyword, true);
+                blogRepository.findWithCursor(lastId, size, null, true, keyword, null);
         List<ListResponse> blogListResponses = blogListService.setList(blogs);
 
         return new SearchListResponse(portfolioListResponses, blogListResponses);

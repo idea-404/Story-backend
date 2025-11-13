@@ -23,7 +23,7 @@ public class BlogListService {
             throw new ExpectedException(HttpStatus.UNPROCESSABLE_ENTITY,"허용되지 않은 정렬 기준입니다: " + type);
         }
         List<BlogJpaEntity> blogs =
-                blogRepository.findWithCursor(lastId, size, type, true, null, true);
+                blogRepository.findWithCursor(lastId, size, type, true, null, null);
         List<ListResponse> listResponses = setList(blogs);
         return new BlogListResponse(listResponses);
     }
