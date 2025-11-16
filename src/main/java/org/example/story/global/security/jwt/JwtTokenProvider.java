@@ -5,7 +5,9 @@ import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
+import org.example.story.global.error.exception.ExpectedException;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 
 import java.nio.charset.StandardCharsets;
@@ -41,7 +43,7 @@ public class JwtTokenProvider {
             return Optional.ofNullable(Jwts.parserBuilder()
                     .setSigningKey(key).build().parseClaimsJws(token).getBody());
         } catch (JwtException | IllegalArgumentException e) {
-            return Optional.empty();
+            throw new ExpectedException(HttpStatus.UNAUTHORIZED, "토큰이 유효하지 않습니다.");
         }
     }
 }
