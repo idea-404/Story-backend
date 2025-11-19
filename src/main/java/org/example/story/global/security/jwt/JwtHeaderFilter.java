@@ -19,7 +19,6 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.Optional;
 
 
 @Component
@@ -36,11 +35,11 @@ public class JwtHeaderFilter extends OncePerRequestFilter {
         String token = null;
         if (bearerToken != null && bearerToken.startsWith("Bearer ")) {
             token = bearerToken.substring(7);
-            Optional<Claims> claims = jwtTokenProvider.getClaimsFromToken(token);
-            if (claims.isPresent()) {
+            Claims claims = jwtTokenProvider.getClaimsFromToken(token);
+            if (claims != null) {
                 try {
-                    Long userId = Long.parseLong(claims.get().getSubject());
-                    String role = claims.get().get("role", String.class);
+                    Long userId = Long.parseLong(claims.getSubject());
+                    String role = claims.get("role", String.class);
 
                     if (role != null) {
                         CustomPrincipal principal = new CustomPrincipal(userId, role);
