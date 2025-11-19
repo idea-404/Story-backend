@@ -60,10 +60,13 @@ dependencies {
 
 	// 캐시 또는 Redis 등 분산환경용
 	implementation 'org.ehcache:ehcache:3.10.8'
-
 	implementation 'com.github.ben-manes.caffeine:caffeine:3.1.8'
-
 	implementation 'com.theokanning.openai-gpt3-java:service:0.17.0'
+
+	// AWS
+	implementation 'software.amazon.awssdk:s3:2.20.0'
+	implementation 'org.springframework.cloud:spring-cloud-starter-aws:2.2.6.RELEASE'
+
 
 }
 
