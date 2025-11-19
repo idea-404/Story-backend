@@ -1,11 +1,11 @@
 package org.example.story.domain.image.service;
 
-import org.example.story.domain.image.record.request.ImageFileRequest;
 import org.example.story.domain.image.record.request.ImageUrlRequest;
 import org.example.story.domain.image.record.response.ImageResponse;
 import org.springframework.beans.factory.annotation.Value;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.model.DeleteObjectRequest;
@@ -26,22 +26,22 @@ public class ImageService {
     @Value("${cloud.aws.region.static}")
     private String region;
 
-    public ImageResponse uploadImage(ImageFileRequest file) {
+    public ImageResponse uploadImage(MultipartFile file) {
 
-        String fileName = createFileName(file.imageFile().getOriginalFilename());
+        String fileName = createFileName(file.getOriginalFilename());
         try {
             // 메타데이터 설정
             PutObjectRequest putObjectRequest = PutObjectRequest.builder()
                     .bucket(bucket)
                     .key(fileName)
-                    .contentType(file.imageFile().getContentType())
+                    .contentType(file.getContentType())
                     .acl(ObjectCannedACL.PUBLIC_READ)  // 공개 URL로 접근시키려면 필요
                     .build();
 
             // 업로드 실행
             s3Client.putObject(
                     putObjectRequest,
-                    RequestBody.fromInputStream(file.imageFile().getInputStream(), file.imageFile().getSize())
+                    RequestBody.fromInputStream(file.getInputStream(), file.getSize())
             );
 
         } catch (IOException e) {
