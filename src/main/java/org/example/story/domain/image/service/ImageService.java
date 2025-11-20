@@ -1,6 +1,5 @@
 package org.example.story.domain.image.service;
 
-import org.example.story.domain.image.record.request.ImageUrlRequest;
 import org.example.story.domain.image.record.response.ImageResponse;
 import org.example.story.global.error.exception.ExpectedException;
 import org.springframework.beans.factory.annotation.Value;
@@ -25,8 +24,6 @@ public class ImageService {
     @Value("${cloud.aws.s3.bucket}")
     private String bucket;
 
-    @Value("${cloud.aws.region.static}")
-    private String region;
 
     public ImageResponse uploadImage(MultipartFile file) {
         validateImageType(file);
@@ -46,7 +43,7 @@ public class ImageService {
             );
 
         } catch (IOException e) {
-            throw new RuntimeException("S3 업로드 실패", e);
+            throw new IllegalStateException("S3 업로드 실패", e);
         }
 
         return new ImageResponse(
@@ -54,8 +51,8 @@ public class ImageService {
         );
     }
 
-    public void deleteImage(ImageUrlRequest url) {
-        String key = extractFileName(url.imageUrl());
+    public void deleteImage(String url) {
+        String key = extractFileName(url);
 
         DeleteObjectRequest request = DeleteObjectRequest.builder()
                 .bucket(bucket)
@@ -87,8 +84,12 @@ public class ImageService {
     }
 
     private String extractFileName(String imageUrl) {
-        int index = imageUrl.lastIndexOf("/") + 1;
-        return imageUrl.substring(index);
+        try {
+            String path = new java.net.URL(imageUrl).getPath();
+            return path.substring(path.lastIndexOf('/') + 1);
+        } catch (java.net.MalformedURLException e) {
+            throw new IllegalArgumentException("잘못된 형식의 URL입니다: " + imageUrl, e);
+        }
     }
 
     private void validateImageType(MultipartFile file) {
