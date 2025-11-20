@@ -1,17 +1,17 @@
-cloud:
-  aws:
-    s3:
-      bucket: ${BUCKET_NAME}
-    credentials:
-      access-key: ${BUCKET_ACCESS}
-      secret-key: ${BUCKET_SECRET}
-    region:
-      static: ap-northeast-2
-      auto: false
-    stack:
-      auto: false
-
 spring:
+  spring:
+    cloud:
+      aws:
+        s3:
+          bucket: ${BUCKET_NAME}
+        credentials:
+          access-key: ${BUCKET_ACCESS}
+          secret-key: ${BUCKET_SECRET}
+        region:
+          static: ap-northeast-2
+          auto: false
+        stack:
+          auto: false
   application:
     name: story
   docker:
