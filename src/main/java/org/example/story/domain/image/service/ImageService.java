@@ -65,8 +65,7 @@ public class ImageService {
     }
 
     private String getPublicUrl(String fileName) {
-        return String.format("https://%s.s3.%s.amazonaws.com/%s",
-                bucket, region, fileName);
+        return s3Client.utilities().getUrl(builder -> builder.bucket(bucket).key(fileName)).toExternalForm();
     }
 
 
@@ -77,6 +76,9 @@ public class ImageService {
 
     private String extractExt(String fileName) {
         int pos = fileName.lastIndexOf(".");
+        if (pos < 0) {
+            throw new IllegalArgumentException("파일 확장자가 없습니다: " + fileName);
+        }
         return fileName.substring(pos + 1);
     }
 
