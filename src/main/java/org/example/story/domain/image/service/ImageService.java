@@ -2,8 +2,10 @@ package org.example.story.domain.image.service;
 
 import org.example.story.domain.image.record.request.ImageUrlRequest;
 import org.example.story.domain.image.record.response.ImageResponse;
+import org.example.story.global.error.exception.ExpectedException;
 import org.springframework.beans.factory.annotation.Value;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import software.amazon.awssdk.core.sync.RequestBody;
@@ -27,18 +29,17 @@ public class ImageService {
     private String region;
 
     public ImageResponse uploadImage(MultipartFile file) {
-
+        validateImageType(file);
         String fileName = createFileName(file.getOriginalFilename());
         try {
-            // 메타데이터 설정
+
             PutObjectRequest putObjectRequest = PutObjectRequest.builder()
                     .bucket(bucket)
                     .key(fileName)
                     .contentType(file.getContentType())
-                    .acl(ObjectCannedACL.PUBLIC_READ)  // 공개 URL로 접근시키려면 필요
+                    .acl(ObjectCannedACL.PUBLIC_READ)
                     .build();
 
-            // 업로드 실행
             s3Client.putObject(
                     putObjectRequest,
                     RequestBody.fromInputStream(file.getInputStream(), file.getSize())
@@ -57,8 +58,8 @@ public class ImageService {
         String key = extractFileName(url.imageUrl());
 
         DeleteObjectRequest request = DeleteObjectRequest.builder()
-                .bucket(bucket) // 버킷 이름
-                .key(key)            // URL에서 추출한 키
+                .bucket(bucket)
+                .key(key)
                 .build();
 
         s3Client.deleteObject(request);
@@ -70,6 +71,9 @@ public class ImageService {
 
 
     private String createFileName(String originalName) {
+        if (originalName == null || originalName.isBlank()) {
+            throw new IllegalArgumentException("원본 파일 이름이 비어있습니다.");
+        }
         String ext = extractExt(originalName);
         return UUID.randomUUID() + "." + ext;
     }
@@ -85,5 +89,23 @@ public class ImageService {
     private String extractFileName(String imageUrl) {
         int index = imageUrl.lastIndexOf("/") + 1;
         return imageUrl.substring(index);
+    }
+
+    private void validateImageType(MultipartFile file) {
+        if (file == null || file.isEmpty()) {
+            throw new ExpectedException(HttpStatus.BAD_REQUEST, "파일이 존재하지 않습니다.");
+        }
+
+        String originalName = file.getOriginalFilename();
+        String contentType = file.getContentType();
+
+        if (originalName == null || !originalName.toLowerCase().matches(".*\\.(jpg|jpeg)$")) {
+            throw new ExpectedException(HttpStatus.BAD_REQUEST, "jpg/jpeg 형식의 파일만 업로드할 수 있습니다.");
+        }
+
+        if (contentType == null ||
+                !(contentType.equalsIgnoreCase("image/jpeg") || contentType.equalsIgnoreCase("image/jpg"))) {
+            throw new ExpectedException(HttpStatus.BAD_REQUEST, "이미지 MIME 타입이 jpg/jpeg가 아닙니다.");
+        }
     }
 }
