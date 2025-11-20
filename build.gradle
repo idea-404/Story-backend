@@ -64,7 +64,7 @@ dependencies {
 	implementation 'com.theokanning.openai-gpt3-java:service:0.17.0'
 
 	// AWS
-	implementation 'software.amazon.awssdk:s3:2.20.0'
+//	implementation 'software.amazon.awssdk:s3:2.20.0'
 	implementation 'io.awspring.cloud:spring-cloud-aws-starter-s3:3.1.1'
 
 

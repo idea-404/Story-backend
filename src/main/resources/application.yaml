@@ -1,7 +1,6 @@
 spring:
-  spring:
-    cloud:
-      aws:
+  cloud:
+     aws:
         s3:
           bucket: ${BUCKET_NAME}
         credentials:
