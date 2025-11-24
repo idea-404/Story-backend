@@ -28,7 +28,7 @@ public class GetInformationService {
                 reqDto.studentId().toString(),
                 reqDto.profileImage(),
                 reqDto.major(),
-                reqDto.indroduce()
+                reqDto.introduce()
         );
         return new TokenDto(jwtTokenProvider.createToken(new TokenClaimsDto(
                 user.getEmail(),

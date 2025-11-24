@@ -6,7 +6,7 @@ public record SignupInformReqDto(
         @NotNull String nickname,
         @NotNull Integer studentId,
         @NotNull String major,
-        @NotNull String indroduce,
+        @NotNull String introduce,
         @NotNull String profileImage
 ) {
 }
