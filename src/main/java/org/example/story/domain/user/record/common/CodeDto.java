@@ -1,0 +1,8 @@
+package org.example.story.domain.user.record.common;
+
+import jakarta.validation.constraints.NotNull;
+
+public record CodeDto(
+        @NotNull String code
+) {
+}
