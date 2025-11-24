@@ -1,7 +1,7 @@
 plugins {
-	id 'java'
-	id 'org.springframework.boot' version '3.5.6'
-	id 'io.spring.dependency-management' version '1.1.7'
+    id 'java'
+    id 'org.springframework.boot' version '3.5.6'
+    id 'io.spring.dependency-management' version '1.1.7'
 }
 
 group = 'org.example'
@@ -9,65 +9,72 @@ version = '0.0.1-SNAPSHOT'
 description = 'story'
 
 java {
-	toolchain {
-		languageVersion = JavaLanguageVersion.of(21)
-	}
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(21)
+    }
 }
 
 configurations {
-	compileOnly {
-		extendsFrom annotationProcessor
-	}
+    compileOnly {
+        extendsFrom annotationProcessor
+    }
 }
 
 repositories {
-	mavenCentral()
+    mavenCentral()
 }
 
 dependencies {
-/* Spring Boot Starters */
-	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
-	implementation 'org.springframework.boot:spring-boot-starter-data-redis'
-	implementation 'org.springframework.boot:spring-boot-starter-security'
-	implementation 'org.springframework.boot:spring-boot-starter-web'
+    /* Spring Boot Starters */
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+    implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+    implementation 'org.springframework.boot:spring-boot-starter-security'
+    implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'org.springframework.boot:spring-boot-starter-validation'
-	implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
+    implementation 'org.springframework.boot:spring-boot-starter-mail'
 
-	/* Lombok */
-	compileOnly 'org.projectlombok:lombok'
-	annotationProcessor 'org.projectlombok:lombok'
+    /* JSON Request */
+    implementation 'com.fasterxml.jackson.core:jackson-databind'
 
-	/* Docker Compose Support */
+    /* OAuth */
+    implementation 'com.google.api-client:google-api-client:2.2.0'
+    implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
+
+    /* Lombok */
+    compileOnly 'org.projectlombok:lombok'
+    annotationProcessor 'org.projectlombok:lombok'
+
+    /* Docker Compose Support */
 //	developmentOnly 'org.springframework.boot:spring-boot-docker-compose'
 
-	/* Database */
-	runtimeOnly 'com.mysql:mysql-connector-j'
+    /* Database */
+    runtimeOnly 'com.mysql:mysql-connector-j'
 
-	/* Testing */
-	testImplementation 'org.springframework.boot:spring-boot-starter-test'
-	testImplementation 'org.springframework.security:spring-security-test'
-	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+    /* Testing */
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testImplementation 'org.springframework.security:spring-security-test'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 
-	/* Jwt */
-	implementation 'io.jsonwebtoken:jjwt-api:0.11.5'
-	runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.11.5'
-	runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.11.5'
+    /* Jwt */
+    implementation 'io.jsonwebtoken:jjwt-api:0.11.5'
+    runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.11.5'
+    runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.11.5'
 
-	// AOP
-	implementation 'org.springframework.boot:spring-boot-starter-aop'
+    // AOP
+    implementation 'org.springframework.boot:spring-boot-starter-aop'
 
-	// Bucket4j (Rate limiting)
-	implementation 'com.bucket4j:bucket4j_jdk17-jcache:8.15.0'
+    // Bucket4j (Rate limiting)
+    implementation 'com.bucket4j:bucket4j_jdk17-jcache:8.15.0'
 
-	// 캐시 또는 Redis 등 분산환경용
-	implementation 'org.ehcache:ehcache:3.10.8'
+    // 캐시 또는 Redis 등 분산환경용
+    implementation 'org.ehcache:ehcache:3.10.8'
 
-	implementation 'com.github.ben-manes.caffeine:caffeine:3.1.8'
+    implementation 'com.github.ben-manes.caffeine:caffeine:3.1.8'
 
-	implementation 'com.theokanning.openai-gpt3-java:service:0.17.0'
+    implementation 'com.theokanning.openai-gpt3-java:service:0.17.0'
 
 }
 
 tasks.named('test') {
-	useJUnitPlatform()
+    useJUnitPlatform()
 }
