@@ -38,10 +38,10 @@ public class JwtHeaderFilter extends OncePerRequestFilter {
             Claims claims = jwtTokenProvider.getClaimsFromToken(token);
             if (claims != null) {
                 try {
-                    Long userId = Long.parseLong(claims.getSubject());
+                    Long userId = claims.get("userId", Long.class);
                     String role = claims.get("role", String.class);
 
-                    if (role != null) {
+                    if (userId != null && role != null) {
                         CustomPrincipal principal = new CustomPrincipal(userId, role);
 
                         GrantedAuthority authority = new SimpleGrantedAuthority("ROLE_" + role);
