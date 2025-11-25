@@ -37,8 +37,8 @@ public class SendEmailService {
             MimeMessage mimeMessage = mailSender.createMimeMessage();
             MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, true, "UTF-8");
             helper.setTo(email);
-            helper.setSubject(subject.formatted(verifyUrl));
-            helper.setText(body, true);
+            helper.setSubject(subject);
+            helper.setText(body.formatted(verifyUrl), true);
             mailSender.send(mimeMessage);
         } catch (MessagingException e) {
             throw new ExpectedException(
