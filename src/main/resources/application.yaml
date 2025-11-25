@@ -30,7 +30,6 @@ google:
   public-key: ${GOOGLE_KEY}
 kakao:
   client-id: ${KAKAO_ID}
-  client-secret: ${KAKAO_SECRET}
   redirect-uri: ${KAKAO_URI}
 
 jwt:

@@ -11,6 +11,5 @@ import org.springframework.context.annotation.Configuration;
 @ConfigurationProperties(prefix = "kakao")
 public class KakaoOAuthConfig {
     private String clientId;
-    private String clientSecret;
     private String redirectUri;
 }
