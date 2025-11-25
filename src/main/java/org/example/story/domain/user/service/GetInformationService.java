@@ -20,6 +20,9 @@ public class GetInformationService {
     private final JwtTokenProvider jwtTokenProvider;
 
     public TokenDto execute(Long userId, SignupInformReqDto reqDto) {
+        if(reqDto.studentId().toString().length() == 4) {
+            throw new ExpectedException(HttpStatus.BAD_REQUEST, "학번은 무조건 4자리여야 합니다.");
+        }
         UserJpaEntity user = userRepository.findById(userId)
                 .orElseThrow(() ->
                     new ExpectedException(HttpStatus.NOT_FOUND, "존재하지 않는 계정입니다."));
