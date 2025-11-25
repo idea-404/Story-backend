@@ -8,6 +8,7 @@ import org.example.story.domain.user.repository.UserRepository;
 import org.example.story.global.error.exception.ExpectedException;
 import org.example.story.global.security.jwt.JwtTokenProvider;
 import org.example.story.global.security.jwt.record.common.TokenClaimsDto;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,6 +19,9 @@ import org.springframework.transaction.annotation.Transactional;
 public class GetInformationService {
     private final UserRepository userRepository;
     private final JwtTokenProvider jwtTokenProvider;
+
+    @Value("${jwt.expire-time}")
+    private Long expireTime;
 
     public TokenDto execute(Long userId, SignupInformReqDto reqDto) {
         if(reqDto.studentId().toString().length() == 4) {
@@ -42,6 +46,6 @@ public class GetInformationService {
                 user.getMajor(),
                 user.getIntroduce(),
                 user.getRole()
-        ), 60L));
+        ), expireTime));
     }
 }

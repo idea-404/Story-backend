@@ -5,6 +5,7 @@ import org.example.story.domain.user.entity.UserJpaEntity;
 import org.example.story.domain.user.repository.UserRepository;
 import org.example.story.global.security.jwt.JwtTokenProvider;
 import org.example.story.global.security.jwt.record.common.TokenClaimsDto;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -14,6 +15,9 @@ import org.springframework.transaction.annotation.Transactional;
 public class GetAccountTokenService {
     private final UserRepository userRepository;
     private final JwtTokenProvider jwtTokenProvider;
+
+    @Value("${jwt.expire-time}")
+    private Long expireTime;
 
     public String execute(String email) {
         UserJpaEntity user = userRepository.findByEmail(email)
@@ -30,7 +34,7 @@ public class GetAccountTokenService {
                         user.getMajor(),
                         user.getIntroduce(),
                         user.getRole()
-                ), 60L
+                ), expireTime
         );
     }
 }
