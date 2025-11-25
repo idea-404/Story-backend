@@ -22,6 +22,9 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ErrorResponse> handleValidationExceptions(MethodArgumentNotValidException e) {
-        throw new ExpectedException(HttpStatus.BAD_REQUEST, "Null이 올 수 없는 속성에 Null이 들어왔습니다.");
+        String message = "입력값이 유효하지 않습니다.";
+        return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .body(new ErrorResponse(HttpStatus.BAD_REQUEST.value(), message));
     }
 }
