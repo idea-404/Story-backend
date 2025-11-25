@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import org.example.story.global.error.exception.ExpectedException;
 import org.example.story.global.security.jwt.JwtTokenProvider;
 import org.example.story.global.security.jwt.record.common.TokenClaimsDto;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
@@ -16,6 +17,9 @@ import org.springframework.stereotype.Service;
 public class SendEmailService {
     private final JwtTokenProvider jwtTokenProvider;
     private final JavaMailSender mailSender;
+
+    @Value("${base.url}")
+    private String url;
 
     public void execute(
             String email, String subject, String body
@@ -32,7 +36,7 @@ public class SendEmailService {
                         null
                 ), 10L
         );
-        String verifyUrl = "http://localhost:8080/api/v1/auth/verify?token=" + token;
+        String verifyUrl = url + "/api/v1/auth/verify?token=" + token;
         try {
             MimeMessage mimeMessage = mailSender.createMimeMessage();
             MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, true, "UTF-8");
