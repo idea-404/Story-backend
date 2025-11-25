@@ -24,7 +24,7 @@ public class GetInformationService {
     private Long expireTime;
 
     public TokenDto execute(Long userId, SignupInformReqDto reqDto) {
-        if(reqDto.studentId().toString().length() == 4) {
+        if(reqDto.studentId().toString().length() != 4) {
             throw new ExpectedException(HttpStatus.BAD_REQUEST, "학번은 무조건 4자리여야 합니다.");
         }
         UserJpaEntity user = userRepository.findById(userId)
