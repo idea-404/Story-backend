@@ -169,7 +169,7 @@ public class BlogService {
             blogImageRepository.delete(image);
         }
         else {
-            throw new ExpectedException(HttpStatus.FORBIDDEN, "업로드 권한이 없습니다.");
+            throw new ExpectedException(HttpStatus.FORBIDDEN, "삭제 권한이 없습니다.");
         }
 
     }

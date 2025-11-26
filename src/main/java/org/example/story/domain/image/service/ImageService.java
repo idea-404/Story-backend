@@ -51,7 +51,7 @@ public class ImageService {
             );
 
         } catch (IOException e) {
-            throw new IllegalStateException("S3 업로드 실패: " + fileName, e);
+            throw new ExpectedException(HttpStatus.INTERNAL_SERVER_ERROR, "S3 업로드에 실패했습니다.");
         }
 
         return fileName;
@@ -91,7 +91,7 @@ public class ImageService {
 
     private String extractExt(String fileName) {
         int pos = fileName.lastIndexOf(".");
-        if (pos < 0) throw new IllegalArgumentException("확장자 없음: " + fileName);
+        if (pos < 0) throw new ExpectedException(HttpStatus.BAD_REQUEST, "파일 확장자가 없습니다: " + fileName);
         return fileName.substring(pos + 1);
     }
 
