@@ -129,7 +129,7 @@ public class BlogService {
     public ImageResponse uploadBlogImage(Long userId, Long blogId, MultipartFile file) {
 
         BlogJpaEntity blog = blogRepository.findById(blogId)
-                .orElseThrow(() -> new IllegalArgumentException("블로그 없음"));
+                .orElseThrow(() -> new ExpectedException(HttpStatus.NOT_FOUND,"블로그를 찾을 수 없습니다."));
 
         if(userId.equals(blog.getUser().getId())){
             String fileKey = imageService.uploadImage(file);
@@ -152,10 +152,9 @@ public class BlogService {
     public void deleteBlogImage(Long userId,Long imageId) {
 
         BlogImageJpaEntity image = blogImageRepository.findById(imageId)
-                .orElseThrow(() -> new IllegalArgumentException("이미지를 찾을 수 없습니다."));
+                .orElseThrow(() -> new ExpectedException(HttpStatus.NOT_FOUND,"이미지를 찾을 수 없습니다."));
 
-        BlogJpaEntity blog = blogRepository.findById(image.getBlog().getId())
-                .orElseThrow(() -> new IllegalArgumentException("블로그 없음"));
+        BlogJpaEntity blog = image.getBlog();
 
         if(userId.equals(blog.getUser().getId())) {
             imageService.deleteImage(image.getImageUrl());

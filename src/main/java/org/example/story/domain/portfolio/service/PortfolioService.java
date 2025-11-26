@@ -154,7 +154,7 @@ public class PortfolioService {
     public ImageResponse uploadPortfolioImage(Long userId, Long portfolioId, MultipartFile file) {
 
         PortfolioJpaEntity portfolio = portfolioRepository.findById(portfolioId)
-                .orElseThrow(() -> new IllegalArgumentException("포트폴리오 없음"));
+                .orElseThrow(() -> new ExpectedException(HttpStatus.NOT_FOUND,"포트폴리오를 찾을 수 없습니다."));
 
         if(userId.equals(portfolio.getUser().getId())) {
             String fileKey = imageService.uploadImage(file);
@@ -177,10 +177,9 @@ public class PortfolioService {
     public void deletePortfolioImage(Long userId, Long imageId) {
 
         PortfolioImageJpaEntity image = portfolioImageRepository.findById(imageId)
-                .orElseThrow(() -> new IllegalArgumentException("이미지를 찾을 수 없습니다."));
+                .orElseThrow(() -> new ExpectedException(HttpStatus.NOT_FOUND,"이미지를 찾을 수 없습니다."));
 
-        PortfolioJpaEntity portfolio = portfolioRepository.findById(image.getPortfolio().getId())
-                .orElseThrow(() -> new IllegalArgumentException("포트폴리오 없음"));
+        PortfolioJpaEntity portfolio = image.getPortfolio();
 
         if(userId.equals(portfolio.getUser().getId())){
             imageService.deleteImage(image.getImageUrl());
