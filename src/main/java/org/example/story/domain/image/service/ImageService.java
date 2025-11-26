@@ -16,6 +16,7 @@ import software.amazon.awssdk.services.s3.presigner.model.PresignedGetObjectRequ
 
 import java.io.IOException;
 import java.time.Duration;
+import java.util.Set;
 import java.util.UUID;
 
 @Service
@@ -29,6 +30,8 @@ public class ImageService {
 
     @Value("${spring.cloud.aws.s3.presigned-url-duration-minutes}")
     private long presignedUrlDuration;
+
+    private static final Set<String> ALLOWED_MIME_TYPES = Set.of("image/jpeg", "image/png", "image/gif");
 
     public String uploadImage(MultipartFile file) {
         validateImageType(file);
@@ -102,10 +105,7 @@ public class ImageService {
         if (name == null || !name.toLowerCase().matches(".*\\.(jpg|jpeg|png|gif)$"))
             throw new ExpectedException(HttpStatus.BAD_REQUEST, "jpg, jpeg, png, gif 파일만 허용됩니다.");
 
-        if (type == null ||
-                !(type.equalsIgnoreCase("image/jpeg")
-                        || type.equalsIgnoreCase("image/png")
-                        || type.equalsIgnoreCase("image/gif")))
+        if (type == null || !ALLOWED_MIME_TYPES.contains(type.toLowerCase()))
             throw new ExpectedException(HttpStatus.BAD_REQUEST, "MIME 타입 오류");
     }
 }
