@@ -23,7 +23,7 @@ public class BlogImageJpaEntity {
     @JoinColumn(name = "blog_id", nullable = false)
     private BlogJpaEntity blog;
 
-    @Column(name = "imageUrl", nullable = false, length = 500)
+    @Column(name = "image_url", nullable = false, length = 500)
     private String imageUrl;
 
 }

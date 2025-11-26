@@ -23,7 +23,7 @@ public class PortfolioImageJpaEntity {
     @JoinColumn(name = "portfolio_id", nullable = false)
     private PortfolioJpaEntity portfolio;
 
-    @Column(name = "imageUrl", nullable = false, length = 500)
+    @Column(name = "image_url", nullable = false, length = 500)
     private String imageUrl;
 
 }
