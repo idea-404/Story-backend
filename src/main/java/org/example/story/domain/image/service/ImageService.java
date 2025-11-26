@@ -27,6 +27,9 @@ public class ImageService {
     @Value("${cloud.aws.s3.bucket}")
     private String bucket;
 
+    @Value("${spring.cloud.aws.s3.presigned-url-duration-minutes}")
+    private long presignedUrlDuration;
+
     public String uploadImage(MultipartFile file) {
         validateImageType(file);
 
@@ -60,7 +63,7 @@ public class ImageService {
                 .build();
         PresignedGetObjectRequest presignedRequest =
                 s3Presigner.presignGetObject(builder ->
-                        builder.signatureDuration(Duration.ofMinutes(60))
+                        builder.signatureDuration(Duration.ofMinutes(presignedUrlDuration))
                                 .getObjectRequest(getObjectRequest)
                 );
 
@@ -96,11 +99,13 @@ public class ImageService {
         String name = file.getOriginalFilename();
         String type = file.getContentType();
 
-        if (name == null || !name.toLowerCase().matches(".*\\.(jpg|jpeg)$"))
-            throw new ExpectedException(HttpStatus.BAD_REQUEST, "jpg/jpeg만 허용");
+        if (name == null || !name.toLowerCase().matches(".*\\.(jpg|jpeg|png|gif)$"))
+            throw new ExpectedException(HttpStatus.BAD_REQUEST, "jpg, jpeg, png, gif 파일만 허용됩니다.");
 
         if (type == null ||
-                !(type.equalsIgnoreCase("image/jpeg") || type.equalsIgnoreCase("image/jpg")))
+                !(type.equalsIgnoreCase("image/jpeg")
+                        || type.equalsIgnoreCase("image/png")
+                        || type.equalsIgnoreCase("image/gif")))
             throw new ExpectedException(HttpStatus.BAD_REQUEST, "MIME 타입 오류");
     }
 }
