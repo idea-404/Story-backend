@@ -3,6 +3,7 @@ spring:
      aws:
         s3:
           bucket: ${BUCKET_NAME}
+          presigned-url-duration-minutes: 60
         credentials:
           access-key: ${BUCKET_ACCESS}
           secret-key: ${BUCKET_SECRET}
