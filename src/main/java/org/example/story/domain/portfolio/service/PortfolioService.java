@@ -1,5 +1,9 @@
 package org.example.story.domain.portfolio.service;
 
+import org.example.story.domain.image.entity.PortfolioImageJpaEntity;
+import org.example.story.domain.image.record.response.ImageResponse;
+import org.example.story.domain.image.repository.PortfolioImageRepository;
+import org.example.story.domain.image.service.ImageService;
 import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.example.story.domain.portfolio.entity.PortfolioJpaEntity;
@@ -14,8 +18,10 @@ import org.example.story.domain.user.repository.UserRepository;
 import org.example.story.global.error.exception.ExpectedException;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.time.Instant;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -23,6 +29,8 @@ public class PortfolioService {
     private final PortfolioRepository portfolioRepository;
     private final UserRepository userRepository;
     private final PortfolioLikeRepository portfolioLikeRepository;
+    private final ImageService imageService;
+    private final PortfolioImageRepository portfolioImageRepository;
 
     public PortfolioResponse write(Long userId, PortfolioRequest request) {
         UserJpaEntity user = userRepository.findById(userId)
@@ -143,4 +151,43 @@ public class PortfolioService {
         );
     }
 
+    public ImageResponse uploadPortfolioImage(Long portfolioId, MultipartFile file) {
+
+        PortfolioJpaEntity portfolio = portfolioRepository.findById(portfolioId)
+                .orElseThrow(() -> new IllegalArgumentException("포트폴리오 없음"));
+
+        String fileKey = imageService.uploadImage(file);
+
+        PortfolioImageJpaEntity entity = PortfolioImageJpaEntity.builder()
+                .portfolio(portfolio)
+                .imageUrl(fileKey)
+                .build();
+
+        portfolioImageRepository.save(entity);
+        String presignedUrl = imageService.generatePresignedUrl(fileKey);
+        return new ImageResponse(fileKey, presignedUrl);
+    }
+
+    public void deletePortfolioImage(Long imageId) {
+
+        PortfolioImageJpaEntity image = portfolioImageRepository.findById(imageId)
+                .orElseThrow(() -> new IllegalArgumentException("이미지를 찾을 수 없습니다."));
+
+        imageService.deleteImage(image.getImageUrl());
+
+        portfolioImageRepository.delete(image);
+    }
+
+    public List<ImageResponse> getPortfolioImages(Long portfolioId) {
+
+        List<PortfolioImageJpaEntity> images =
+                portfolioImageRepository.findByPortfolioId(portfolioId);
+
+        return images.stream()
+                .map(img -> new ImageResponse(
+                        img.getImageUrl(),
+                        imageService.generatePresignedUrl(img.getImageUrl())
+                ))
+                .toList();
+    }
 }

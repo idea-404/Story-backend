@@ -1,6 +1,7 @@
 package org.example.story.domain.portfolio.controller;
 
 import lombok.RequiredArgsConstructor;
+import org.example.story.domain.image.record.response.ImageResponse;
 import org.example.story.domain.portfolio.record.common.PortfolioRequest;
 import org.example.story.domain.portfolio.record.common.PortfolioResponse;
 import org.example.story.domain.portfolio.record.request.PortfolioCommentRequest;
@@ -13,6 +14,9 @@ import org.example.story.domain.portfolio.service.PortfolioService;
 import org.example.story.global.aop.RateLimited;
 import org.example.story.global.security.auth.AuthUtils;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -128,4 +132,24 @@ public class PortfolioController {
         return portfolioCommentService.getComments(portfolioId, lastId, size);
     }
 
+    @PostMapping("/image/upload/{portfolioId}")
+    @RateLimited(limit = 20, durationSeconds = 30)
+    public ImageResponse uploadPortfolioImage(
+            @PathVariable Long portfolioId,
+            @RequestPart("file") MultipartFile file
+    ) {
+        return portfolioService.uploadPortfolioImage(portfolioId, file);
+    }
+
+    @DeleteMapping("/image/delete/{imageId}")
+    @RateLimited(limit = 20, durationSeconds = 30)
+    public void deletePortfolioImage(@PathVariable Long imageId) {
+        portfolioService.deletePortfolioImage(imageId);
+    }
+
+    @GetMapping("/image/{portfolioId}")
+    @RateLimited(limit = 20, durationSeconds = 30)
+    public List<ImageResponse> getPortfolioImages(@PathVariable Long portfolioId) {
+        return portfolioService.getPortfolioImages(portfolioId);
+    }
 }

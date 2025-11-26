@@ -9,13 +9,19 @@ import org.example.story.domain.blog.record.common.BlogResponse;
 import org.example.story.domain.blog.record.response.BlogLikeResponse;
 import org.example.story.domain.blog.repository.BlogLikeRepository;
 import org.example.story.domain.blog.repository.BlogRepository;
+import org.example.story.domain.image.entity.BlogImageJpaEntity;
+import org.example.story.domain.image.record.response.ImageResponse;
+import org.example.story.domain.image.repository.BlogImageRepository;
+import org.example.story.domain.image.service.ImageService;
 import org.example.story.domain.user.entity.UserJpaEntity;
 import org.example.story.domain.user.repository.UserRepository;
 import org.example.story.global.error.exception.ExpectedException;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.time.Instant;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -24,6 +30,8 @@ public class BlogService {
     private final BlogRepository blogRepository;
     private final UserRepository userRepository;
     private final BlogLikeRepository blogLikeRepository;
+    private final ImageService imageService;
+    private final BlogImageRepository blogImageRepository;
 
     public BlogResponse write(Long userId, BlogRequest request) {
         UserJpaEntity user = userRepository.findById(userId)
@@ -118,4 +126,43 @@ public class BlogService {
         );
     }
 
+    public ImageResponse uploadBlogImage(Long blogId, MultipartFile file) {
+
+        BlogJpaEntity blog = blogRepository.findById(blogId)
+                .orElseThrow(() -> new IllegalArgumentException("블로그 없음"));
+
+        String fileKey = imageService.uploadImage(file);
+
+        BlogImageJpaEntity entity = BlogImageJpaEntity.builder()
+                .blog(blog)
+                .imageUrl(fileKey)
+                .build();
+
+        blogImageRepository.save(entity);
+        String presignedUrl = imageService.generatePresignedUrl(fileKey);
+        return new ImageResponse(fileKey, presignedUrl);
+    }
+
+    public void deleteBlogImage(Long imageId) {
+
+        BlogImageJpaEntity image = blogImageRepository.findById(imageId)
+                .orElseThrow(() -> new IllegalArgumentException("이미지를 찾을 수 없습니다."));
+
+        imageService.deleteImage(image.getImageUrl());
+
+        blogImageRepository.delete(image);
+    }
+
+    public List<ImageResponse> getBlogImages(Long blogId) {
+
+        List<BlogImageJpaEntity> images =
+                blogImageRepository.findByBlogId(blogId);
+
+        return images.stream()
+                .map(img -> new ImageResponse(
+                        img.getImageUrl(),
+                        imageService.generatePresignedUrl(img.getImageUrl())
+                ))
+                .toList();
+    }
 }
