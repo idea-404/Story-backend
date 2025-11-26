@@ -1,5 +1,9 @@
 package org.example.story.domain.portfolio.service;
 
+import org.example.story.domain.image.entity.PortfolioImageJpaEntity;
+import org.example.story.domain.image.record.response.ImageResponse;
+import org.example.story.domain.image.repository.PortfolioImageRepository;
+import org.example.story.domain.image.service.ImageService;
 import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.example.story.domain.portfolio.entity.PortfolioJpaEntity;
@@ -14,8 +18,10 @@ import org.example.story.domain.user.repository.UserRepository;
 import org.example.story.global.error.exception.ExpectedException;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.time.Instant;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -23,6 +29,8 @@ public class PortfolioService {
     private final PortfolioRepository portfolioRepository;
     private final UserRepository userRepository;
     private final PortfolioLikeRepository portfolioLikeRepository;
+    private final ImageService imageService;
+    private final PortfolioImageRepository portfolioImageRepository;
 
     public PortfolioResponse write(Long userId, PortfolioRequest request) {
         UserJpaEntity user = userRepository.findById(userId)
@@ -78,6 +86,12 @@ public class PortfolioService {
 
 
     public void delete(Long userId, Long portfolioId) {
+        List<PortfolioImageJpaEntity> images =
+                portfolioImageRepository.findByPortfolioId(portfolioId);
+
+        for (PortfolioImageJpaEntity img : images) {
+            imageService.deleteImage(img.getImageUrl());
+        }
         PortfolioJpaEntity portfolio = portfolioRepository.findByIdAndUserId(portfolioId, userId)
                 .orElseThrow(() -> new ExpectedException(HttpStatus.NOT_FOUND, "존재하지 않는 포트폴리오입니다."));
         portfolioRepository.delete(portfolio);
@@ -143,4 +157,56 @@ public class PortfolioService {
         );
     }
 
+    public ImageResponse uploadPortfolioImage(Long userId, Long portfolioId, MultipartFile file) {
+
+        PortfolioJpaEntity portfolio = portfolioRepository.findById(portfolioId)
+                .orElseThrow(() -> new ExpectedException(HttpStatus.NOT_FOUND,"포트폴리오를 찾을 수 없습니다."));
+
+        if(userId.equals(portfolio.getUser().getId())) {
+            String fileKey = imageService.uploadImage(file);
+
+            PortfolioImageJpaEntity entity = PortfolioImageJpaEntity.builder()
+                    .portfolio(portfolio)
+                    .imageUrl(fileKey)
+                    .build();
+
+            portfolioImageRepository.save(entity);
+            String presignedUrl = imageService.generatePresignedUrl(fileKey);
+            return new ImageResponse(fileKey, presignedUrl);
+        }
+        else {
+            throw new ExpectedException(HttpStatus.FORBIDDEN, "업로드 권한이 없습니다.");
+        }
+
+    }
+
+    public void deletePortfolioImage(Long userId, Long imageId) {
+
+        PortfolioImageJpaEntity image = portfolioImageRepository.findById(imageId)
+                .orElseThrow(() -> new ExpectedException(HttpStatus.NOT_FOUND,"이미지를 찾을 수 없습니다."));
+
+        PortfolioJpaEntity portfolio = image.getPortfolio();
+
+        if(userId.equals(portfolio.getUser().getId())){
+            imageService.deleteImage(image.getImageUrl());
+
+            portfolioImageRepository.delete(image);
+        }
+        else {
+            throw new ExpectedException(HttpStatus.FORBIDDEN, "삭제 권한이 없습니다.");
+        }
+    }
+
+    public List<ImageResponse> getPortfolioImages(Long portfolioId) {
+
+        List<PortfolioImageJpaEntity> images =
+                portfolioImageRepository.findByPortfolioId(portfolioId);
+
+        return images.stream()
+                .map(img -> new ImageResponse(
+                        img.getImageUrl(),
+                        imageService.generatePresignedUrl(img.getImageUrl())
+                ))
+                .toList();
+    }
 }

@@ -10,10 +10,14 @@ import org.example.story.domain.blog.record.response.BlogLikeResponse;
 import org.example.story.domain.blog.service.BlogCommentService;
 import org.example.story.domain.blog.service.BlogQueryService;
 import org.example.story.domain.blog.service.BlogService;
+import org.example.story.domain.image.record.response.ImageResponse;
 import org.example.story.global.aop.RateLimited;
 import org.example.story.global.security.auth.AuthUtils;
 import org.example.story.global.security.jwt.JwtTokenProvider;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -23,7 +27,6 @@ public class BlogController {
     private final BlogService blogService;
     private final BlogQueryService blogQueryService;
     private final BlogCommentService blogCommentService;
-    private final JwtTokenProvider jwtTokenProvider;
     private final AuthUtils authUtils;
 
     // 포트폴리오 작성
@@ -116,5 +119,28 @@ public class BlogController {
             @RequestParam(defaultValue = "10") int size
     ) {
         return blogCommentService.getComments(blogId, lastId, size);
+    }
+
+    @PostMapping("/image/upload/{blogId}")
+    @RateLimited(limit = 20, durationSeconds = 30)
+    public ImageResponse uploadBlogImage(
+            @PathVariable Long blogId,
+            @RequestPart("file") MultipartFile file
+    ) {
+        Long userId = authUtils.getCurrentUserId();
+        return blogService.uploadBlogImage(userId, blogId, file);
+    }
+
+    @DeleteMapping("/image/delete/{imageId}")
+    @RateLimited(limit = 20, durationSeconds = 30)
+    public void deleteBlogImage(@PathVariable Long imageId) {
+        Long userId = authUtils.getCurrentUserId();
+        blogService.deleteBlogImage(userId, imageId);
+    }
+
+    @GetMapping("/image/{blogId}")
+    @RateLimited(limit = 20, durationSeconds = 30)
+    public List<ImageResponse> getBlogImages(@PathVariable Long blogId) {
+        return blogService.getBlogImages(blogId);
     }
 }

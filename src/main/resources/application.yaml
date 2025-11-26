@@ -1,4 +1,14 @@
 spring:
+  cloud:
+     aws:
+        s3:
+          bucket: ${BUCKET_NAME}
+          presigned-url-duration-minutes: 60
+        region:
+          static: ap-northeast-2
+          auto: false
+        stack:
+          auto: false
   application:
     name: story
   docker:
