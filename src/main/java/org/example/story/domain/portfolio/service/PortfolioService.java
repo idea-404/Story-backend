@@ -86,6 +86,12 @@ public class PortfolioService {
 
 
     public void delete(Long userId, Long portfolioId) {
+        List<PortfolioImageJpaEntity> images =
+                portfolioImageRepository.findByPortfolioId(portfolioId);
+
+        for (PortfolioImageJpaEntity img : images) {
+            imageService.deleteImage(img.getImageUrl());   // 🔥 여기서 네 deleteImage 활용됨!
+        }
         PortfolioJpaEntity portfolio = portfolioRepository.findByIdAndUserId(portfolioId, userId)
                 .orElseThrow(() -> new ExpectedException(HttpStatus.NOT_FOUND, "존재하지 않는 포트폴리오입니다."));
         portfolioRepository.delete(portfolio);

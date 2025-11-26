@@ -84,6 +84,13 @@ public class BlogService {
 
 
     public void delete(Long userId, Long blogId) {
+        List<BlogImageJpaEntity> images =
+                blogImageRepository.findByBlogId(blogId);
+
+        for (BlogImageJpaEntity img : images) {
+            imageService.deleteImage(img.getImageUrl());
+        }
+
         BlogJpaEntity blog = blogRepository.findByIdAndUserId(blogId, userId)
                 .orElseThrow(() -> new ExpectedException(HttpStatus.NOT_FOUND, "존재하지 않는 블로그입니다."));
         blogRepository.delete(blog);
