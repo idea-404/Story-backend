@@ -127,13 +127,15 @@ public class BlogController {
             @PathVariable Long blogId,
             @RequestPart("file") MultipartFile file
     ) {
-        return blogService.uploadBlogImage(blogId, file);
+        Long userId = authUtils.getCurrentUserId();
+        return blogService.uploadBlogImage(userId, blogId, file);
     }
 
     @DeleteMapping("/image/delete/{imageId}")
     @RateLimited(limit = 20, durationSeconds = 30)
     public void deleteBlogImage(@PathVariable Long imageId) {
-        blogService.deleteBlogImage(imageId);
+        Long userId = authUtils.getCurrentUserId();
+        blogService.deleteBlogImage(userId, imageId);
     }
 
     @GetMapping("/image/{blogId}")

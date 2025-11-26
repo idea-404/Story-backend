@@ -151,31 +151,45 @@ public class PortfolioService {
         );
     }
 
-    public ImageResponse uploadPortfolioImage(Long portfolioId, MultipartFile file) {
+    public ImageResponse uploadPortfolioImage(Long userId, Long portfolioId, MultipartFile file) {
 
         PortfolioJpaEntity portfolio = portfolioRepository.findById(portfolioId)
                 .orElseThrow(() -> new IllegalArgumentException("포트폴리오 없음"));
 
-        String fileKey = imageService.uploadImage(file);
+        if(userId.equals(portfolio.getUser().getId())) {
+            String fileKey = imageService.uploadImage(file);
 
-        PortfolioImageJpaEntity entity = PortfolioImageJpaEntity.builder()
-                .portfolio(portfolio)
-                .imageUrl(fileKey)
-                .build();
+            PortfolioImageJpaEntity entity = PortfolioImageJpaEntity.builder()
+                    .portfolio(portfolio)
+                    .imageUrl(fileKey)
+                    .build();
 
-        portfolioImageRepository.save(entity);
-        String presignedUrl = imageService.generatePresignedUrl(fileKey);
-        return new ImageResponse(fileKey, presignedUrl);
+            portfolioImageRepository.save(entity);
+            String presignedUrl = imageService.generatePresignedUrl(fileKey);
+            return new ImageResponse(fileKey, presignedUrl);
+        }
+        else {
+            throw new ExpectedException(HttpStatus.FORBIDDEN, "업로드 권한이 없습니다.");
+        }
+
     }
 
-    public void deletePortfolioImage(Long imageId) {
+    public void deletePortfolioImage(Long userId, Long imageId) {
 
         PortfolioImageJpaEntity image = portfolioImageRepository.findById(imageId)
                 .orElseThrow(() -> new IllegalArgumentException("이미지를 찾을 수 없습니다."));
 
-        imageService.deleteImage(image.getImageUrl());
+        PortfolioJpaEntity portfolio = portfolioRepository.findById(image.getPortfolio().getId())
+                .orElseThrow(() -> new IllegalArgumentException("포트폴리오 없음"));
 
-        portfolioImageRepository.delete(image);
+        if(userId.equals(portfolio.getUser().getId())){
+            imageService.deleteImage(image.getImageUrl());
+
+            portfolioImageRepository.delete(image);
+        }
+        else {
+            throw new ExpectedException(HttpStatus.FORBIDDEN, "삭제 권한이 없습니다.");
+        }
     }
 
     public List<ImageResponse> getPortfolioImages(Long portfolioId) {

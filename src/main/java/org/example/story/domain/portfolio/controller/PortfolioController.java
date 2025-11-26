@@ -138,13 +138,15 @@ public class PortfolioController {
             @PathVariable Long portfolioId,
             @RequestPart("file") MultipartFile file
     ) {
-        return portfolioService.uploadPortfolioImage(portfolioId, file);
+        Long userId = authUtils.getCurrentUserId();
+        return portfolioService.uploadPortfolioImage(userId,portfolioId, file);
     }
 
     @DeleteMapping("/image/delete/{imageId}")
     @RateLimited(limit = 20, durationSeconds = 30)
     public void deletePortfolioImage(@PathVariable Long imageId) {
-        portfolioService.deletePortfolioImage(imageId);
+        Long userId = authUtils.getCurrentUserId();
+        portfolioService.deletePortfolioImage(userId, imageId);
     }
 
     @GetMapping("/image/{portfolioId}")

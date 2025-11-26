@@ -126,31 +126,46 @@ public class BlogService {
         );
     }
 
-    public ImageResponse uploadBlogImage(Long blogId, MultipartFile file) {
+    public ImageResponse uploadBlogImage(Long userId, Long blogId, MultipartFile file) {
 
         BlogJpaEntity blog = blogRepository.findById(blogId)
                 .orElseThrow(() -> new IllegalArgumentException("블로그 없음"));
 
-        String fileKey = imageService.uploadImage(file);
+        if(userId.equals(blog.getUser().getId())){
+            String fileKey = imageService.uploadImage(file);
 
-        BlogImageJpaEntity entity = BlogImageJpaEntity.builder()
-                .blog(blog)
-                .imageUrl(fileKey)
-                .build();
+            BlogImageJpaEntity entity = BlogImageJpaEntity.builder()
+                    .blog(blog)
+                    .imageUrl(fileKey)
+                    .build();
 
-        blogImageRepository.save(entity);
-        String presignedUrl = imageService.generatePresignedUrl(fileKey);
-        return new ImageResponse(fileKey, presignedUrl);
+            blogImageRepository.save(entity);
+            String presignedUrl = imageService.generatePresignedUrl(fileKey);
+            return new ImageResponse(fileKey, presignedUrl);
+        }
+        else {
+            throw new ExpectedException(HttpStatus.FORBIDDEN, "업로드 권한이 없습니다.");
+        }
+
     }
 
-    public void deleteBlogImage(Long imageId) {
+    public void deleteBlogImage(Long userId,Long imageId) {
 
         BlogImageJpaEntity image = blogImageRepository.findById(imageId)
                 .orElseThrow(() -> new IllegalArgumentException("이미지를 찾을 수 없습니다."));
 
-        imageService.deleteImage(image.getImageUrl());
+        BlogJpaEntity blog = blogRepository.findById(image.getBlog().getId())
+                .orElseThrow(() -> new IllegalArgumentException("블로그 없음"));
 
-        blogImageRepository.delete(image);
+        if(userId.equals(blog.getUser().getId())) {
+            imageService.deleteImage(image.getImageUrl());
+
+            blogImageRepository.delete(image);
+        }
+        else {
+            throw new ExpectedException(HttpStatus.FORBIDDEN, "업로드 권한이 없습니다.");
+        }
+
     }
 
     public List<ImageResponse> getBlogImages(Long blogId) {
