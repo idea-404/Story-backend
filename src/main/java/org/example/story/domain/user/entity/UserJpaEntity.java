@@ -35,8 +35,17 @@ public class UserJpaEntity {
     @Column(name = "introduce", length = 128)
     private String introduce;
 
-    @ColumnDefault("'VERIFIED'")
-    @Column(name = "role", nullable = false, length = 128)
+    @Column(name = "role", length = 128)
     private String role;
 
+    public void updateUserInformation(
+            String nickname, String hakburn, String profileImage, String major, String introduce
+    ) {
+        this.nickname = nickname;
+        this.hakburn = hakburn;
+        this.profileImage = profileImage;
+        this.major = major;
+        this.introduce = introduce;
+        this.role = "VERIFIED";
+    }
 }
