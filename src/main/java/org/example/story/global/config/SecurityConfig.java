@@ -48,12 +48,7 @@ public class SecurityConfig {
                         // 아래 경로들은 인증 없이 접근 허용
                         .requestMatchers(
                                 // 인증/회원가입 관련
-                                "/api/v1/auth/**",
-                                "/api/v1/auth/login",
-                                "/api/v1/auth/signup",
-                                "/api/v1/auth/verify",
-                                "/api/v1/auth/google",
-                                "/api/v1/auth/kakao"
+                                "/api/v1/auth/**"
                         ).permitAll()
                         .requestMatchers(
                                 HttpMethod.GET, // 아래 모든 경로 GET 요청에만 허용
@@ -61,7 +56,7 @@ public class SecurityConfig {
                                 "/api/v1/main/**",
 
                                 // 다른 유저 프로필 조회
-                                "/api/v1/profile/*",
+                                "/api/v1/profile/**",
 
                                 // 포트폴리오
                                 "/api/v1/portfolio/view/**", // 포트폴리오 조회
