@@ -2,6 +2,7 @@ package org.example.story.global.config;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.extern.slf4j.Slf4j;
 import org.example.story.global.error.exception.ExpectedException;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -15,9 +16,9 @@ import org.springframework.web.servlet.View;
 
 import java.io.IOException;
 import java.net.URI;
-import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 
+@Slf4j
 @Configuration
 public class AppConfig {
     private final ObjectMapper objectMapper;
@@ -49,7 +50,7 @@ public class AppConfig {
                         errorMessage = String.format("%s (%s)", errorDescription, error);
                     }
                 } catch (Exception e) {
-
+                    log.warn("ResponseBody 파싱에 실패하였습니다.: {}", responseBody, e);
                 }
                 HttpStatus status = (HttpStatus) response.getStatusCode();
                 HttpStatus finalStatus = (status == HttpStatus.BAD_REQUEST || status == HttpStatus.UNAUTHORIZED)

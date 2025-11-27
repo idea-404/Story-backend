@@ -3,6 +3,7 @@ package org.example.story.domain.user.service;
 import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken;
 import com.google.api.client.googleapis.auth.oauth2.GoogleIdTokenVerifier;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.example.story.domain.user.record.common.GoogleTokenResponse;
 import org.example.story.domain.user.record.common.TokenDto;
 import org.example.story.global.config.GoogleOAuthConfig;
@@ -17,6 +18,7 @@ import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.util.Optional;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class GoogleLoginService {
@@ -72,7 +74,8 @@ public class GoogleLoginService {
         } catch (IOException e) {
             throw new ExpectedException(HttpStatus.INTERNAL_SERVER_ERROR, "구글 서버와의 통신에 실패했습니다.");
         } catch (Exception e) {
-            throw new ExpectedException(HttpStatus.BAD_REQUEST, "예상치 못한 오류가 발생하였습니다 : " + e.getMessage());
+            log.error("구글 로그인 중 예상치 못한 오류 발생", e);
+            throw new ExpectedException(HttpStatus.INTERNAL_SERVER_ERROR, "예상치 못한 오류가 발생하였습니다");
         }
     }
 }
