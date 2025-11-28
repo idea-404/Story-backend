@@ -14,7 +14,6 @@ import org.example.story.domain.image.record.response.ImageKeyResponse;
 import org.example.story.domain.image.record.response.ImageResponse;
 import org.example.story.domain.image.repository.BlogImageRepository;
 import org.example.story.domain.image.service.ImageService;
-import org.example.story.domain.portfolio.entity.PortfolioJpaEntity;
 import org.example.story.domain.user.entity.UserJpaEntity;
 import org.example.story.domain.user.repository.UserRepository;
 import org.example.story.global.error.exception.ExpectedException;
@@ -69,7 +68,7 @@ public class BlogService {
         BlogJpaEntity blog = blogRepository.findByIdAndUserId(blogId, userId)
                 .orElseThrow(() -> new ExpectedException(HttpStatus.NOT_FOUND, "존재하지 않는 블로그입니다."));
 
-        blog.update(request.title(), request.content(),request.thumbnail());
+        blog.update(request.title(), request.content(), request.thumbnail());
 
         BlogJpaEntity saved = blogRepository.save(blog);
 
