@@ -1,6 +1,7 @@
 package org.example.story.domain.portfolio.controller;
 
 import lombok.RequiredArgsConstructor;
+import org.example.story.domain.image.record.response.ImageKeyResponse;
 import org.example.story.domain.image.record.response.ImageResponse;
 import org.example.story.domain.portfolio.record.common.PortfolioRequest;
 import org.example.story.domain.portfolio.record.common.PortfolioResponse;
@@ -153,5 +154,11 @@ public class PortfolioController {
     @RateLimited(limit = 20, durationSeconds = 30)
     public List<ImageResponse> getPortfolioImages(@PathVariable Long portfolioId) {
         return portfolioService.getPortfolioImages(portfolioId);
+    }
+
+    @PostMapping("/thumbnail")
+    @RateLimited(limit = 20, durationSeconds = 30)
+    public ImageKeyResponse uploadThumbnail(@RequestPart("file") MultipartFile file){
+        return portfolioService.uploadPortfolioThumbnail(file);
     }
 }

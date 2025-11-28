@@ -1,6 +1,7 @@
 package org.example.story.domain.portfolio.service;
 
 import org.example.story.domain.image.entity.PortfolioImageJpaEntity;
+import org.example.story.domain.image.record.response.ImageKeyResponse;
 import org.example.story.domain.image.record.response.ImageResponse;
 import org.example.story.domain.image.repository.PortfolioImageRepository;
 import org.example.story.domain.image.service.ImageService;
@@ -45,6 +46,7 @@ public class PortfolioService {
                 .view(0L)
                 .comment(0L)
                 .zerodog(false)
+                .thumbnail(request.thumbnail())
                 .build();
 
         PortfolioJpaEntity saved = portfolioRepository.save(portfolio);
@@ -67,7 +69,7 @@ public class PortfolioService {
         PortfolioJpaEntity portfolio = portfolioRepository.findByIdAndUserId(portfolioId, userId)
                 .orElseThrow(() -> new ExpectedException(HttpStatus.NOT_FOUND, "존재하지 않는 포트폴리오입니다."));
 
-        portfolio.update(request.title(),request.content());
+        portfolio.update(request.title(),request.content(),request.thumbnail());
 
         PortfolioJpaEntity saved = portfolioRepository.save(portfolio);
 
@@ -94,6 +96,7 @@ public class PortfolioService {
         }
         PortfolioJpaEntity portfolio = portfolioRepository.findByIdAndUserId(portfolioId, userId)
                 .orElseThrow(() -> new ExpectedException(HttpStatus.NOT_FOUND, "존재하지 않는 포트폴리오입니다."));
+        imageService.deleteImage(portfolio.getThumbnail());
         portfolioRepository.delete(portfolio);
     }
 
@@ -208,5 +211,9 @@ public class PortfolioService {
                         imageService.generatePresignedUrl(img.getImageUrl())
                 ))
                 .toList();
+    }
+
+    public ImageKeyResponse uploadPortfolioThumbnail(MultipartFile file) {
+        return new ImageKeyResponse(imageService.uploadThumbnail(file));
     }
 }

@@ -10,9 +10,11 @@ import org.example.story.domain.blog.record.response.BlogLikeResponse;
 import org.example.story.domain.blog.repository.BlogLikeRepository;
 import org.example.story.domain.blog.repository.BlogRepository;
 import org.example.story.domain.image.entity.BlogImageJpaEntity;
+import org.example.story.domain.image.record.response.ImageKeyResponse;
 import org.example.story.domain.image.record.response.ImageResponse;
 import org.example.story.domain.image.repository.BlogImageRepository;
 import org.example.story.domain.image.service.ImageService;
+import org.example.story.domain.portfolio.entity.PortfolioJpaEntity;
 import org.example.story.domain.user.entity.UserJpaEntity;
 import org.example.story.domain.user.repository.UserRepository;
 import org.example.story.global.error.exception.ExpectedException;
@@ -45,6 +47,7 @@ public class BlogService {
                 .like(0L)
                 .view(0L)
                 .comment(0L)
+                .thumbnail(request.thumbnail())
                 .build();
 
         BlogJpaEntity saved = blogRepository.save(blog);
@@ -66,7 +69,7 @@ public class BlogService {
         BlogJpaEntity blog = blogRepository.findByIdAndUserId(blogId, userId)
                 .orElseThrow(() -> new ExpectedException(HttpStatus.NOT_FOUND, "존재하지 않는 블로그입니다."));
 
-        blog.update(request.title(), request.content());
+        blog.update(request.title(), request.content(),request.thumbnail());
 
         BlogJpaEntity saved = blogRepository.save(blog);
 
@@ -93,6 +96,7 @@ public class BlogService {
 
         BlogJpaEntity blog = blogRepository.findByIdAndUserId(blogId, userId)
                 .orElseThrow(() -> new ExpectedException(HttpStatus.NOT_FOUND, "존재하지 않는 블로그입니다."));
+        imageService.deleteImage(blog.getThumbnail());
         blogRepository.delete(blog);
     }
 
@@ -185,5 +189,9 @@ public class BlogService {
                         imageService.generatePresignedUrl(img.getImageUrl())
                 ))
                 .toList();
+    }
+
+    public ImageKeyResponse uploadBlogThumbnail(MultipartFile file) {
+        return new ImageKeyResponse(imageService.uploadThumbnail(file));
     }
 }
