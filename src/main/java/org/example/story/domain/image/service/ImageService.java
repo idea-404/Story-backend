@@ -138,6 +138,9 @@ public class ImageService {
     }
 
     public String getPublicUrl(String key) {
+        if (key == null || key.isBlank()) {
+            return null;
+        }
         return String.format("https://%s.s3.%s.amazonaws.com/%s",
                 bucket,
                 region,
