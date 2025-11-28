@@ -52,6 +52,9 @@ public class PortfolioJpaEntity {
     @Column(name = "comment")
     private Long comment;
 
+    @Column(name = "thumbnail")
+    private String thumbnail;
+
     @OneToMany(mappedBy = "portfolio", cascade = CascadeType.REMOVE, orphanRemoval = true)
     private List<PortfolioLikeJpaEntity> likes = new ArrayList<>();
 
@@ -62,9 +65,10 @@ public class PortfolioJpaEntity {
     private List<OlaHistoryJpaEntity> ola = new ArrayList<>();
 
 
-    public void update(String title, String content) {
+    public void update(String title, String content, String thumbnail) {
         this.title = title;
         this.content = content;
+        this.thumbnail = thumbnail;
     }
 
     public void increaseLike() {

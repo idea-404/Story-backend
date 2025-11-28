@@ -10,6 +10,7 @@ public record ListResponse(
         Long like,
         Long view,
         Long comment,
-        Instant createdAt
+        Instant createdAt,
+        String thumbnail
 ) {
 }

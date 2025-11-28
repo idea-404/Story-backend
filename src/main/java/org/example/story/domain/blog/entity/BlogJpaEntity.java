@@ -48,15 +48,19 @@ public class BlogJpaEntity {
     @Column(name = "comment")
     private Long comment;
 
+    @Column(name = "thumbnail")
+    private String thumbnail;
+
     @OneToMany(mappedBy = "blog", cascade = CascadeType.REMOVE, orphanRemoval = true)
     private List<BlogLikeJpaEntity> likes = new ArrayList<>();
 
     @OneToMany(mappedBy = "blog", cascade = CascadeType.REMOVE, orphanRemoval = true)
     private List<BlogCommentJpaEntity> comments = new ArrayList<>();
 
-    public void update(String title,String content) {
+    public void update(String title,String content, String thumbnail) {
         this.title = title;
         this.content = content;
+        this.thumbnail = thumbnail;
     }
     public void increaseLike() {
         this.like++;
