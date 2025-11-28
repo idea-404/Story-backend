@@ -96,7 +96,9 @@ public class BlogService {
 
         BlogJpaEntity blog = blogRepository.findByIdAndUserId(blogId, userId)
                 .orElseThrow(() -> new ExpectedException(HttpStatus.NOT_FOUND, "존재하지 않는 블로그입니다."));
-        imageService.deleteImage(blog.getThumbnail());
+        if (blog.getThumbnail() != null) {
+            imageService.deleteImage(blog.getThumbnail());
+        }
         blogRepository.delete(blog);
     }
 

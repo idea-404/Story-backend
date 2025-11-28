@@ -96,7 +96,9 @@ public class PortfolioService {
         }
         PortfolioJpaEntity portfolio = portfolioRepository.findByIdAndUserId(portfolioId, userId)
                 .orElseThrow(() -> new ExpectedException(HttpStatus.NOT_FOUND, "존재하지 않는 포트폴리오입니다."));
-        imageService.deleteImage(portfolio.getThumbnail());
+        if (portfolio.getThumbnail() != null) {
+            imageService.deleteImage(portfolio.getThumbnail());
+        }
         portfolioRepository.delete(portfolio);
     }
 
