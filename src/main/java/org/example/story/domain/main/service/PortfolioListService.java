@@ -1,6 +1,7 @@
 package org.example.story.domain.main.service;
 
 import lombok.RequiredArgsConstructor;
+import org.example.story.domain.image.service.ImageService;
 import org.example.story.domain.main.record.ListResponse;
 import org.example.story.domain.main.record.PortfolioListResponse;
 import org.example.story.domain.portfolio.entity.PortfolioJpaEntity;
@@ -16,6 +17,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class PortfolioListService {
     private final PortfolioRepository portfolioRepository;
+    private final ImageService imageService;
 
     public PortfolioListResponse portfolioFilter(Long lastId, int size, String type){
         List<String> allowedSortFields = List.of("view", "like", "comment");
@@ -38,7 +40,8 @@ public class PortfolioListService {
                         c.getLike(),
                         c.getView(),
                         c.getComment(),
-                        c.getCreatedAt()
+                        c.getCreatedAt(),
+                        imageService.getPublicUrl(c.getThumbnail())
                 ))
                 .collect(Collectors.toList());
 

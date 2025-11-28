@@ -3,6 +3,7 @@ package org.example.story.domain.main.service;
 import lombok.RequiredArgsConstructor;
 import org.example.story.domain.blog.entity.BlogJpaEntity;
 import org.example.story.domain.blog.repository.BlogRepository;
+import org.example.story.domain.image.service.ImageService;
 import org.example.story.domain.main.record.BlogListResponse;
 import org.example.story.domain.main.record.ListResponse;
 import org.example.story.global.error.exception.ExpectedException;
@@ -16,6 +17,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class BlogListService {
     private final BlogRepository blogRepository;
+    private final ImageService imageService;
 
     public BlogListResponse blogFilter(Long lastId, int size, String type){
         List<String> allowedSortFields = List.of("view", "like", "comment");
@@ -39,7 +41,8 @@ public class BlogListService {
                         c.getLike(),
                         c.getView(),
                         c.getComment(),
-                        c.getCreatedAt()
+                        c.getCreatedAt(),
+                        imageService.getPublicUrl(c.getThumbnail())
                 ))
                 .collect(Collectors.toList());
 
