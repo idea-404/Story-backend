@@ -192,6 +192,7 @@ public class BlogService {
                 .toList();
     }
 
+    @Transactional
     public ImageKeyResponse uploadBlogThumbnail(MultipartFile file) {
         return new ImageKeyResponse(imageService.uploadThumbnail(file));
     }
