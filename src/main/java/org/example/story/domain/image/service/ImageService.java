@@ -32,8 +32,7 @@ public class ImageService {
     @Value("${spring.cloud.aws.s3.presigned-url-duration-minutes}")
     private long presignedUrlDuration;
 
-    @Value("${cloud.aws.region.static}")
-    private String region;
+    private static final String THUMBNAIL_DIRECTORY = "thumbnail/";
 
     private static final Set<String> ALLOWED_MIME_TYPES = Set.of("image/jpeg", "image/png", "image/gif");
 
@@ -64,7 +63,7 @@ public class ImageService {
     public String uploadThumbnail(MultipartFile file) {
         validateImageType(file);
 
-        String key = "thumbnail/" + createFileName(file.getOriginalFilename());
+        String key = THUMBNAIL_DIRECTORY + createFileName(file.getOriginalFilename());
 
         try {
             PutObjectRequest putObjectRequest = PutObjectRequest.builder()
