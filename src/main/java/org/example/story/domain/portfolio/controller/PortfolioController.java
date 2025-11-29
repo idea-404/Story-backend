@@ -156,9 +156,4 @@ public class PortfolioController {
         return portfolioService.getPortfolioImages(portfolioId);
     }
 
-    @PostMapping("/thumbnail")
-    @RateLimited(limit = 20, durationSeconds = 30)
-    public ImageKeyResponse uploadThumbnail(@RequestPart("file") MultipartFile file){
-        return portfolioService.uploadPortfolioThumbnail(file);
-    }
 }

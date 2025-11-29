@@ -3,7 +3,8 @@ package org.example.story.domain.main.service;
 import lombok.RequiredArgsConstructor;
 import org.example.story.domain.blog.entity.BlogJpaEntity;
 import org.example.story.domain.blog.repository.BlogRepository;
-import org.example.story.domain.main.record.ListResponse;
+import org.example.story.domain.main.record.BlogViewResponse;
+import org.example.story.domain.main.record.PortfolioViewResponse;
 import org.example.story.domain.main.record.SearchListResponse;
 import org.example.story.domain.portfolio.entity.PortfolioJpaEntity;
 import org.example.story.domain.portfolio.repository.PortfolioRepository;
@@ -22,10 +23,10 @@ public class SearchService {
     public SearchListResponse search(Long lastId, int size, String keyword){
         List<PortfolioJpaEntity> portfolios =
                 portfolioRepository.findWithCursor(lastId, size, null, true, keyword, true);
-        List<ListResponse> portfolioListResponses = portfolioListService.setList(portfolios);
+        List<PortfolioViewResponse> portfolioListResponses = portfolioListService.setList(portfolios);
         List<BlogJpaEntity> blogs =
                 blogRepository.findWithCursor(lastId, size, null, true, keyword, null);
-        List<ListResponse> blogListResponses = blogListService.setList(blogs);
+        List<BlogViewResponse> blogListResponses = blogListService.setList(blogs);
 
         return new SearchListResponse(portfolioListResponses, blogListResponses);
     }

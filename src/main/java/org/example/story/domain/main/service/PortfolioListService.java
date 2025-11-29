@@ -1,9 +1,8 @@
 package org.example.story.domain.main.service;
 
 import lombok.RequiredArgsConstructor;
-import org.example.story.domain.image.service.ImageService;
-import org.example.story.domain.main.record.ListResponse;
 import org.example.story.domain.main.record.PortfolioListResponse;
+import org.example.story.domain.main.record.PortfolioViewResponse;
 import org.example.story.domain.portfolio.entity.PortfolioJpaEntity;
 import org.example.story.domain.portfolio.repository.PortfolioRepository;
 import org.example.story.global.error.exception.ExpectedException;
@@ -17,7 +16,6 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class PortfolioListService {
     private final PortfolioRepository portfolioRepository;
-    private final ImageService imageService;
 
     public PortfolioListResponse portfolioFilter(Long lastId, int size, String type){
         List<String> allowedSortFields = List.of("view", "like", "comment");
@@ -26,13 +24,13 @@ public class PortfolioListService {
         }
         List<PortfolioJpaEntity> portfolios =
                 portfolioRepository.findWithCursor(lastId, size, type, true, null, true);
-        List<ListResponse> listResponses = setList(portfolios);
+        List<PortfolioViewResponse> listResponses = setList(portfolios);
         return new PortfolioListResponse(listResponses);
     }
 
-    public List<ListResponse> setList(List<PortfolioJpaEntity> portfolios){
-        List<ListResponse> listResponses = portfolios.stream()
-                .map(c -> new ListResponse(
+    public List<PortfolioViewResponse> setList(List<PortfolioJpaEntity> portfolios){
+        List<PortfolioViewResponse> listResponses = portfolios.stream()
+                .map(c -> new PortfolioViewResponse(
                         c.getId(),
                         c.getUser().getId(),
                         c.getTitle(),
@@ -40,8 +38,7 @@ public class PortfolioListService {
                         c.getLike(),
                         c.getView(),
                         c.getComment(),
-                        c.getCreatedAt(),
-                        imageService.getPublicUrl(c.getThumbnail())
+                        c.getCreatedAt()
                 ))
                 .collect(Collectors.toList());
 
