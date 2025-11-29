@@ -85,6 +85,7 @@ public class BlogService {
     }
 
 
+    @Transactional
     public void delete(Long userId, Long blogId) {
         List<BlogImageJpaEntity> images =
                 blogImageRepository.findByBlogId(blogId);
@@ -95,7 +96,7 @@ public class BlogService {
 
         BlogJpaEntity blog = blogRepository.findByIdAndUserId(blogId, userId)
                 .orElseThrow(() -> new ExpectedException(HttpStatus.NOT_FOUND, "존재하지 않는 블로그입니다."));
-        if (blog.getThumbnail() != null) {
+        if (blog.getThumbnail() != null  && !blog.getThumbnail().isBlank()) {
             imageService.deleteImage(blog.getThumbnail());
         }
         blogRepository.delete(blog);
@@ -192,7 +193,7 @@ public class BlogService {
                 .toList();
     }
 
-    @Transactional
+
     public ImageKeyResponse uploadBlogThumbnail(MultipartFile file) {
         return new ImageKeyResponse(imageService.uploadThumbnail(file));
     }
