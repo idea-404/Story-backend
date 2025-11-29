@@ -1,7 +1,6 @@
 package org.example.story.domain.portfolio.service;
 
 import org.example.story.domain.image.entity.PortfolioImageJpaEntity;
-import org.example.story.domain.image.record.response.ImageKeyResponse;
 import org.example.story.domain.image.record.response.ImageResponse;
 import org.example.story.domain.image.repository.PortfolioImageRepository;
 import org.example.story.domain.image.service.ImageService;
