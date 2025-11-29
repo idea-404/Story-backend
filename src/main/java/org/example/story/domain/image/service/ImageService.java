@@ -141,10 +141,6 @@ public class ImageService {
         if (key == null || key.isBlank()) {
             return null;
         }
-        return String.format("https://%s.s3.%s.amazonaws.com/%s",
-                bucket,
-                region,
-                key
-        );
+        return s3Client.utilities().getUrl(builder -> builder.bucket(bucket).key(key)).toString();
     }
 }
