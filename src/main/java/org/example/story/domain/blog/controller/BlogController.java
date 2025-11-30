@@ -10,6 +10,7 @@ import org.example.story.domain.blog.record.response.BlogLikeResponse;
 import org.example.story.domain.blog.service.BlogCommentService;
 import org.example.story.domain.blog.service.BlogQueryService;
 import org.example.story.domain.blog.service.BlogService;
+import org.example.story.domain.image.record.response.ImageKeyResponse;
 import org.example.story.domain.image.record.response.ImageResponse;
 import org.example.story.global.aop.RateLimited;
 import org.example.story.global.security.auth.AuthUtils;
@@ -142,5 +143,11 @@ public class BlogController {
     @RateLimited(limit = 20, durationSeconds = 30)
     public List<ImageResponse> getBlogImages(@PathVariable Long blogId) {
         return blogService.getBlogImages(blogId);
+    }
+
+    @PostMapping("/thumbnail")
+    @RateLimited(limit = 20, durationSeconds = 30)
+    public ImageKeyResponse uploadThumbnail(@RequestPart("file") MultipartFile file){
+        return blogService.uploadBlogThumbnail(file);
     }
 }

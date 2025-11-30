@@ -154,4 +154,5 @@ public class PortfolioController {
     public List<ImageResponse> getPortfolioImages(@PathVariable Long portfolioId) {
         return portfolioService.getPortfolioImages(portfolioId);
     }
+
 }

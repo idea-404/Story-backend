@@ -10,6 +10,7 @@ import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.model.DeleteObjectRequest;
 import software.amazon.awssdk.services.s3.model.GetObjectRequest;
+import software.amazon.awssdk.services.s3.model.ObjectCannedACL;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 import software.amazon.awssdk.services.s3.presigner.S3Presigner;
 import software.amazon.awssdk.services.s3.presigner.model.PresignedGetObjectRequest;
@@ -30,6 +31,8 @@ public class ImageService {
 
     @Value("${spring.cloud.aws.s3.presigned-url-duration-minutes}")
     private long presignedUrlDuration;
+
+    private static final String THUMBNAIL_DIRECTORY = "thumbnail/";
 
     private static final Set<String> ALLOWED_MIME_TYPES = Set.of("image/jpeg", "image/png", "image/gif");
 
@@ -57,6 +60,30 @@ public class ImageService {
         return fileName;
     }
 
+    public String uploadThumbnail(MultipartFile file) {
+        validateImageType(file);
+
+        String key = THUMBNAIL_DIRECTORY + createFileName(file.getOriginalFilename());
+
+        try {
+            PutObjectRequest putObjectRequest = PutObjectRequest.builder()
+                    .bucket(bucket)
+                    .key(key)
+                    .contentType(file.getContentType())
+                    .acl(ObjectCannedACL.PUBLIC_READ)
+                    .build();
+
+            s3Client.putObject(
+                    putObjectRequest,
+                    RequestBody.fromInputStream(file.getInputStream(), file.getSize())
+            );
+
+        } catch (IOException e) {
+            throw new ExpectedException(HttpStatus.INTERNAL_SERVER_ERROR, "썸네일 업로드 실패");
+        }
+
+        return key;
+    }
 
     public String generatePresignedUrl(String fileName) {
 
@@ -107,5 +134,12 @@ public class ImageService {
 
         if (type == null || !ALLOWED_MIME_TYPES.contains(type.toLowerCase()))
             throw new ExpectedException(HttpStatus.BAD_REQUEST, "MIME 타입 오류");
+    }
+
+    public String getPublicUrl(String key) {
+        if (key == null || key.isBlank()) {
+            return null;
+        }
+        return s3Client.utilities().getUrl(builder -> builder.bucket(bucket).key(key)).toString();
     }
 }
