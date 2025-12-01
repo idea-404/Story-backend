@@ -1,11 +1,15 @@
 package org.example.story.global.security.jwt;
 
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.UnsupportedJwtException;
+import io.jsonwebtoken.security.SignatureException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.example.story.global.error.exception.ExpectedException;
 import org.example.story.global.security.jwt.custom.CustomPrincipal;
 import org.springframework.http.HttpStatus;
@@ -23,6 +27,7 @@ import java.util.List;
 
 @Component
 @RequiredArgsConstructor
+@Slf4j
 public class JwtHeaderFilter extends OncePerRequestFilter {
     private final JwtTokenProvider jwtTokenProvider;
 
@@ -35,7 +40,18 @@ public class JwtHeaderFilter extends OncePerRequestFilter {
         String token = null;
         if (bearerToken != null && bearerToken.startsWith("Bearer ")) {
             token = bearerToken.substring(7);
-            Claims claims = jwtTokenProvider.getClaimsFromToken(token);
+            Claims claims = null;
+            try {
+                claims = jwtTokenProvider.getClaimsFromToken(token);
+            } catch (ExpiredJwtException e) {
+                log.debug("토큰이 만료되었습니다: {}", e.getMessage());
+            } catch (SignatureException e) {
+                log.debug("유효하지 않은 서명입니다: {}", e.getMessage());
+            } catch (UnsupportedJwtException e) {
+                log.debug("지원하지 않는 JWT입니다: {}", e.getMessage());
+            } catch (Exception e) {
+                log.debug("JWT 처리 중 예상치 못한 오류: {}", e.getMessage());
+            }
             if (claims != null) {
                 try {
                     Long userId = claims.get("userId", Long.class);

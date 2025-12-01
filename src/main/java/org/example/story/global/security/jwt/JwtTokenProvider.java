@@ -55,11 +55,7 @@ public class JwtTokenProvider {
 
     // 토큰 유효성 검사 후 권한 파싱
     public Claims getClaimsFromToken(String token) {
-        try {
-            return Jwts.parserBuilder()
+        return Jwts.parserBuilder()
                     .setSigningKey(key).build().parseClaimsJws(token).getBody();
-        } catch (JwtException | IllegalArgumentException e) {
-            throw new ExpectedException(HttpStatus.UNAUTHORIZED, "토큰 에러 : " + e.getMessage());
-        }
     }
 }
