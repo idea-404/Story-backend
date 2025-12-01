@@ -2,6 +2,7 @@ package org.example.story.global.security.jwt;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.UnsupportedJwtException;
 import io.jsonwebtoken.security.SignatureException;
 import jakarta.servlet.FilterChain;
@@ -37,9 +38,8 @@ public class JwtHeaderFilter extends OncePerRequestFilter {
                                     FilterChain filterChain)
             throws ServletException, IOException {
         String bearerToken = request.getHeader("Authorization");
-        String token = null;
         if (bearerToken != null && bearerToken.startsWith("Bearer ")) {
-            token = bearerToken.substring(7);
+            String token = bearerToken.substring(7);
             Claims claims = null;
             try {
                 claims = jwtTokenProvider.getClaimsFromToken(token);
@@ -49,6 +49,8 @@ public class JwtHeaderFilter extends OncePerRequestFilter {
                 log.debug("유효하지 않은 서명입니다: {}", e.getMessage());
             } catch (UnsupportedJwtException e) {
                 log.debug("지원하지 않는 JWT입니다: {}", e.getMessage());
+            } catch (MalformedJwtException e) {
+                log.debug("토큰 형식이 잘못되었습니다: {}", e.getMessage());
             } catch (Exception e) {
                 log.debug("JWT 처리 중 예상치 못한 오류: {}", e.getMessage());
             }
