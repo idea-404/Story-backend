@@ -2,7 +2,7 @@ package org.example.story.domain.main.record;
 
 import java.time.Instant;
 
-public record ListResponse(
+public record BlogViewResponse(
         Long id,
         Long userId,
         String title,
@@ -10,6 +10,7 @@ public record ListResponse(
         Long like,
         Long view,
         Long comment,
-        Instant createdAt
+        Instant createdAt,
+        String thumbnail
 ) {
 }

@@ -4,6 +4,6 @@ package org.example.story.domain.main.record;
 import java.util.List;
 
 public record PortfolioListResponse(
-        List<ListResponse> portfolio
+        List<PortfolioViewResponse> portfolio
 ) {
 }
