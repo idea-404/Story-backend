@@ -49,7 +49,6 @@ public class GetInformationService {
                 user.getIntroduce(),
                 user.getRole()
         ), expireTime);
-        Claims claims = jwtTokenProvider.getClaimsFromToken(token);
-        return new TokenResDto(token, claims.get("role").toString());
+        return new TokenResDto(token, user.getRole());
     }
 }
