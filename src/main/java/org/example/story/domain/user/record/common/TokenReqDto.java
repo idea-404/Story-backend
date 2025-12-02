@@ -1,6 +1,6 @@
 package org.example.story.domain.user.record.common;
 
-public record TokenDto(
+public record TokenReqDto(
         String token
 ) {
 }
