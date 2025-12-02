@@ -1,12 +1,15 @@
 package org.example.story.domain.user.service;
 
+import io.jsonwebtoken.Claims;
 import lombok.RequiredArgsConstructor;
+import org.example.story.domain.user.record.common.TokenResDto;
 import org.example.story.domain.user.record.common.kakao.KakaoAccount;
 import org.example.story.domain.user.record.common.kakao.KakaoTokenResponse;
-import org.example.story.domain.user.record.common.TokenDto;
+import org.example.story.domain.user.record.common.TokenReqDto;
 import org.example.story.domain.user.record.common.kakao.KakaoUserInfoResponse;
 import org.example.story.global.config.KakaoOAuthConfig;
 import org.example.story.global.error.exception.ExpectedException;
+import org.example.story.global.security.jwt.JwtTokenProvider;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
@@ -22,13 +25,16 @@ public class KakaoLoginService {
     private final RestTemplate restTemplate;
     private final KakaoOAuthConfig kakaoOAuthConfig;
     private final GetAccountTokenService getAccountTokenService;
+    private final JwtTokenProvider jwtTokenProvider;
 
-    public TokenDto execute(String code) {
+    public TokenResDto execute(String code) {
         // access_token 받아오기 대작전
         try {
             String accessToken = getKakaoAccessToken(code);
             String email = getKakaoUserEmail(accessToken);
-            return new TokenDto(getAccountTokenService.execute(email));
+            String token = getAccountTokenService.execute(email);
+            Claims claims = jwtTokenProvider.getClaimsFromToken(token);
+            return new TokenResDto(token, claims.get("role").toString());
         } catch (RestClientException e) {
             throw new ExpectedException(HttpStatus.INTERNAL_SERVER_ERROR,
                     "카카오 로그인 처리 중 오류가 발생했습니다.");

@@ -2,7 +2,8 @@ package org.example.story.domain.user.service;
 
 import io.jsonwebtoken.Claims;
 import lombok.RequiredArgsConstructor;
-import org.example.story.domain.user.record.common.TokenDto;
+import org.example.story.domain.user.record.common.TokenReqDto;
+import org.example.story.domain.user.record.common.TokenResDto;
 import org.example.story.global.security.jwt.JwtTokenProvider;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -14,9 +15,12 @@ public class VerifyService {
     private final JwtTokenProvider jwtTokenProvider;
     private final GetAccountTokenService getAccountTokenService;
 
-    public TokenDto execute(String token) {
+    public TokenResDto execute(String token) {
         Claims claims = jwtTokenProvider.getClaimsFromToken(token);
         String email = claims.getSubject();
-        return new TokenDto(getAccountTokenService.execute(email));
+        String finalToken = getAccountTokenService.execute(email);
+        claims = jwtTokenProvider.getClaimsFromToken(finalToken);
+        return new TokenResDto(
+                finalToken, claims.get("role").toString());
     }
 }
