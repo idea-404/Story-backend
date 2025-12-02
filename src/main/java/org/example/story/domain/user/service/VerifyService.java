@@ -18,9 +18,6 @@ public class VerifyService {
     public TokenResDto execute(String token) {
         Claims claims = jwtTokenProvider.getClaimsFromToken(token);
         String email = claims.getSubject();
-        String finalToken = getAccountTokenService.execute(email);
-        claims = jwtTokenProvider.getClaimsFromToken(finalToken);
-        return new TokenResDto(
-                finalToken, claims.get("role").toString());
+        return getAccountTokenService.execute(email);
     }
 }

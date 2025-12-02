@@ -32,9 +32,7 @@ public class KakaoLoginService {
         try {
             String accessToken = getKakaoAccessToken(code);
             String email = getKakaoUserEmail(accessToken);
-            String token = getAccountTokenService.execute(email);
-            Claims claims = jwtTokenProvider.getClaimsFromToken(token);
-            return new TokenResDto(token, claims.get("role").toString());
+            return getAccountTokenService.execute(email);
         } catch (RestClientException e) {
             throw new ExpectedException(HttpStatus.INTERNAL_SERVER_ERROR,
                     "카카오 로그인 처리 중 오류가 발생했습니다.");

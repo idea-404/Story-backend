@@ -71,9 +71,7 @@ public class GoogleLoginService {
             if (email == null) {
                 throw new ExpectedException(HttpStatus.BAD_REQUEST, "이메일이 존재하지 않습니다.");
             }
-            String token = getAccountTokenService.execute(email);
-            Claims claims = jwtTokenProvider.getClaimsFromToken(token);
-            return new TokenResDto(token, claims.get("role").toString());
+            return getAccountTokenService.execute(email);
         } catch (GeneralSecurityException e) {
             throw new ExpectedException(HttpStatus.UNAUTHORIZED, "ID 토큰 검증에 실패하였습니다.");
         } catch (IOException e) {
