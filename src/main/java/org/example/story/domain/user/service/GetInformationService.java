@@ -43,7 +43,7 @@ public class GetInformationService {
                 user.getEmail(),
                 user.getId(),
                 user.getNickname(),
-                Long.parseLong(user.getHakburn()),
+                user.getHakburn(),
                 user.getProfileImage(),
                 user.getMajor(),
                 user.getIntroduce(),
