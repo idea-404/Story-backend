@@ -31,7 +31,7 @@ public class GetAccountTokenService {
                                 email,
                                 user.getId(),
                                 user.getNickname(),
-                                user.getHakburn() != null ? Long.parseLong(user.getHakburn()) : null,
+                                user.getHakburn(),
                                 user.getProfileImage(),
                                 user.getMajor(),
                                 user.getIntroduce(),

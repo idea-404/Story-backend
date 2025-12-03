@@ -34,7 +34,7 @@ public class GetInformationService {
                     new ExpectedException(HttpStatus.NOT_FOUND, "존재하지 않는 계정입니다."));
         user.updateUserInformation(
                 reqDto.nickname(),
-                reqDto.studentId().toString(),
+                reqDto.studentId(),
                 reqDto.profileImage(),
                 reqDto.major(),
                 reqDto.introduce()
@@ -43,7 +43,7 @@ public class GetInformationService {
                 user.getEmail(),
                 user.getId(),
                 user.getNickname(),
-                Long.parseLong(user.getHakburn()),
+                user.getHakburn(),
                 user.getProfileImage(),
                 user.getMajor(),
                 user.getIntroduce(),
