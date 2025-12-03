@@ -33,6 +33,7 @@ public class PortfolioListService {
                 .map(c -> new PortfolioViewResponse(
                         c.getId(),
                         c.getUser().getId(),
+                        c.getUser().getNickname(),
                         c.getTitle(),
                         c.getContent(),
                         c.getLike(),
