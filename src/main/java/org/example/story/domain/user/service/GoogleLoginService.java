@@ -2,12 +2,15 @@ package org.example.story.domain.user.service;
 
 import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken;
 import com.google.api.client.googleapis.auth.oauth2.GoogleIdTokenVerifier;
+import io.jsonwebtoken.Claims;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.example.story.domain.user.record.common.GoogleTokenResponse;
-import org.example.story.domain.user.record.common.TokenDto;
+import org.example.story.domain.user.record.common.TokenReqDto;
+import org.example.story.domain.user.record.common.TokenResDto;
 import org.example.story.global.config.GoogleOAuthConfig;
 import org.example.story.global.error.exception.ExpectedException;
+import org.example.story.global.security.jwt.JwtTokenProvider;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
@@ -26,8 +29,9 @@ public class GoogleLoginService {
     private final GoogleOAuthConfig googleOAuthConfig;
     private final GetAccountTokenService getAccountTokenService;
     private final GoogleIdTokenVerifier googleIdTokenVerifier;
+    private final JwtTokenProvider jwtTokenProvider;
 
-    public TokenDto execute(String code) {
+    public TokenResDto execute(String code) {
         // 토큰 요청
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
@@ -67,8 +71,7 @@ public class GoogleLoginService {
             if (email == null) {
                 throw new ExpectedException(HttpStatus.BAD_REQUEST, "이메일이 존재하지 않습니다.");
             }
-
-            return new TokenDto(getAccountTokenService.execute(email));
+            return getAccountTokenService.execute(email);
         } catch (GeneralSecurityException e) {
             throw new ExpectedException(HttpStatus.UNAUTHORIZED, "ID 토큰 검증에 실패하였습니다.");
         } catch (IOException e) {

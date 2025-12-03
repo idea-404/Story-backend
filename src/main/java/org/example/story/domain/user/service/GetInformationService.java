@@ -1,8 +1,10 @@
 package org.example.story.domain.user.service;
 
+import io.jsonwebtoken.Claims;
 import lombok.RequiredArgsConstructor;
 import org.example.story.domain.user.entity.UserJpaEntity;
-import org.example.story.domain.user.record.common.TokenDto;
+import org.example.story.domain.user.record.common.TokenReqDto;
+import org.example.story.domain.user.record.common.TokenResDto;
 import org.example.story.domain.user.record.request.SignupInformReqDto;
 import org.example.story.domain.user.repository.UserRepository;
 import org.example.story.global.error.exception.ExpectedException;
@@ -23,7 +25,7 @@ public class GetInformationService {
     @Value("${jwt.expire-time}")
     private Long expireTime;
 
-    public TokenDto execute(Long userId, SignupInformReqDto reqDto) {
+    public TokenResDto execute(Long userId, SignupInformReqDto reqDto) {
         if(reqDto.studentId().toString().length() != 4) {
             throw new ExpectedException(HttpStatus.BAD_REQUEST, "학번은 무조건 4자리여야 합니다.");
         }
@@ -37,7 +39,7 @@ public class GetInformationService {
                 reqDto.major(),
                 reqDto.introduce()
         );
-        return new TokenDto(jwtTokenProvider.createToken(new TokenClaimsDto(
+        String token = jwtTokenProvider.createToken(new TokenClaimsDto(
                 user.getEmail(),
                 user.getId(),
                 user.getNickname(),
@@ -46,6 +48,7 @@ public class GetInformationService {
                 user.getMajor(),
                 user.getIntroduce(),
                 user.getRole()
-        ), expireTime));
+        ), expireTime);
+        return new TokenResDto(token, user.getRole());
     }
 }

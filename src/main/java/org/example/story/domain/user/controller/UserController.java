@@ -4,7 +4,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.example.story.domain.user.record.common.CodeDto;
 import org.example.story.domain.user.record.common.EmailDto;
-import org.example.story.domain.user.record.common.TokenDto;
+import org.example.story.domain.user.record.common.TokenResDto;
 import org.example.story.domain.user.record.request.SignupInformReqDto;
 import org.example.story.domain.user.service.*;
 import org.example.story.global.security.auth.AuthUtils;
@@ -39,32 +39,32 @@ public class UserController {
     }
 
     @PostMapping("/verify")
-    public ResponseEntity<TokenDto> verify(
+    public ResponseEntity<TokenResDto> verify(
             @RequestParam String token) {
-        TokenDto dto = verifyService.execute(token);
+        TokenResDto dto = verifyService.execute(token);
         return ResponseEntity.status(HttpStatus.CREATED).body(dto);
     }
 
     @PostMapping("/google")
-    public ResponseEntity<TokenDto> googleLogin(
+    public ResponseEntity<TokenResDto> googleLogin(
             @RequestBody @Valid CodeDto reqDto) {
-        TokenDto dto = googleLoginService.execute(reqDto.code());
+        TokenResDto dto = googleLoginService.execute(reqDto.code());
         return ResponseEntity.status(HttpStatus.CREATED).body(dto);
     }
 
     @PostMapping("/kakao")
-    public ResponseEntity<TokenDto> kakaoLogin(
+    public ResponseEntity<TokenResDto> kakaoLogin(
             @RequestBody @Valid CodeDto reqDto) {
-        TokenDto dto = kakaoLoginService.execute(reqDto.code());
+        TokenResDto dto = kakaoLoginService.execute(reqDto.code());
         return ResponseEntity.status(HttpStatus.CREATED).body(dto);
     }
 
     @PostMapping("/signup/inform")
-    public ResponseEntity<TokenDto> information(
+    public ResponseEntity<TokenResDto> information(
             @RequestBody @Valid SignupInformReqDto reqDto
             ) {
         Long userId = authUtils.getCurrentUserId();
-        TokenDto dto = getInformationService.execute(userId, reqDto);
+        TokenResDto dto = getInformationService.execute(userId, reqDto);
         return ResponseEntity.status(HttpStatus.CREATED).body(dto);
     }
 }

@@ -5,7 +5,8 @@ import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.UnsupportedJwtException;
 import io.jsonwebtoken.security.SignatureException;
 import lombok.RequiredArgsConstructor;
-import org.example.story.domain.user.record.common.TokenDto;
+import org.example.story.domain.user.record.common.TokenReqDto;
+import org.example.story.domain.user.record.common.TokenResDto;
 import org.example.story.global.error.exception.ExpectedException;
 import org.example.story.global.security.jwt.JwtTokenProvider;
 import org.springframework.http.HttpStatus;
@@ -19,11 +20,11 @@ public class VerifyService {
     private final JwtTokenProvider jwtTokenProvider;
     private final GetAccountTokenService getAccountTokenService;
 
-    public TokenDto execute(String token) {
+    public TokenResDto execute(String token) {
         try {
             Claims claims = jwtTokenProvider.getClaimsFromToken(token);
             String email = claims.getSubject();
-            return new TokenDto(getAccountTokenService.execute(email));
+            return getAccountTokenService.execute(email);
         } catch (ExpiredJwtException e) {
             throw new ExpectedException(HttpStatus.UNAUTHORIZED, "JWT 토큰이 만료되었습니다.");
         } catch (SignatureException e) {

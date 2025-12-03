@@ -2,6 +2,7 @@ package org.example.story.domain.user.service;
 
 import lombok.RequiredArgsConstructor;
 import org.example.story.domain.user.entity.UserJpaEntity;
+import org.example.story.domain.user.record.common.TokenResDto;
 import org.example.story.domain.user.repository.UserRepository;
 import org.example.story.global.security.jwt.JwtTokenProvider;
 import org.example.story.global.security.jwt.record.common.TokenClaimsDto;
@@ -19,22 +20,24 @@ public class GetAccountTokenService {
     @Value("${jwt.expire-time}")
     private Long expireTime;
 
-    public String execute(String email) {
+    public TokenResDto execute(String email) {
         UserJpaEntity user = userRepository.findByEmail(email)
                 .orElseGet(() -> userRepository.save(
                         UserJpaEntity.builder().email(email).build()
                 ));
-        return jwtTokenProvider.createToken(
-                new TokenClaimsDto(
-                        email,
-                        user.getId(),
-                        user.getNickname(),
-                        user.getHakburn() != null ? Long.parseLong(user.getHakburn()) : null,
-                        user.getProfileImage(),
-                        user.getMajor(),
-                        user.getIntroduce(),
-                        user.getRole()
-                ), expireTime
+        return new TokenResDto(
+                jwtTokenProvider.createToken(
+                        new TokenClaimsDto(
+                                email,
+                                user.getId(),
+                                user.getNickname(),
+                                user.getHakburn() != null ? Long.parseLong(user.getHakburn()) : null,
+                                user.getProfileImage(),
+                                user.getMajor(),
+                                user.getIntroduce(),
+                                user.getRole()
+                        ), expireTime
+                ), user.getRole()
         );
     }
 }
