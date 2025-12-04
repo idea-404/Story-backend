@@ -6,8 +6,6 @@ import org.example.story.domain.blog.repository.BlogRepository;
 import org.example.story.domain.image.service.ImageService;
 import org.example.story.domain.main.record.BlogListResponse;
 import org.example.story.domain.main.record.BlogViewResponse;
-import org.example.story.domain.user.entity.UserJpaEntity;
-import org.example.story.domain.user.repository.UserRepository;
 import org.example.story.global.error.exception.ExpectedException;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -20,7 +18,6 @@ import java.util.stream.Collectors;
 public class BlogListService {
     private final BlogRepository blogRepository;
     private final ImageService imageService;
-    private final UserRepository userRepository;
 
     public BlogListResponse blogFilter(Long lastId, int size, String type){
         List<String> allowedSortFields = List.of("view", "like", "comment");
