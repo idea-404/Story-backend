@@ -26,4 +26,11 @@ public interface PortfolioRepository extends JpaRepository<PortfolioJpaEntity, L
     @Transactional
     @Query("UPDATE PortfolioJpaEntity p SET p.comment = p.comment - 1 WHERE p.id = :portfolioId")
     void decrementComment(Long portfolioId);
+
+    @Query("""
+            select p from PortfolioJpaEntity p
+            join fetch p.user
+            where p.user.id = :userId
+            """)
+    List<PortfolioJpaEntity> findByUserId(Long userId);
 }
