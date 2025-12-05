@@ -5,6 +5,7 @@ import java.time.Instant;
 public record PortfolioViewResponse(
         Long id,
         Long userId,
+        String nickname,
         String title,
         String content,
         Long like,

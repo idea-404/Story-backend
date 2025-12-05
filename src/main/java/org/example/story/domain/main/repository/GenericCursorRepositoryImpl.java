@@ -23,85 +23,103 @@ public class GenericCursorRepositoryImpl<T> implements GenericCursorRepository<T
 
     @Override
     public List<T> findWithCursor(Long lastId, int size, String sortBy,
-                                  boolean desc, String keyword, Boolean zerodog){
+                                  boolean desc, String keyword, Boolean zerodog) {
+
         CriteriaBuilder cb = em.getCriteriaBuilder();
         CriteriaQuery<T> cq = cb.createQuery(domainClass);
         Root<T> root = cq.from(domainClass);
 
         List<Predicate> predicates = new ArrayList<>();
 
-        // User 테이블 nickname 검색용
+        /* ------------------------------
+         *   User Fetch Join + Join
+         * ------------------------------ */
         Join<Object, Object> userJoin = null;
+        boolean hasUserRelation = true;
+
         try {
+            // nickname 조회를 위한 fetch join (항상 즉시 로딩 → N+1 제거)
+            root.fetch("user", JoinType.LEFT);
+
+            // keyword 검색을 위해 일반 join도 필요
             userJoin = root.join("user", JoinType.LEFT);
         } catch (IllegalArgumentException e) {
-            // user 관계 없는 엔티티는 무시
+            hasUserRelation = false;
         }
 
-        // 커서 페이징 조건
-        if(lastId != null){
+
+        /* ------------------------------
+         *     Cursor 페이징 조건
+         * ------------------------------ */
+        if (lastId != null) {
             predicates.add(cb.lessThan(root.get("id"), lastId));
         }
 
-        // 포트폴리오에서만 사용 블로그에선 값을 누락시켜 넘김
-        try{
+        /* ------------------------------
+         *     zerodog 필터 (Portfolio 전용)
+         * ------------------------------ */
+        try {
             root.get("zerodog");
-            if(zerodog != null){
+            if (zerodog != null) {
                 predicates.add(cb.equal(root.get("zerodog"), zerodog));
             }
-        }catch(IllegalArgumentException e){}
+        } catch (IllegalArgumentException ignore) {}
 
+
+        /* ------------------------------
+         *     Keyword 검색 (title/content/nickname)
+         * ------------------------------ */
         Expression<Integer> matchCount = cb.literal(0);
 
         if (keyword != null && !keyword.isEmpty()) {
+
             Expression<Integer> titleMatch;
             Expression<Integer> contentMatch;
             Expression<Integer> nicknameMatch = cb.literal(0);
 
             try {
-                // CASE WHEN title LIKE '%keyword%' THEN 1 ELSE 0 END
                 titleMatch = cb.<Integer>selectCase()
                         .when(cb.like(root.get("title"), "%" + keyword + "%"), 1)
                         .otherwise(0);
 
-                // CASE WHEN content LIKE '%keyword%' THEN 1 ELSE 0 END
                 contentMatch = cb.<Integer>selectCase()
                         .when(cb.like(root.get("content"), "%" + keyword + "%"), 1)
                         .otherwise(0);
 
-                // CASE WHEN nickname LIKE '%keyword%' THEN 1 ELSE 0 END (user가 있을 경우만)
-                if (userJoin != null) {
+                if (hasUserRelation) {
                     nicknameMatch = cb.<Integer>selectCase()
                             .when(cb.like(userJoin.get("nickname"), "%" + keyword + "%"), 1)
                             .otherwise(0);
                 }
 
             } catch (IllegalArgumentException e) {
-                // 기본 안전값으로 초기화
                 titleMatch = cb.literal(0);
                 contentMatch = cb.literal(0);
-                nicknameMatch = cb.literal(0);
             }
 
-            // matchCount = titleMatch + contentMatch + nicknameMatch
             matchCount = cb.sum(cb.sum(titleMatch, contentMatch), nicknameMatch);
 
-            // 매치된 항목만 (즉, 하나라도 일치한 경우)
             predicates.add(cb.greaterThan(matchCount, 0));
 
-            // ORDER BY matchCount DESC, like DESC
+            // 검색 시: matchCount DESC 우선 정렬
             cq.orderBy(cb.desc(matchCount), cb.desc(root.get("like")));
+
         } else {
-            // keyword 없을 시 기본 정렬
+            /* ------------------------------
+             *    기본 정렬 (검색 없을 때)
+             * ------------------------------ */
             Path<?> sortPath = root.get(sortBy);
             if (desc) cq.orderBy(cb.desc(sortPath), cb.desc(root.get("id")));
             else cq.orderBy(cb.asc(sortPath), cb.desc(root.get("id")));
         }
 
+
         cq.where(predicates.toArray(new Predicate[0]));
+
         TypedQuery<T> query = em.createQuery(cq);
         query.setMaxResults(size);
 
         return query.getResultList();
     }
+
 }

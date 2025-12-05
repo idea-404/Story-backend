@@ -36,6 +36,7 @@ public class BlogListService {
                 .map(c -> new BlogViewResponse(
                         c.getId(),
                         c.getUser().getId(),
+                        c.getUser().getNickname(),
                         c.getTitle(),
                         c.getContent(),
                         c.getLike(),
