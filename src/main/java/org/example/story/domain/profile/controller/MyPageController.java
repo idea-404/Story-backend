@@ -18,7 +18,7 @@ public class MyPageController {
     private final ViewMyPageService viewMyPageService;
     private final EditMyPageService editMyPageService;
 
-    @GetMapping("/")
+    @GetMapping("/view")
     public ResponseEntity<ViewMyPageResDto> viewMyPage() {
         Long userId = authUtils.getCurrentUserId();
         return ResponseEntity.ok().body(
