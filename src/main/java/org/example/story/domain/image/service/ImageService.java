@@ -26,7 +26,7 @@ public class ImageService {
     private final S3Client s3Client;
     private final S3Presigner s3Presigner;
 
-    @Value("${cloud.aws.s3.bucket}")
+    @Value("${cloud.aws.s3.bucket:#{null}}")
     private String bucket;
 
     @Value("${spring.cloud.aws.s3.presigned-url-duration-minutes}")

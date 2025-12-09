@@ -13,8 +13,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public interface PortfolioRepository extends JpaRepository<PortfolioJpaEntity, Long>,
-        GenericCursorRepository<PortfolioJpaEntity> {
+public interface PortfolioRepository extends JpaRepository<PortfolioJpaEntity, Long> {
     Optional<PortfolioJpaEntity> findByIdAndUserId(Long id, Long userId);
 
     @Modifying

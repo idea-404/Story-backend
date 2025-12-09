@@ -34,6 +34,7 @@ public class BlogService {
     private final ImageService imageService;
     private final BlogImageRepository blogImageRepository;
 
+
     public BlogResponse write(Long userId, BlogRequest request) {
         UserJpaEntity user = userRepository.findById(userId)
                 .orElseThrow(() -> new ExpectedException(HttpStatus.NOT_FOUND, "존재하지 않는 유저입니다."));
