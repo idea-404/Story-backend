@@ -11,8 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.Optional;
 
 @Repository
-public interface BlogRepository extends JpaRepository<BlogJpaEntity, Long>,
-        GenericCursorRepository<BlogJpaEntity> {
+public interface BlogRepository extends JpaRepository<BlogJpaEntity, Long> {
     Optional<BlogJpaEntity> findByIdAndUserId(Long id, Long userId);
 
     @Modifying

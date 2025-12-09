@@ -4,20 +4,19 @@ import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.TypedQuery;
 import jakarta.persistence.criteria.*;
-import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
 import java.util.List;
 
 
-public class GenericCursorRepositoryImpl<T> implements GenericCursorRepository<T> {
+public class GenericCursorRepositoryCustom<T> implements GenericCursorRepository<T> {
 
     @PersistenceContext
     private EntityManager em;
 
     private final Class<T> domainClass;
 
-    public GenericCursorRepositoryImpl(final Class<T> domainClass) {
+    public GenericCursorRepositoryCustom(final Class<T> domainClass) {
         this.domainClass = domainClass;
     }
 
