@@ -10,6 +10,7 @@ import org.example.story.domain.blog.record.response.BlogLikeResponse;
 import org.example.story.domain.blog.repository.BlogLikeRepository;
 import org.example.story.domain.blog.repository.BlogRepository;
 import org.example.story.domain.image.entity.BlogImageJpaEntity;
+import org.example.story.domain.image.record.request.ImageRequest;
 import org.example.story.domain.image.record.response.ImageKeyResponse;
 import org.example.story.domain.image.record.response.ImageResponse;
 import org.example.story.domain.image.repository.BlogImageRepository;
@@ -116,7 +117,7 @@ public class BlogService {
         if(liked) {
             blog.decreaseLike();
             BlogLikeJpaEntity like = blogLikeRepository.findByBlogAndUser(blog, user)
-                    .orElseThrow(() -> new ExpectedException(HttpStatus.NOT_FOUND, "존재하지 않는 기록  ㅠ ㅕ ㅛㅛ ㅛ ㅛ ㅎ   퓨입니다."));
+                    .orElseThrow(() -> new ExpectedException(HttpStatus.NOT_FOUND, "존재하지 않는 기록입니다."));
             blogLikeRepository.delete(like);
         } else {
             BlogLikeJpaEntity likerecord = BlogLikeJpaEntity.builder()
@@ -140,26 +141,29 @@ public class BlogService {
         );
     }
 
-    public ImageResponse uploadBlogImage(Long userId, Long blogId, MultipartFile file) {
+    public ImageResponse uploadBlogImage(MultipartFile file) {
+        String fileKey = imageService.uploadImage(file);
+        String presignedUrl = imageService.generatePresignedUrl(fileKey);
+        return new ImageResponse(fileKey, presignedUrl);
+    }
 
+    public void saveBlogImage(Long userId, Long blogId , ImageRequest request) {
         BlogJpaEntity blog = blogRepository.findById(blogId)
                 .orElseThrow(() -> new ExpectedException(HttpStatus.NOT_FOUND,"블로그를 찾을 수 없습니다."));
 
-        if(userId.equals(blog.getUser().getId())){
-            String fileKey = imageService.uploadImage(file);
-
-            BlogImageJpaEntity entity = BlogImageJpaEntity.builder()
-                    .blog(blog)
-                    .imageUrl(fileKey)
-                    .build();
-
-            blogImageRepository.save(entity);
-            String presignedUrl = imageService.generatePresignedUrl(fileKey);
-            return new ImageResponse(fileKey, presignedUrl);
-        }
-        else {
+        if(!userId.equals(blog.getUser().getId())) {
             throw new ExpectedException(HttpStatus.FORBIDDEN, "업로드 권한이 없습니다.");
         }
+        if(request.fileKeys() == null || request.fileKeys().isEmpty()) {
+            throw new ExpectedException(HttpStatus.BAD_REQUEST, "저장할 이미지가 없습니다.");
+        }
+        List<BlogImageJpaEntity> images = request.fileKeys().stream()
+                .map(key -> BlogImageJpaEntity.builder()
+                        .blog(blog)
+                        .imageUrl(key)
+                        .build())
+                .toList();
+        blogImageRepository.saveAll(images);
 
     }
 
@@ -193,7 +197,6 @@ public class BlogService {
                 ))
                 .toList();
     }
-
 
     public ImageKeyResponse uploadBlogThumbnail(MultipartFile file) {
         return new ImageKeyResponse(imageService.uploadThumbnail(file));

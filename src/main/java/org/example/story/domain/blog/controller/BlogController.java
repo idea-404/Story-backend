@@ -10,6 +10,7 @@ import org.example.story.domain.blog.record.response.BlogLikeResponse;
 import org.example.story.domain.blog.service.BlogCommentService;
 import org.example.story.domain.blog.service.BlogQueryService;
 import org.example.story.domain.blog.service.BlogService;
+import org.example.story.domain.image.record.request.ImageRequest;
 import org.example.story.domain.image.record.response.ImageKeyResponse;
 import org.example.story.domain.image.record.response.ImageResponse;
 import org.example.story.global.aop.RateLimited;
@@ -122,14 +123,20 @@ public class BlogController {
         return blogCommentService.getComments(blogId, lastId, size);
     }
 
-    @PostMapping("/image/upload/{blogId}")
+    @PostMapping("/image/upload")
     @RateLimited(limit = 20, durationSeconds = 30)
     public ImageResponse uploadBlogImage(
-            @PathVariable Long blogId,
             @RequestPart("file") MultipartFile file
     ) {
+        return blogService.uploadBlogImage(file);
+    }
+
+    @PostMapping("/image/save/{blogId}")
+    @RateLimited(limit = 15, durationSeconds = 30)
+    public void saveBlogImage(@RequestBody ImageRequest request,
+                                   @PathVariable("blogId") Long blogId) {
         Long userId = authUtils.getCurrentUserId();
-        return blogService.uploadBlogImage(userId, blogId, file);
+        blogService.saveBlogImage(userId, blogId, request);
     }
 
     @DeleteMapping("/image/delete/{imageId}")

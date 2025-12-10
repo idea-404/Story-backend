@@ -1,6 +1,7 @@
 package org.example.story.domain.portfolio.service;
 
 import org.example.story.domain.image.entity.PortfolioImageJpaEntity;
+import org.example.story.domain.image.record.request.ImageRequest;
 import org.example.story.domain.image.record.response.ImageResponse;
 import org.example.story.domain.image.repository.PortfolioImageRepository;
 import org.example.story.domain.image.service.ImageService;
@@ -158,26 +159,30 @@ public class PortfolioService {
         );
     }
 
-    public ImageResponse uploadPortfolioImage(Long userId, Long portfolioId, MultipartFile file) {
+    public ImageResponse uploadPortfolioImage(MultipartFile file) {
+        String fileKey = imageService.uploadImage(file);
+        String presignedUrl = imageService.generatePresignedUrl(fileKey);
+        return new ImageResponse(fileKey, presignedUrl);
+    }
+
+    public void savePortfolioImage(Long userId, Long portfolioId ,ImageRequest request) {
 
         PortfolioJpaEntity portfolio = portfolioRepository.findById(portfolioId)
                 .orElseThrow(() -> new ExpectedException(HttpStatus.NOT_FOUND,"포트폴리오를 찾을 수 없습니다."));
 
-        if(userId.equals(portfolio.getUser().getId())) {
-            String fileKey = imageService.uploadImage(file);
-
-            PortfolioImageJpaEntity entity = PortfolioImageJpaEntity.builder()
-                    .portfolio(portfolio)
-                    .imageUrl(fileKey)
-                    .build();
-
-            portfolioImageRepository.save(entity);
-            String presignedUrl = imageService.generatePresignedUrl(fileKey);
-            return new ImageResponse(fileKey, presignedUrl);
-        }
-        else {
+        if(!userId.equals(portfolio.getUser().getId())) {
             throw new ExpectedException(HttpStatus.FORBIDDEN, "업로드 권한이 없습니다.");
         }
+        if(request.fileKeys() == null || request.fileKeys().isEmpty()) {
+            throw new ExpectedException(HttpStatus.BAD_REQUEST, "저장할 이미지가 없습니다.");
+        }
+        List<PortfolioImageJpaEntity> images = request.fileKeys().stream()
+                .map(key -> PortfolioImageJpaEntity.builder()
+                        .portfolio(portfolio)
+                        .imageUrl(key)
+                        .build())
+                .toList();
+        portfolioImageRepository.saveAll(images);
 
     }
 

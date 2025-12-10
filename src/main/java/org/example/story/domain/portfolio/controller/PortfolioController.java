@@ -1,6 +1,7 @@
 package org.example.story.domain.portfolio.controller;
 
 import lombok.RequiredArgsConstructor;
+import org.example.story.domain.image.record.request.ImageRequest;
 import org.example.story.domain.image.record.response.ImageResponse;
 import org.example.story.domain.portfolio.record.common.PortfolioRequest;
 import org.example.story.domain.portfolio.record.common.PortfolioResponse;
@@ -132,14 +133,20 @@ public class PortfolioController {
         return portfolioCommentService.getComments(portfolioId, lastId, size);
     }
 
-    @PostMapping("/image/upload/{portfolioId}")
+    @PostMapping("/image/upload")
     @RateLimited(limit = 20, durationSeconds = 30)
     public ImageResponse uploadPortfolioImage(
-            @PathVariable Long portfolioId,
             @RequestPart("file") MultipartFile file
     ) {
+        return portfolioService.uploadPortfolioImage(file);
+    }
+
+    @PostMapping("/image/save/{portfolioId}")
+    @RateLimited(limit = 15, durationSeconds = 30)
+    public void savePortfolioImage(@RequestBody ImageRequest request,
+                                   @PathVariable("portfolioId") Long portfolioId) {
         Long userId = authUtils.getCurrentUserId();
-        return portfolioService.uploadPortfolioImage(userId,portfolioId, file);
+        portfolioService.savePortfolioImage(userId, portfolioId, request);
     }
 
     @DeleteMapping("/image/delete/{imageId}")
