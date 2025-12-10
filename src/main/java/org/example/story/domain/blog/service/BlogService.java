@@ -10,6 +10,8 @@ import org.example.story.domain.blog.record.response.BlogLikeResponse;
 import org.example.story.domain.blog.repository.BlogLikeRepository;
 import org.example.story.domain.blog.repository.BlogRepository;
 import org.example.story.domain.image.entity.BlogImageJpaEntity;
+import org.example.story.domain.image.entity.PortfolioImageJpaEntity;
+import org.example.story.domain.image.record.request.ImageRequest;
 import org.example.story.domain.image.record.response.ImageKeyResponse;
 import org.example.story.domain.image.record.response.ImageResponse;
 import org.example.story.domain.image.repository.BlogImageRepository;
@@ -39,7 +41,7 @@ public class BlogService {
         UserJpaEntity user = userRepository.findById(userId)
                 .orElseThrow(() -> new ExpectedException(HttpStatus.NOT_FOUND, "존재하지 않는 유저입니다."));
 
-        BlogJpaEntity blog = BlogJpaEntity.builder()
+        org.example.story.domain.blog.entity.BlogJpaEntity blog = org.example.story.domain.blog.entity.BlogJpaEntity.builder()
                 .user(user)
                 .title(request.title())
                 .content(request.content())
@@ -50,7 +52,7 @@ public class BlogService {
                 .thumbnail(request.thumbnail())
                 .build();
 
-        BlogJpaEntity saved = blogRepository.save(blog);
+        org.example.story.domain.blog.entity.BlogJpaEntity saved = blogRepository.save(blog);
 
         return new BlogResponse(
                 saved.getId(),
@@ -66,12 +68,12 @@ public class BlogService {
 
 
     public BlogResponse edit(Long userId, Long blogId, BlogRequest request) {
-        BlogJpaEntity blog = blogRepository.findByIdAndUserId(blogId, userId)
+        org.example.story.domain.blog.entity.BlogJpaEntity blog = blogRepository.findByIdAndUserId(blogId, userId)
                 .orElseThrow(() -> new ExpectedException(HttpStatus.NOT_FOUND, "존재하지 않는 블로그입니다."));
 
         blog.update(request.title(), request.content(), request.thumbnail());
 
-        BlogJpaEntity saved = blogRepository.save(blog);
+        org.example.story.domain.blog.entity.BlogJpaEntity saved = blogRepository.save(blog);
 
         return new BlogResponse(
                 saved.getId(),
@@ -95,7 +97,7 @@ public class BlogService {
             imageService.deleteImage(img.getImageUrl());
         }
 
-        BlogJpaEntity blog = blogRepository.findByIdAndUserId(blogId, userId)
+        org.example.story.domain.blog.entity.BlogJpaEntity blog = blogRepository.findByIdAndUserId(blogId, userId)
                 .orElseThrow(() -> new ExpectedException(HttpStatus.NOT_FOUND, "존재하지 않는 블로그입니다."));
         if (blog.getThumbnail() != null  && !blog.getThumbnail().isBlank()) {
             imageService.deleteImage(blog.getThumbnail());
@@ -108,7 +110,7 @@ public class BlogService {
     public BlogLikeResponse likeUp(Long userId, Long blogId) {
         UserJpaEntity user = userRepository.findById(userId)
                 .orElseThrow(() -> new ExpectedException(HttpStatus.NOT_FOUND, "존재하지 않는 유저입니다."));
-        BlogJpaEntity blog = blogRepository.findById(blogId)
+        org.example.story.domain.blog.entity.BlogJpaEntity blog = blogRepository.findById(blogId)
                 .orElseThrow(() -> new ExpectedException(HttpStatus.NOT_FOUND, "존재하지 않는 블로그입니다."));
 
         boolean liked = blogLikeRepository.findByBlogAndUser(blog, user).isPresent();
@@ -140,27 +142,31 @@ public class BlogService {
         );
     }
 
-    public ImageResponse uploadBlogImage(Long userId, Long blogId, MultipartFile file) {
+    public ImageResponse uploadBlogImage(MultipartFile file) {
+        String fileKey = imageService.uploadImage(file);
+        String presignedUrl = imageService.generatePresignedUrl(fileKey);
+        return new ImageResponse(fileKey, presignedUrl);
+    }
 
+    public void saveBlogImage(Long userId, Long blogId , ImageRequest request) {
         BlogJpaEntity blog = blogRepository.findById(blogId)
                 .orElseThrow(() -> new ExpectedException(HttpStatus.NOT_FOUND,"블로그를 찾을 수 없습니다."));
 
-        if(userId.equals(blog.getUser().getId())){
-            String fileKey = imageService.uploadImage(file);
-
-            BlogImageJpaEntity entity = BlogImageJpaEntity.builder()
-                    .blog(blog)
-                    .imageUrl(fileKey)
-                    .build();
-
-            blogImageRepository.save(entity);
-            String presignedUrl = imageService.generatePresignedUrl(fileKey);
-            return new ImageResponse(fileKey, presignedUrl);
-        }
-        else {
+        if(!userId.equals(blog.getUser().getId())) {
             throw new ExpectedException(HttpStatus.FORBIDDEN, "업로드 권한이 없습니다.");
         }
-
+        else if(request.fileKeys() == null || request.fileKeys().isEmpty()){
+            throw new ExpectedException(HttpStatus.BAD_REQUEST, "저장할 이미지가 없습니다.");
+        }
+        else {
+            for(String key : request.fileKeys()) {
+                BlogImageJpaEntity image = BlogImageJpaEntity.builder()
+                        .blog(blog)
+                        .imageUrl(key)
+                        .build();
+                blogImageRepository.save(image);
+            }
+        }
     }
 
     public void deleteBlogImage(Long userId,Long imageId) {
@@ -168,7 +174,7 @@ public class BlogService {
         BlogImageJpaEntity image = blogImageRepository.findById(imageId)
                 .orElseThrow(() -> new ExpectedException(HttpStatus.NOT_FOUND,"이미지를 찾을 수 없습니다."));
 
-        BlogJpaEntity blog = image.getBlog();
+        org.example.story.domain.blog.entity.BlogJpaEntity blog = image.getBlog();
 
         if(userId.equals(blog.getUser().getId())) {
             imageService.deleteImage(image.getImageUrl());
