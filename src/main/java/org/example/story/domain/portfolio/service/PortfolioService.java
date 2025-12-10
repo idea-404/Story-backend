@@ -170,21 +170,20 @@ public class PortfolioService {
         PortfolioJpaEntity portfolio = portfolioRepository.findById(portfolioId)
                 .orElseThrow(() -> new ExpectedException(HttpStatus.NOT_FOUND,"포트폴리오를 찾을 수 없습니다."));
 
-        if(!userId.equals(portfolio.getUser().getId())) {
+        if(!userId.equals(portfolio.getUser().getId()))
             throw new ExpectedException(HttpStatus.FORBIDDEN, "업로드 권한이 없습니다.");
-        }
-        else if(request.fileKeys() == null || request.fileKeys().isEmpty()){
+
+        if(request.fileKeys() == null || request.fileKeys().isEmpty())
             throw new ExpectedException(HttpStatus.BAD_REQUEST, "저장할 이미지가 없습니다.");
-        }
-        else {
-            for(String key : request.fileKeys()) {
-                PortfolioImageJpaEntity image = PortfolioImageJpaEntity.builder()
+
+        List<PortfolioImageJpaEntity> images = request.fileKeys().stream()
+                .map(key -> PortfolioImageJpaEntity.builder()
                         .portfolio(portfolio)
                         .imageUrl(key)
-                        .build();
-                portfolioImageRepository.save(image);
-            }
-        }
+                        .build())
+                .toList();
+        portfolioImageRepository.saveAll(images);
+
     }
 
     public void deletePortfolioImage(Long userId, Long imageId) {
