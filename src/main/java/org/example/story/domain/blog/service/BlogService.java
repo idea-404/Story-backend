@@ -151,12 +151,12 @@ public class BlogService {
         BlogJpaEntity blog = blogRepository.findById(blogId)
                 .orElseThrow(() -> new ExpectedException(HttpStatus.NOT_FOUND,"블로그를 찾을 수 없습니다."));
 
-        if(!userId.equals(blog.getUser().getId()))
+        if(!userId.equals(blog.getUser().getId())) {
             throw new ExpectedException(HttpStatus.FORBIDDEN, "업로드 권한이 없습니다.");
-
-        if(request.fileKeys() == null || request.fileKeys().isEmpty())
+        }
+        if(request.fileKeys() == null || request.fileKeys().isEmpty()) {
             throw new ExpectedException(HttpStatus.BAD_REQUEST, "저장할 이미지가 없습니다.");
-
+        }
         List<BlogImageJpaEntity> images = request.fileKeys().stream()
                 .map(key -> BlogImageJpaEntity.builder()
                         .blog(blog)
@@ -172,7 +172,7 @@ public class BlogService {
         BlogImageJpaEntity image = blogImageRepository.findById(imageId)
                 .orElseThrow(() -> new ExpectedException(HttpStatus.NOT_FOUND,"이미지를 찾을 수 없습니다."));
 
-        org.example.story.domain.blog.entity.BlogJpaEntity blog = image.getBlog();
+        BlogJpaEntity blog = image.getBlog();
 
         if(userId.equals(blog.getUser().getId())) {
             imageService.deleteImage(image.getImageUrl());
