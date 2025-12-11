@@ -29,7 +29,6 @@ public class GoogleLoginService {
     private final GoogleOAuthConfig googleOAuthConfig;
     private final GetAccountTokenService getAccountTokenService;
     private final GoogleIdTokenVerifier googleIdTokenVerifier;
-    private final JwtTokenProvider jwtTokenProvider;
 
     public TokenResDto execute(String code) {
         // 토큰 요청
