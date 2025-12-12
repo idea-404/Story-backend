@@ -23,7 +23,10 @@ public class GetAccountTokenService {
     public TokenResDto execute(String email) {
         UserJpaEntity user = userRepository.findByEmail(email)
                 .orElseGet(() -> userRepository.save(
-                        UserJpaEntity.builder().email(email).build()
+                        UserJpaEntity.builder()
+                                .email(email)
+                                .role("VERIFIED")
+                                .build()
                 ));
         return new TokenResDto(
                 jwtTokenProvider.createToken(
