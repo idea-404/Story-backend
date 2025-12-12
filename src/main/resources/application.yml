@@ -1,29 +1,17 @@
 spring:
-  cloud:
-     aws:
-        s3:
-          bucket: ${BUCKET_NAME}
-          presigned-url-duration-minutes: 60
-        region:
-          static: ap-northeast-2
-          auto: false
-        stack:
-          auto: false
   application:
     name: story
+  profiles:
+    active: local
   docker:
     compose:
       file: /absolute/path/to/docker-compose.yml
-  datasource:
-    url: jdbc:mysql://localhost:3306/story
-    username: root
-    password: ${DB_PASSWORD}
-    driver-class-name: com.mysql.cj.jdbc.Driver
   jpa:
     hibernate:
-      ddl-auto: update
+      ddl-auto: validate
     properties:
       hibernate.format_sql: true
+    open-in-view: false
   mail:
     host: smtp.gmail.com
     port: 587
@@ -32,6 +20,16 @@ spring:
     properties:
       mail.smtp.auth: true
       mail.smtp.starttls.enable: true
+  cloud:
+    aws:
+      s3:
+        bucket: ${BUCKET_NAME}
+        presigned-url-duration-minutes: 60
+      region:
+        static: ap-northeast-2
+        auto: false
+      stack:
+        auto: false
   task:
     execution:
       pool:
@@ -39,11 +37,13 @@ spring:
         max-size: 8
         queue-capacity: 100
 
+base:
+  url: ${BASE_URL:http://localhost:8080}
+
 google:
   client-id: ${GOOGLE_ID}
   client-secret: ${GOOGLE_SECRET}
   redirect-uri: ${GOOGLE_URI}
-  public-key: ${GOOGLE_KEY}
 kakao:
   client-id: ${KAKAO_ID}
   redirect-uri: ${KAKAO_URI}
@@ -62,6 +62,3 @@ openai:
   options:
     max-tokens: 500
     temperature: 0.8
-
-base:
-  url: http://localhost:8080
