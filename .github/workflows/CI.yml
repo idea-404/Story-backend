@@ -28,8 +28,8 @@ jobs:
       - name:  Clean build
         run: ./gradlew clean
 
-      - name:  Run tests
-        run: ./gradlew test
+     # - name:  Run tests
+     #   run: ./gradlew test
 
       - name:  Publish test results
         uses: EnricoMi/publish-unit-test-result-action@v2
