@@ -21,10 +21,10 @@ public class OlaHistoryJpaEntity {
     private PortfolioJpaEntity portfolio;
 
     @Lob
-    @Column(name = "question", nullable = false)
+    @Column(name = "question", columnDefinition = "TEXT", nullable = false)
     private String question;
 
     @Lob
-    @Column(name = "answer", nullable = false)
+    @Column(name = "answer", columnDefinition = "TEXT", nullable = false)
     private String answer;
 }

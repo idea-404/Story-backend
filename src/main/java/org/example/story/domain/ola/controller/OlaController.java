@@ -5,6 +5,7 @@ import org.example.story.domain.ola.record.request.OlaRequest;
 import org.example.story.domain.ola.record.response.OlaListResponse;
 import org.example.story.domain.ola.record.response.OlaResponse;
 import org.example.story.domain.ola.service.OlaService;
+import org.example.story.global.security.auth.AuthUtils;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.concurrent.CompletableFuture;
@@ -14,11 +15,13 @@ import java.util.concurrent.CompletableFuture;
 @RequestMapping("/api/v1/ola")
 public class OlaController {
     private final OlaService olaService;
+    private final AuthUtils authUtils;
 
     @PostMapping("/{portfolioId}")
-    public CompletableFuture<OlaResponse> feed(@PathVariable("portfolioId") Long portfolioId,
+    public OlaResponse feed(@PathVariable("portfolioId") Long portfolioId,
                                                @RequestBody OlaRequest request) {
-        return olaService.feedOla(request.question(), portfolioId);
+        Long userId = authUtils.getCurrentUserId();
+        return olaService.feedOla(userId,request.question(), portfolioId);
     }
 
     @GetMapping("/history/{portfolioId}")

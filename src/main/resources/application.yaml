@@ -54,13 +54,13 @@ jwt:
 
 openai:
   api-key: ${AI_KEY}      # 환경 변수로 등록한 내 OpenAI 키
-  base-url: https://api.openai.com/v1  # 고정 공식 주소
+  base-url: https://api.openai.com/v1  # 고정 공식 주소니다. 중요한 정보는
   timeout-seconds: 60
   models:
     chat: gpt-4o-mini                  # 대화용 (피드백 생성 등)
     embedding: text-embedding-3-small
   options:
-    max-tokens: 500
+    max-tokens: 600
     temperature: 0.8
 
 base:
