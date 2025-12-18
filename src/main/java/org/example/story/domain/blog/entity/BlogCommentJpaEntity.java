@@ -29,7 +29,7 @@ public class BlogCommentJpaEntity {
     @Column(name = "content", nullable = false, length = 512)
     private String content;
 
-    @Column(name = "createdAt", nullable = false)
+    @Column(name = "createdAt")
     private Instant createdAt;
 
 }

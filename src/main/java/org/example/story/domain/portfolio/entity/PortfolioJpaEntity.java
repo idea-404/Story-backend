@@ -45,7 +45,7 @@ public class PortfolioJpaEntity {
     @Column(name = "zerodog")
     private Boolean zerodog;
 
-    @Column(name = "createdAt", nullable = false)
+    @Column(name = "createdAt")
     private Instant createdAt;
 
     @ColumnDefault("0")

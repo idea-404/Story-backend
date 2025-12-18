@@ -107,9 +107,15 @@ public class GenericCursorRepositoryCustom<T> implements GenericCursorRepository
             /* ------------------------------
              *    기본 정렬 (검색 없을 때)
              * ------------------------------ */
-            Path<?> sortPath = root.get(sortBy);
-            if (desc) cq.orderBy(cb.desc(sortPath), cb.desc(root.get("id")));
-            else cq.orderBy(cb.asc(sortPath), cb.desc(root.get("id")));
+            if ("id".equals(sortBy)) {
+                // id 단독 정렬
+                if (desc) cq.orderBy(cb.desc(root.get("id")));
+                else cq.orderBy(cb.asc(root.get("id")));
+            } else {
+                Path<?> sortPath = root.get(sortBy);
+                if (desc) cq.orderBy(cb.desc(sortPath), cb.desc(root.get("id")));
+                else cq.orderBy(cb.asc(sortPath), cb.desc(root.get("id")));
+            }
         }
 
 

@@ -17,7 +17,7 @@ import java.util.stream.Collectors;
 public class PortfolioListService {
     private final GenericCursorRepository<PortfolioJpaEntity> portfolioCursorRepo;
     public PortfolioListResponse portfolioFilter(Long lastId, int size, String type){
-        List<String> allowedSortFields = List.of("view", "like", "comment");
+        List<String> allowedSortFields = List.of("id","view", "like", "comment");
         if (type != null && !allowedSortFields.contains(type)) {
             throw new ExpectedException(HttpStatus.UNPROCESSABLE_ENTITY,"허용되지 않은 정렬 기준입니다: " + type);
         }

@@ -41,7 +41,7 @@ public class BlogJpaEntity {
     @Column(name = "view")
     private Long view;
 
-    @Column(name = "createdAt", nullable = false)
+    @Column(name = "createdAt")
     private Instant createdAt;
 
     @ColumnDefault("0")
