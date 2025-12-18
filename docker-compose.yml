@@ -1,0 +1,48 @@
+version: "3.9"
+
+services:
+  app:
+    build: .
+    container_name: story-app
+    ports:
+      - "8080:8080"
+    depends_on:
+      - mysql
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+
+      DB_HOST: mysql
+      DB_NAME: story
+      DB_USERNAME: root
+      DB_PASSWORD: ${DB_PASSWORD}
+
+      MAIL_USERNAME: ${MAIL_USERNAME}
+      MAIL_PASSWORD: ${MAIL_PASSWORD}
+
+      GOOGLE_ID: ${GOOGLE_ID}
+      GOOGLE_SECRET: ${GOOGLE_SECRET}
+      GOOGLE_URI: ${GOOGLE_URI}
+
+      KAKAO_ID: ${KAKAO_ID}
+      KAKAO_URI: ${KAKAO_URI}
+
+      JWT_SECRET: ${JWT_SECRET}
+      AI_KEY: ${AI_KEY}
+      BUCKET_NAME: ${BUCKET_NAME}
+      BASE_URL: http://localhost:8080
+
+    restart: always
+
+  mysql:
+    image: mysql:8.0
+    container_name: mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
+      MYSQL_DATABASE: story
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql-data:/var/lib/mysql
+
+volumes:
+  mysql-data:
