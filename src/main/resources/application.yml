@@ -22,8 +22,8 @@ spring:
       mail.smtp.starttls.enable: true
   minio:
     endpoint: http://localhost:9000
-    access-key: minioadmin
-    secret-key: minioadmin
+    access-key: ${MINIO_ACCESS_KEY}
+    secret-key: ${MINIO_SECRET_KEY}
     bucket: story-images
   task:
     execution:
