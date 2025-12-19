@@ -20,16 +20,11 @@ spring:
     properties:
       mail.smtp.auth: true
       mail.smtp.starttls.enable: true
-  cloud:
-    aws:
-      s3:
-        bucket: ${BUCKET_NAME}
-        presigned-url-duration-minutes: 60
-      region:
-        static: ap-northeast-2
-        auto: false
-      stack:
-        auto: false
+  minio:
+    endpoint: http://localhost:9000
+    access-key: minioadmin
+    secret-key: minioadmin
+    bucket: story-images
   task:
     execution:
       pool:
