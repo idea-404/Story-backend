@@ -4,6 +4,7 @@ import io.minio.GetPresignedObjectUrlArgs;
 import io.minio.MinioClient;
 import io.minio.PutObjectArgs;
 import io.minio.RemoveObjectArgs;
+import io.minio.errors.MinioException;
 import io.minio.http.Method;
 import org.example.story.global.error.exception.ExpectedException;
 import org.springframework.beans.factory.annotation.Value;
@@ -12,6 +13,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
 import java.util.Set;
 import java.util.UUID;
 
@@ -50,7 +54,7 @@ public class ImageService {
                             .contentType(file.getContentType())
                             .build()
             );
-        } catch (Exception e) {
+        } catch (MinioException | IOException | NoSuchAlgorithmException | InvalidKeyException e) {
             throw new ExpectedException(
                     HttpStatus.INTERNAL_SERVER_ERROR,
                     "이미지 업로드에 실패했습니다."
@@ -60,7 +64,6 @@ public class ImageService {
         return key;
     }
 
-    /** 썸네일 이미지 (public) */
     public String uploadThumbnail(MultipartFile file) {
         validateImageType(file);
 
@@ -85,11 +88,6 @@ public class ImageService {
         return key;
     }
 
-    /* ======================
-     * URL
-     * ====================== */
-
-    /** presigned URL (본문 이미지 조회용) */
     public String generatePresignedUrl(String key) {
         try {
             return minioClient.getPresignedObjectUrl(
@@ -97,7 +95,7 @@ public class ImageService {
                             .bucket(bucket)
                             .object(key)
                             .method(Method.GET)
-                            .expiry((int) presignedUrlDuration * 60)
+                            .expiry(Math.toIntExact(presignedUrlDuration * 60))
                             .build()
             );
         } catch (Exception e) {
@@ -108,17 +106,12 @@ public class ImageService {
         }
     }
 
-    /** public URL (썸네일 조회용) */
     public String getPublicUrl(String key) {
         if (key == null || key.isBlank()) {
             return null;
         }
         return endpoint + "/" + bucket + "/" + key;
     }
-
-    /* ======================
-     * Delete
-     * ====================== */
 
     public void deleteImage(String key) {
         try {
@@ -156,7 +149,9 @@ public class ImageService {
         if (file == null || file.isEmpty()) {
             throw new ExpectedException(HttpStatus.BAD_REQUEST, "파일이 없습니다.");
         }
-
+        if (file.getOriginalFilename() == null || file.getOriginalFilename().isBlank()) {
+            throw new ExpectedException(HttpStatus.BAD_REQUEST, "파일 이름이 없습니다.");
+        }
         String contentType = file.getContentType();
         if (contentType == null || !ALLOWED_MIME_TYPES.contains(contentType)) {
             throw new ExpectedException(
