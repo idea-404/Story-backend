@@ -1,12 +1,11 @@
-FROM eclipse-temurin:21-jre-jammy
-
+FROM gradle:8.5-jdk17 AS builder
 WORKDIR /app
+COPY . .
+RUN gradle build -x test
 
-# Copy JAR file
-COPY build/libs/*.jar app.jar
-
-# Expose port
+# 2단계: run
+FROM eclipse-temurin:17-jre
+WORKDIR /app
+COPY --from=builder /app/build/libs/*.jar app.jar
 EXPOSE 8080
-
-# Run
-ENTRYPOINT ["java", "-jar", "-Dspring.profiles.active=docker", "app.jar"]
+ENTRYPOINT ["java", "-jar", "app.jar"]
