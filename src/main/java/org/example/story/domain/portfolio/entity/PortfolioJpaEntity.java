@@ -29,6 +29,9 @@ public class PortfolioJpaEntity {
     @Column(name = "title", nullable = false, length = 12)
     private String title;
 
+    @Column(name = "introduce")
+    private String introduce;
+
     @Lob
     @Column(name = "content", nullable = false)
     private String content;

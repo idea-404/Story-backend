@@ -29,6 +29,9 @@ public class BlogJpaEntity {
     @Column(name = "title", nullable = false)
     private String title;
 
+    @Column(name = "introduce")
+    private String introduce;
+
     @Lob
     @Column(name = "content", nullable = false)
     private String content;
@@ -70,3 +73,5 @@ public class BlogJpaEntity {
     public void increaseComment(){this.comment++;}
     public void decreaseComment(){this.comment--;}
 }
+
+// 노트북 잠그고 다니세요

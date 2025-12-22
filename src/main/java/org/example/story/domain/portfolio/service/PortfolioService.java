@@ -40,6 +40,7 @@ public class PortfolioService {
         PortfolioJpaEntity portfolio = PortfolioJpaEntity.builder()
                 .user(user)
                 .title(request.title())
+                .introduce(request.introduce())
                 .content(request.content())
                 .createdAt(Instant.now())
                 .like(0L)
@@ -54,6 +55,7 @@ public class PortfolioService {
                 saved.getId(),
                 saved.getUser().getId(),
                 saved.getTitle(),
+                saved.getIntroduce(),
                 saved.getContent(),
                 saved.getLike(),
                 saved.getView(),
@@ -76,6 +78,7 @@ public class PortfolioService {
                 saved.getId(),
                 saved.getUser().getId(),
                 saved.getTitle(),
+                saved.getIntroduce(),
                 saved.getContent(),
                 saved.getLike(),
                 saved.getView(),
@@ -150,6 +153,7 @@ public class PortfolioService {
                 portfolio.getId(),
                 portfolio.getUser().getId(),
                 portfolio.getTitle(),
+                portfolio.getIntroduce(),
                 portfolio.getContent(),
                 portfolio.getLike(),
                 portfolio.getView(),

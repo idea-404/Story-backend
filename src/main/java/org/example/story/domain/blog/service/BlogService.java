@@ -43,6 +43,7 @@ public class BlogService {
         BlogJpaEntity blog = BlogJpaEntity.builder()
                 .user(user)
                 .title(request.title())
+                .introduce(request.introduce())
                 .content(request.content())
                 .createdAt(Instant.now())
                 .like(0L)
@@ -57,6 +58,7 @@ public class BlogService {
                 saved.getId(),
                 saved.getUser().getId(),
                 saved.getTitle(),
+                saved.getIntroduce(),
                 saved.getContent(),
                 saved.getLike(),
                 saved.getView(),
@@ -78,6 +80,7 @@ public class BlogService {
                 saved.getId(),
                 saved.getUser().getId(),
                 saved.getTitle(),
+                saved.getIntroduce(),
                 saved.getContent(),
                 saved.getLike(),
                 saved.getView(),
