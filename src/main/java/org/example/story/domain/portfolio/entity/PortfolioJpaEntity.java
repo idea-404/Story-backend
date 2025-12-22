@@ -29,7 +29,7 @@ public class PortfolioJpaEntity {
     @Column(name = "title", nullable = false, length = 12)
     private String title;
 
-    @Column(name = "introduce")
+    @Column(name = "introduce", length = 500)
     private String introduce;
 
     @Lob

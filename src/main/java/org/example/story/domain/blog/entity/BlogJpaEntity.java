@@ -29,7 +29,7 @@ public class BlogJpaEntity {
     @Column(name = "title", nullable = false)
     private String title;
 
-    @Column(name = "introduce")
+    @Column(name = "introduce", length = 500)
     private String introduce;
 
     @Lob
