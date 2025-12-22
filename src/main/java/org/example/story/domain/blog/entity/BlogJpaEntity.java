@@ -60,9 +60,10 @@ public class BlogJpaEntity {
     @OneToMany(mappedBy = "blog", cascade = CascadeType.REMOVE, orphanRemoval = true)
     private List<BlogCommentJpaEntity> comments = new ArrayList<>();
 
-    public void update(String title, String content, String thumbnail) {
+    public void update(String title, String content, String introduce, String thumbnail) {
         this.title = title;
         this.content = content;
+        this.introduce = introduce;
         this.thumbnail = thumbnail;
     }
     public void increaseLike() {

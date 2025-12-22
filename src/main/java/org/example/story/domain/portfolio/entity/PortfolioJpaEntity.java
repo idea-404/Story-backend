@@ -65,9 +65,10 @@ public class PortfolioJpaEntity {
     private List<OlaHistoryJpaEntity> ola = new ArrayList<>();
 
 
-    public void update(String title, String content) {
+    public void update(String title, String content, String introduce) {
         this.title = title;
         this.content = content;
+        this.introduce = introduce;
     }
 
     public void increaseLike() {

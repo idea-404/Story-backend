@@ -70,7 +70,7 @@ public class PortfolioService {
         PortfolioJpaEntity portfolio = portfolioRepository.findByIdAndUserId(portfolioId, userId)
                 .orElseThrow(() -> new ExpectedException(HttpStatus.NOT_FOUND, "존재하지 않는 포트폴리오입니다."));
 
-        portfolio.update(request.title(),request.content());
+        portfolio.update(request.title(),request.content(),request.introduce());
 
         PortfolioJpaEntity saved = portfolioRepository.save(portfolio);
 
