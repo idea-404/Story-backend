@@ -29,6 +29,9 @@ public class PortfolioJpaEntity {
     @Column(name = "title", nullable = false, length = 12)
     private String title;
 
+    @Column(name = "introduce", length = 500)
+    private String introduce;
+
     @Lob
     @Column(name = "content", nullable = false)
     private String content;
@@ -62,9 +65,10 @@ public class PortfolioJpaEntity {
     private List<OlaHistoryJpaEntity> ola = new ArrayList<>();
 
 
-    public void update(String title, String content) {
+    public void update(String title, String content, String introduce) {
         this.title = title;
         this.content = content;
+        this.introduce = introduce;
     }
 
     public void increaseLike() {

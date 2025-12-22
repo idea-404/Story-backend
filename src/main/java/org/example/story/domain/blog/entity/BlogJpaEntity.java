@@ -29,6 +29,9 @@ public class BlogJpaEntity {
     @Column(name = "title", nullable = false)
     private String title;
 
+    @Column(name = "introduce", length = 500)
+    private String introduce;
+
     @Lob
     @Column(name = "content", nullable = false)
     private String content;
@@ -57,9 +60,10 @@ public class BlogJpaEntity {
     @OneToMany(mappedBy = "blog", cascade = CascadeType.REMOVE, orphanRemoval = true)
     private List<BlogCommentJpaEntity> comments = new ArrayList<>();
 
-    public void update(String title, String content, String thumbnail) {
+    public void update(String title, String content, String introduce, String thumbnail) {
         this.title = title;
         this.content = content;
+        this.introduce = introduce;
         this.thumbnail = thumbnail;
     }
     public void increaseLike() {
@@ -70,3 +74,5 @@ public class BlogJpaEntity {
     public void increaseComment(){this.comment++;}
     public void decreaseComment(){this.comment--;}
 }
+
+// 노트북 잠그고 다니세요

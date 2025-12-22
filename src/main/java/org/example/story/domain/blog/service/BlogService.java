@@ -43,6 +43,7 @@ public class BlogService {
         BlogJpaEntity blog = BlogJpaEntity.builder()
                 .user(user)
                 .title(request.title())
+                .introduce(request.introduce())
                 .content(request.content())
                 .createdAt(Instant.now())
                 .like(0L)
@@ -57,6 +58,7 @@ public class BlogService {
                 saved.getId(),
                 saved.getUser().getId(),
                 saved.getTitle(),
+                saved.getIntroduce(),
                 saved.getContent(),
                 saved.getLike(),
                 saved.getView(),
@@ -70,7 +72,7 @@ public class BlogService {
         BlogJpaEntity blog = blogRepository.findByIdAndUserId(blogId, userId)
                 .orElseThrow(() -> new ExpectedException(HttpStatus.NOT_FOUND, "존재하지 않는 블로그입니다."));
 
-        blog.update(request.title(), request.content(), request.thumbnail());
+        blog.update(request.title(), request.content(), request.introduce(), request.thumbnail());
 
         BlogJpaEntity saved = blogRepository.save(blog);
 
@@ -78,6 +80,7 @@ public class BlogService {
                 saved.getId(),
                 saved.getUser().getId(),
                 saved.getTitle(),
+                saved.getIntroduce(),
                 saved.getContent(),
                 saved.getLike(),
                 saved.getView(),

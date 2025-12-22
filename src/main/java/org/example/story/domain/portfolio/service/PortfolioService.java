@@ -40,6 +40,7 @@ public class PortfolioService {
         PortfolioJpaEntity portfolio = PortfolioJpaEntity.builder()
                 .user(user)
                 .title(request.title())
+                .introduce(request.introduce())
                 .content(request.content())
                 .createdAt(Instant.now())
                 .like(0L)
@@ -54,6 +55,7 @@ public class PortfolioService {
                 saved.getId(),
                 saved.getUser().getId(),
                 saved.getTitle(),
+                saved.getIntroduce(),
                 saved.getContent(),
                 saved.getLike(),
                 saved.getView(),
@@ -68,7 +70,7 @@ public class PortfolioService {
         PortfolioJpaEntity portfolio = portfolioRepository.findByIdAndUserId(portfolioId, userId)
                 .orElseThrow(() -> new ExpectedException(HttpStatus.NOT_FOUND, "존재하지 않는 포트폴리오입니다."));
 
-        portfolio.update(request.title(),request.content());
+        portfolio.update(request.title(),request.content(),request.introduce());
 
         PortfolioJpaEntity saved = portfolioRepository.save(portfolio);
 
@@ -76,6 +78,7 @@ public class PortfolioService {
                 saved.getId(),
                 saved.getUser().getId(),
                 saved.getTitle(),
+                saved.getIntroduce(),
                 saved.getContent(),
                 saved.getLike(),
                 saved.getView(),
@@ -150,6 +153,7 @@ public class PortfolioService {
                 portfolio.getId(),
                 portfolio.getUser().getId(),
                 portfolio.getTitle(),
+                portfolio.getIntroduce(),
                 portfolio.getContent(),
                 portfolio.getLike(),
                 portfolio.getView(),

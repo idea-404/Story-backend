@@ -7,6 +7,7 @@ public record PortfolioResponse (
         Long id,
         Long userId,
         String title,
+        String introduce,
         String content,
         Long like,
         Long view,

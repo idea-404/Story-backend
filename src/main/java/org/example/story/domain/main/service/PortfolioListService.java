@@ -34,7 +34,7 @@ public class PortfolioListService {
                         c.getUser().getId(),
                         c.getUser().getNickname(),
                         c.getTitle(),
-                        c.getContent(),
+                        c.getIntroduce(),
                         c.getLike(),
                         c.getView(),
                         c.getComment(),
