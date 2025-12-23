@@ -16,7 +16,6 @@ import org.example.story.domain.image.record.response.ImageKeyResponse;
 import org.example.story.domain.image.record.response.ImageResponse;
 import org.example.story.global.aop.RateLimited;
 import org.example.story.global.security.auth.AuthUtils;
-import org.example.story.global.security.jwt.JwtTokenProvider;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -66,7 +65,7 @@ public class BlogController {
     // 포트폴리오 조회 (토큰 필요 X)
     @GetMapping("/view/{blogId}")
     @RateLimited(limit = 20, durationSeconds = 30)
-    public BlogViewResponse view(@PathVariable Long blogId) {
+    public BlogViewResponse view(@PathVariable("blogId") Long blogId) {
         return blogQueryService.view(blogId);
     }
 
