@@ -76,8 +76,8 @@ public class OlaService {
 """;
 
 
-    public OlaResponse feedOla(Long userId,String question, Long portfolioId) {
-        return CompletableFuture.supplyAsync(() -> doFeedOla(userId, question,portfolioId),
+    public OlaResponse feedOla(String question, Long portfolioId) {
+        return CompletableFuture.supplyAsync(() -> doFeedOla(question,portfolioId),
                 openAiExecutor).join();
 
     }
@@ -101,7 +101,7 @@ public class OlaService {
     }
 
     @Transactional
-    public OlaResponse doFeedOla(Long userId,String question, Long portfolioId){
+    public OlaResponse doFeedOla(String question, Long portfolioId){
         PortfolioJpaEntity portfolio = portfolioRepository.findById(portfolioId)
                 .orElseThrow(() -> new ExpectedException(HttpStatus.NOT_FOUND,"존재하지 않는 포트폴리오입니다"));
 

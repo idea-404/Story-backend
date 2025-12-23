@@ -15,17 +15,15 @@ import java.util.concurrent.CompletableFuture;
 @RequestMapping("/api/v1/ola")
 public class OlaController {
     private final OlaService olaService;
-    private final AuthUtils authUtils;
 
     @PostMapping("/{portfolioId}")
     public OlaResponse feed(@PathVariable("portfolioId") Long portfolioId,
-                                               @RequestBody OlaRequest request) {
-        Long userId = authUtils.getCurrentUserId();
-        return olaService.feedOla(userId,request.question(), portfolioId);
+                            @RequestBody OlaRequest request) {
+        return olaService.feedOla(request.question(), portfolioId);
     }
 
     @GetMapping("/history/{portfolioId}")
-    public OlaListResponse history(@PathVariable("portfolioId") Long portfolioId){
+    public OlaListResponse history(@PathVariable("portfolioId") Long portfolioId) {
         return olaService.historyOla(portfolioId);
     }
 }
