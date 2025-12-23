@@ -78,7 +78,7 @@ public class ImageService {
                             .contentType(file.getContentType())
                             .build()
             );
-        } catch (Exception e) {
+        } catch (MinioException | IOException | NoSuchAlgorithmException | InvalidKeyException e) {
             throw new ExpectedException(
                     HttpStatus.INTERNAL_SERVER_ERROR,
                     "썸네일 업로드에 실패했습니다."
