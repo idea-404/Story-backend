@@ -23,6 +23,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.time.Instant;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -110,13 +111,11 @@ public class PortfolioService {
         PortfolioJpaEntity portfolio = portfolioRepository.findById(portfolioId)
                 .orElseThrow(() -> new ExpectedException(HttpStatus.NOT_FOUND, "존재하지 않는 포트폴리오입니다."));
 
-        boolean liked = portfolioLikeRepository.findByPortfolioAndUser(portfolio, user).isPresent();
+        Optional<PortfolioLikeJpaEntity> like = portfolioLikeRepository.findByPortfolioAndUser(portfolio, user);
 
-        if(liked) {
+        if(like.isPresent()) {
             portfolio.decreaseLike();
-            PortfolioLikeJpaEntity like = portfolioLikeRepository.findByPortfolioAndUser(portfolio, user)
-                    .orElseThrow(() -> new ExpectedException(HttpStatus.NOT_FOUND, "존재하지 않는 기록입니다."));
-            portfolioLikeRepository.delete(like);
+            portfolioLikeRepository.delete(like.get());
         } else {
             PortfolioLikeJpaEntity likerecord = PortfolioLikeJpaEntity.builder()
                     .portfolio(portfolio)
@@ -137,7 +136,7 @@ public class PortfolioService {
                 portfolio.getComment(),
                 portfolio.getZerodog(),
                 portfolio.getCreatedAt(),
-                !liked
+                !like.isPresent()
         );
     }
 
