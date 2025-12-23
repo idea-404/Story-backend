@@ -57,7 +57,7 @@ public class BlogService {
 
         return new BlogResponse(
                 saved.getId(),
-                saved.getUser().getId(),
+                saved.getUser().getNickname(),
                 saved.getTitle(),
                 saved.getIntroduce(),
                 saved.getContent(),
@@ -79,7 +79,7 @@ public class BlogService {
 
         return new BlogResponse(
                 saved.getId(),
-                saved.getUser().getId(),
+                saved.getUser().getNickname(),
                 saved.getTitle(),
                 saved.getIntroduce(),
                 saved.getContent(),
@@ -132,7 +132,7 @@ public class BlogService {
 
         return new BlogLikeResponse(
                 blog.getId(),
-                blog.getUser().getId(),
+                blog.getUser().getNickname(),
                 blog.getTitle(),
                 blog.getContent(),
                 blog.getLike(),

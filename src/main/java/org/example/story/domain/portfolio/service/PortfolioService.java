@@ -54,7 +54,7 @@ public class PortfolioService {
 
         return new PortfolioResponse(
                 saved.getId(),
-                saved.getUser().getId(),
+                saved.getUser().getNickname(),
                 saved.getTitle(),
                 saved.getIntroduce(),
                 saved.getContent(),
@@ -77,7 +77,7 @@ public class PortfolioService {
 
         return new PortfolioResponse(
                 saved.getId(),
-                saved.getUser().getId(),
+                saved.getUser().getNickname(),
                 saved.getTitle(),
                 saved.getIntroduce(),
                 saved.getContent(),
@@ -128,7 +128,7 @@ public class PortfolioService {
 
         return new PortfolioLikeResponse(
                 portfolio.getId(),
-                portfolio.getUser().getId(),
+                portfolio.getUser().getNickname(),
                 portfolio.getTitle(),
                 portfolio.getContent(),
                 portfolio.getLike(),
@@ -150,7 +150,7 @@ public class PortfolioService {
 
         return new PortfolioResponse(
                 portfolio.getId(),
-                portfolio.getUser().getId(),
+                portfolio.getUser().getNickname(),
                 portfolio.getTitle(),
                 portfolio.getIntroduce(),
                 portfolio.getContent(),

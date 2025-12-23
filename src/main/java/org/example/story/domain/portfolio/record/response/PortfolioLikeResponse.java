@@ -5,7 +5,7 @@ import java.time.Instant;
 public record PortfolioLikeResponse (
         // 이름이 곧 역할인 record
         Long id,
-        Long userId,
+        String nickname,
         String title,
         String content,
         Long like,

@@ -5,7 +5,7 @@ import java.time.Instant;
 public record PortfolioResponse (
         // 공통으로 사용되는 응답 record
         Long id,
-        Long userId,
+        String nickname,
         String title,
         String introduce,
         String content,

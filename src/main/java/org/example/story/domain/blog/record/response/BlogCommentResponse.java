@@ -6,7 +6,7 @@ public record BlogCommentResponse(
         // 이름이 곧 역할인 record
         Long id,
         Long blogId,
-        Long userId,
+        String nickname,
         String content,
         Instant createdAt
 ){
