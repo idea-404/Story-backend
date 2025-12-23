@@ -3,7 +3,7 @@ package org.example.story.domain.profile.controller;
 import lombok.RequiredArgsConstructor;
 import org.example.story.domain.profile.record.request.EditMyPageReqDto;
 import org.example.story.domain.profile.record.response.EditMyPageResDto;
-import org.example.story.domain.profile.record.response.ViewMyPageResDto;
+import org.example.story.domain.profile.record.response.ViewProfileResDto;
 import org.example.story.domain.profile.service.EditMyPageService;
 import org.example.story.domain.profile.service.ViewMyPageService;
 import org.example.story.global.security.auth.AuthUtils;
@@ -19,7 +19,7 @@ public class MyPageController {
     private final EditMyPageService editMyPageService;
 
     @GetMapping("/view")
-    public ResponseEntity<ViewMyPageResDto> viewMyPage() {
+    public ResponseEntity<ViewProfileResDto> viewMyPage() {
         Long userId = authUtils.getCurrentUserId();
         return ResponseEntity.ok().body(
                 viewMyPageService.execute(userId)
