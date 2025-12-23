@@ -74,5 +74,3 @@ public class BlogJpaEntity {
     public void increaseComment(){this.comment++;}
     public void decreaseComment(){this.comment--;}
 }
-
-// 노트북 잠그고 다니세요
