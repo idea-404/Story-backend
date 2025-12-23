@@ -1,11 +1,14 @@
 spring:
   application:
     name: story
-  profiles:
-    active: local
   docker:
     compose:
       file: /absolute/path/to/docker-compose.yml
+  datasource:
+    url: jdbc:mysql://${DB_HOST:localhost}:3306/${DB_NAME:story}
+    username: ${DB_USERNAME:root}
+    password: ${DB_PASSWORD:1234}
+    driver-class-name: com.mysql.cj.jdbc.Driver
   jpa:
     hibernate:
       ddl-auto: validate
