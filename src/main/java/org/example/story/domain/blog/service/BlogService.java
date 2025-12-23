@@ -24,6 +24,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.time.Instant;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -115,13 +116,11 @@ public class BlogService {
         BlogJpaEntity blog = blogRepository.findById(blogId)
                 .orElseThrow(() -> new ExpectedException(HttpStatus.NOT_FOUND, "존재하지 않는 블로그입니다."));
 
-        boolean liked = blogLikeRepository.findByBlogAndUser(blog, user).isPresent();
+        Optional<BlogLikeJpaEntity> like = blogLikeRepository.findByBlogAndUser(blog, user);
 
-        if(liked) {
+        if(like.isPresent()) {
             blog.decreaseLike();
-            BlogLikeJpaEntity like = blogLikeRepository.findByBlogAndUser(blog, user)
-                    .orElseThrow(() -> new ExpectedException(HttpStatus.NOT_FOUND, "존재하지 않는 기록입니다."));
-            blogLikeRepository.delete(like);
+            blogLikeRepository.delete(like.get());
         } else {
             BlogLikeJpaEntity likerecord = BlogLikeJpaEntity.builder()
                     .blog(blog)
@@ -140,7 +139,7 @@ public class BlogService {
                 blog.getView(),
                 blog.getComment(),
                 blog.getCreatedAt(),
-                !liked
+                !like.isPresent()
         );
     }
 
