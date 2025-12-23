@@ -1,19 +1,18 @@
 package org.example.story.domain.user.entity;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
-import lombok.Getter;
-import lombok.Setter;
+import jakarta.persistence.*;
+import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
 
 @Getter
-@Setter
 @Entity
 @Table(name = "user")
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class UserJpaEntity {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
     private Long id;
 
@@ -36,8 +35,17 @@ public class UserJpaEntity {
     @Column(name = "introduce", length = 128)
     private String introduce;
 
-    @ColumnDefault("'VERIFIED'")
-    @Column(name = "role", nullable = false, length = 128)
+    @Column(name = "role", length = 128)
     private String role;
 
+    public void updateUserInformation(
+            String nickname, String hakburn, String profileImage, String major, String introduce
+    ) {
+        this.nickname = nickname;
+        this.hakburn = hakburn;
+        this.profileImage = profileImage;
+        this.major = major;
+        this.introduce = introduce;
+        this.role = "VERIFIED";
+    }
 }

@@ -1,0 +1,65 @@
+spring:
+  application:
+    name: story
+  docker:
+    compose:
+      file: /absolute/path/to/docker-compose.yml
+  datasource:
+    url: jdbc:mysql://${DB_HOST:localhost}:3306/${DB_NAME:story}
+    username: ${DB_USERNAME:root}
+    password: ${DB_PASSWORD:1234}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    properties:
+      hibernate.format_sql: true
+    open-in-view: false
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: ${MAIL_USERNAME}
+    password: ${MAIL_PASSWORD}
+    properties:
+      mail.smtp.auth: true
+      mail.smtp.starttls.enable: true
+  minio:
+    endpoint: http://localhost:9000
+    access-key: ${MINIO_ACCESS_KEY}
+    secret-key: ${MINIO_SECRET_KEY}
+    bucket: story-images
+  task:
+    execution:
+      pool:
+        core-size: 4
+        max-size: 8
+        queue-capacity: 100
+
+base:
+  url: ${BASE_URL:http://localhost:8080}
+
+google:
+  client-id: ${GOOGLE_ID}
+  client-secret: ${GOOGLE_SECRET}
+  redirect-uri: ${GOOGLE_URI}
+kakao:
+  client-id: ${KAKAO_ID}
+  redirect-uri: ${KAKAO_URI}
+
+jwt:
+  secret: ${JWT_SECRET}
+  expire-time: 60
+
+openai:
+  api-key: ${AI_KEY}      # 환경 변수로 등록한 내 OpenAI 키
+  base-url: https://api.openai.com/v1
+  timeout-seconds: 60
+  models:
+    chat: gpt-4o-mini                  # 대화용 (피드백 생성 등)
+    embedding: text-embedding-3-small
+  options:
+    max-tokens: 600
+    temperature: 0.8
+
+server:
+  port: ${SERVER_PORT:8080}
