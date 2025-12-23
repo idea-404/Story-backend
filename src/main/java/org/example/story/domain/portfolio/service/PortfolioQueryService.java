@@ -1,6 +1,7 @@
 package org.example.story.domain.portfolio.service;
 
 
+import org.example.story.domain.portfolio.record.response.PortfolioViewResponse;
 import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.example.story.domain.portfolio.entity.PortfolioJpaEntity;
@@ -33,15 +34,16 @@ public class PortfolioQueryService {
     }
 
     @Transactional
-    public PortfolioResponse view(Long portfolioId){
+    public PortfolioViewResponse view(Long portfolioId){
         PortfolioJpaEntity portfolio = portfolioRepository.findById(portfolioId)
                 .orElseThrow(() -> new ExpectedException(HttpStatus.NOT_FOUND, "존재하지 않는 포트폴리오입니다."));
 
         portfolio.increaseView();
 
-        return new PortfolioResponse(
+        return new PortfolioViewResponse(
                 portfolio.getId(),
                 portfolio.getUser().getNickname(),
+                portfolio.getUser().getHakburn(),
                 portfolio.getTitle(),
                 portfolio.getIntroduce(),
                 portfolio.getContent(),

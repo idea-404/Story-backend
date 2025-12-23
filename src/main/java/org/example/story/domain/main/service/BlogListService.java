@@ -4,7 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.example.story.domain.blog.entity.BlogJpaEntity;
 import org.example.story.domain.image.service.ImageService;
 import org.example.story.domain.main.record.BlogListResponse;
-import org.example.story.domain.main.record.BlogViewResponse;
+import org.example.story.domain.main.record.BlogViewsResponse;
 import org.example.story.domain.main.repository.GenericCursorRepository;
 import org.example.story.global.error.exception.ExpectedException;
 import org.springframework.http.HttpStatus;
@@ -26,14 +26,14 @@ public class BlogListService {
         }
         List<BlogJpaEntity> blogs =
                 blogCursorRepo.findWithCursor(lastId, size, type, true, null, null);
-        List<BlogViewResponse> listResponses = setList(blogs);
+        List<BlogViewsResponse> listResponses = setList(blogs);
         return new BlogListResponse(listResponses);
     }
 
 
-    public List<BlogViewResponse> setList(List<BlogJpaEntity> blogs){
-        List<BlogViewResponse> listResponses = blogs.stream()
-                .map(c -> new BlogViewResponse(
+    public List<BlogViewsResponse> setList(List<BlogJpaEntity> blogs){
+        List<BlogViewsResponse> listResponses = blogs.stream()
+                .map(c -> new BlogViewsResponse(
                         c.getId(),
                         c.getUser().getId(),
                         c.getUser().getNickname(),

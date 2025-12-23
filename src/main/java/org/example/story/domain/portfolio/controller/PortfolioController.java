@@ -9,6 +9,7 @@ import org.example.story.domain.portfolio.record.request.PortfolioCommentRequest
 import org.example.story.domain.portfolio.record.response.PortfolioCommentListResponse;
 import org.example.story.domain.portfolio.record.response.PortfolioCommentResponse;
 import org.example.story.domain.portfolio.record.response.PortfolioLikeResponse;
+import org.example.story.domain.portfolio.record.response.PortfolioViewResponse;
 import org.example.story.domain.portfolio.service.PortfolioCommentService;
 import org.example.story.domain.portfolio.service.PortfolioQueryService;
 import org.example.story.domain.portfolio.service.PortfolioService;
@@ -64,7 +65,7 @@ public class PortfolioController {
     // 포트폴리오 조회 (토큰 필요 X)
     @GetMapping("/view/{portfolioId}")
     @RateLimited(limit = 20, durationSeconds = 30)
-    public PortfolioResponse view(
+    public PortfolioViewResponse view(
             @PathVariable("portfolioId") Long portfolioId
     ) {
         return portfolioQueryService.view(portfolioId);
@@ -126,11 +127,9 @@ public class PortfolioController {
     @GetMapping("/comment/{portfolioId}")
     @RateLimited(limit = 20, durationSeconds = 30)
     public PortfolioCommentListResponse comment(
-            @PathVariable("portfolioId") Long portfolioId,
-            @RequestParam(required = false) Long lastId,
-            @RequestParam(defaultValue = "10") int size
+            @PathVariable("portfolioId") Long portfolioId
     ) {
-        return portfolioCommentService.getComments(portfolioId, lastId, size);
+        return portfolioCommentService.getComments(portfolioId);
     }
 
     @PostMapping("/image/upload")

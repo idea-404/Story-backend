@@ -6,6 +6,7 @@ import org.example.story.domain.blog.entity.BlogJpaEntity;
 import org.example.story.domain.blog.record.request.BlogCommentRequest;
 import org.example.story.domain.blog.record.response.BlogCommentListResponse;
 import org.example.story.domain.blog.record.response.BlogCommentResponse;
+import org.example.story.domain.blog.record.response.BlogCommentViewResponse;
 import org.example.story.domain.blog.repository.BlogCommentRepository;
 import org.example.story.domain.blog.repository.BlogRepository;
 import org.example.story.domain.user.entity.UserJpaEntity;
@@ -66,16 +67,18 @@ public class BlogCommentService {
         blogRepository.decrementComment(blog.getId());
     }
 
-    public BlogCommentListResponse getComments(Long blogId, Long lastId, int size) {
-        Pageable pageable = PageRequest.of(0, size, Sort.by("id").descending());
+    public BlogCommentListResponse getComments(Long blogId) {
+        BlogJpaEntity blog = blogRepository.findById(blogId)
+                .orElseThrow(() -> new ExpectedException(HttpStatus.NOT_FOUND, "존재하지 않는 블로그입니다."));
         List<BlogCommentJpaEntity> comments =
-                blogCommentRepository.findCommentsAfterCursor(blogId, lastId, pageable);
+                blogCommentRepository.findByBlogOrderByIdDesc(blog);
 
-        List<BlogCommentResponse> responses = comments.stream()
-                .map(c -> new BlogCommentResponse(
+        List<BlogCommentViewResponse> responses = comments.stream()
+                .map(c -> new BlogCommentViewResponse(
                         c.getId(),
                         c.getBlog().getId(),
                         c.getUser().getNickname(),
+                        c.getUser().getHakburn(),
                         c.getContent(),
                         c.getCreatedAt()
                 ))

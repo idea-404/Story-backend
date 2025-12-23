@@ -7,6 +7,7 @@ import org.example.story.domain.blog.record.request.BlogCommentRequest;
 import org.example.story.domain.blog.record.response.BlogCommentListResponse;
 import org.example.story.domain.blog.record.response.BlogCommentResponse;
 import org.example.story.domain.blog.record.response.BlogLikeResponse;
+import org.example.story.domain.blog.record.response.BlogViewResponse;
 import org.example.story.domain.blog.service.BlogCommentService;
 import org.example.story.domain.blog.service.BlogQueryService;
 import org.example.story.domain.blog.service.BlogService;
@@ -65,7 +66,7 @@ public class BlogController {
     // 포트폴리오 조회 (토큰 필요 X)
     @GetMapping("/view/{blogId}")
     @RateLimited(limit = 20, durationSeconds = 30)
-    public BlogResponse view(@PathVariable Long blogId) {
+    public BlogViewResponse view(@PathVariable Long blogId) {
         return blogQueryService.view(blogId);
     }
 
@@ -116,11 +117,9 @@ public class BlogController {
     @GetMapping("/comment/{blogId}")
     @RateLimited(limit = 20, durationSeconds = 30)
     public BlogCommentListResponse comment(
-            @PathVariable("blogId") Long blogId,
-            @RequestParam(required = false) Long lastId,
-            @RequestParam(defaultValue = "10") int size
+            @PathVariable("blogId") Long blogId
     ) {
-        return blogCommentService.getComments(blogId, lastId, size);
+        return blogCommentService.getComments(blogId);
     }
 
     @PostMapping("/image/upload")

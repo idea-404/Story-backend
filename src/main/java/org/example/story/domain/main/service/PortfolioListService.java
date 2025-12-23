@@ -2,7 +2,7 @@ package org.example.story.domain.main.service;
 
 import lombok.RequiredArgsConstructor;
 import org.example.story.domain.main.record.PortfolioListResponse;
-import org.example.story.domain.main.record.PortfolioViewResponse;
+import org.example.story.domain.main.record.PortfolioViewsResponse;
 import org.example.story.domain.main.repository.GenericCursorRepository;
 import org.example.story.domain.portfolio.entity.PortfolioJpaEntity;
 import org.example.story.global.error.exception.ExpectedException;
@@ -23,13 +23,13 @@ public class PortfolioListService {
         }
         List<PortfolioJpaEntity> portfolios =
                 portfolioCursorRepo.findWithCursor(lastId, size, type, true, null, true);
-        List<PortfolioViewResponse> listResponses = setList(portfolios);
+        List<PortfolioViewsResponse> listResponses = setList(portfolios);
         return new PortfolioListResponse(listResponses);
     }
 
-    public List<PortfolioViewResponse> setList(List<PortfolioJpaEntity> portfolios){
-        List<PortfolioViewResponse> listResponses = portfolios.stream()
-                .map(c -> new PortfolioViewResponse(
+    public List<PortfolioViewsResponse> setList(List<PortfolioJpaEntity> portfolios){
+        List<PortfolioViewsResponse> listResponses = portfolios.stream()
+                .map(c -> new PortfolioViewsResponse(
                         c.getId(),
                         c.getUser().getId(),
                         c.getUser().getNickname(),
