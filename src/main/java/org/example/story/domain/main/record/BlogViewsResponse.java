@@ -2,7 +2,7 @@ package org.example.story.domain.main.record;
 
 import java.time.Instant;
 
-public record PortfolioViewResponse(
+public record BlogViewsResponse(
         Long id,
         Long userId,
         String nickname,
@@ -11,6 +11,7 @@ public record PortfolioViewResponse(
         Long like,
         Long view,
         Long comment,
-        Instant createdAt
+        Instant createdAt,
+        String thumbnail
 ) {
 }
