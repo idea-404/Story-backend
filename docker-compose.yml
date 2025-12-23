@@ -29,7 +29,7 @@ services:
       JWT_SECRET: ${JWT_SECRET}
       AI_KEY: ${AI_KEY}
       BUCKET_NAME: ${BUCKET_NAME}
-      BASE_URL: http://localhost:8080
+      BASE_URL: ${BASE_URL}
 
     restart: always
 
