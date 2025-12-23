@@ -2,13 +2,13 @@ spring:
   application:
     name: story
   profiles:
-    active: local
+    active: prod
   docker:
     compose:
       file: /absolute/path/to/docker-compose.yml
   jpa:
     hibernate:
-      ddl-auto: validate
+      ddl-auto: create
     properties:
       hibernate.format_sql: true
     open-in-view: false
