@@ -38,7 +38,7 @@ jobs:
           username: ${{ secrets.EC2_USER }}
           key: ${{ secrets.EC2_SSH_KEY }}
           source: "build/libs/app.jar"
-          target: "/home/ubuntu/app/jar"
+          target: "/home/ubuntu/app/jar/build/libs"
 
       - name: Restart application on EC2
         uses: appleboy/ssh-action@v1.0.3
@@ -48,11 +48,13 @@ jobs:
           key: ${{ secrets.EC2_SSH_KEY }}
           script_stop: false
           script: |
-            mkdir -p /home/ubuntu/app/jar /home/ubuntu/app/logs
-            
+            mkdir -p /home/ubuntu/app/jar/build/libs /home/ubuntu/app/logs
+
             echo "Stopping existing application..."
-            pkill -f "/home/ubuntu/app/jar/app.jar" || true
-            
+            pkill -f "/home/ubuntu/app/jar/build/libs/app.jar" || true
+
             echo "Starting new application..."
-            nohup java -jar /home/ubuntu/app/jar/app.jar \
-              > /home/ubuntu/app/logs/app.log 2>&1 &
+            setsid nohup /usr/bin/java -jar /home/ubuntu/app/jar/build/libs/app.jar \
+              > /home/ubuntu/app/logs/app.log 2>&1 < /dev/null &
+
+            echo "Application started successfully"
