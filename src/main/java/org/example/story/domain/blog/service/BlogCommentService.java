@@ -45,8 +45,8 @@ public class BlogCommentService {
         blogRepository.incrementComment(blog.getId());
         return new BlogCommentResponse(
                 comment.getId(),
-                comment.getUser().getId(),
                 comment.getBlog().getId(),
+                comment.getUser().getId(),
                 comment.getContent(),
                 comment.getCreatedAt()
         );

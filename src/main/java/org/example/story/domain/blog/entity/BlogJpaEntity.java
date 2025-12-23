@@ -1,8 +1,10 @@
 package org.example.story.domain.blog.entity;
 
 import jakarta.persistence.*;
-import lombok.*;
-import org.example.story.domain.portfolio.entity.PortfolioLikeJpaEntity;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 import org.example.story.domain.user.entity.UserJpaEntity;
 import org.hibernate.annotations.ColumnDefault;
 

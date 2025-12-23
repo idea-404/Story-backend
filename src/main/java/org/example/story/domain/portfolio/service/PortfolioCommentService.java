@@ -45,8 +45,8 @@ public class PortfolioCommentService {
         portfolioRepository.incrementComment(portfolio.getId());
         return new PortfolioCommentResponse(
                 comment.getId(),
-                comment.getUser().getId(),
                 comment.getPortfolio().getId(),
+                comment.getUser().getId(),
                 comment.getContent(),
                 comment.getCreatedAt()
         );
