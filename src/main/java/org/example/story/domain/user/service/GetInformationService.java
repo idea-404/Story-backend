@@ -1,9 +1,7 @@
 package org.example.story.domain.user.service;
 
-import io.jsonwebtoken.Claims;
 import lombok.RequiredArgsConstructor;
 import org.example.story.domain.user.entity.UserJpaEntity;
-import org.example.story.domain.user.record.common.TokenReqDto;
 import org.example.story.domain.user.record.common.TokenResDto;
 import org.example.story.domain.user.record.request.SignupInformReqDto;
 import org.example.story.domain.user.repository.UserRepository;
@@ -26,7 +24,7 @@ public class GetInformationService {
     private Long expireTime;
 
     public TokenResDto execute(Long userId, SignupInformReqDto reqDto) {
-        if(reqDto.studentId().toString().length() != 4) {
+        if(reqDto.studentId().length() != 4) {
             throw new ExpectedException(HttpStatus.BAD_REQUEST, "학번은 무조건 4자리여야 합니다.");
         }
         UserJpaEntity user = userRepository.findById(userId)
