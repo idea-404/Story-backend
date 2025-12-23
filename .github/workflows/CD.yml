@@ -24,11 +24,11 @@ jobs:
         run: chmod +x gradlew
 
       - name: Build application
-        run: ./gradlew clean build -x test
+        run: ./gradlew clean bootJar -x test
 
-      - name: Rename boot jar to app.jar
+      - name: Rename jar to app.jar
         run: |
-          JAR_NAME=$(ls build/libs/*boot*.jar | head -n 1)
+          JAR_NAME=$(ls build/libs/*.jar | head -n 1)
           mv $JAR_NAME build/libs/app.jar
 
       - name: Upload jar to EC2
