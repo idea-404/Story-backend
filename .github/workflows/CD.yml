@@ -26,10 +26,10 @@ jobs:
       - name: Build application
         run: ./gradlew clean bootJar -x test
 
-      - name: Rename jar to app.jar
+      - name: Copy bootJar to app.jar
         run: |
-          JAR_NAME=$(ls build/libs/*.jar | head -n 1)
-          mv $JAR_NAME build/libs/app.jar
+          BOOT_JAR=$(ls build/libs/*.jar | grep -v plain | head -n 1)
+          cp "$BOOT_JAR" build/libs/app.jar
 
       - name: Upload jar to EC2
         uses: appleboy/scp-action@v0.1.7
@@ -46,15 +46,6 @@ jobs:
           host: ${{ secrets.EC2_HOST }}
           username: ${{ secrets.EC2_USER }}
           key: ${{ secrets.EC2_SSH_KEY }}
-          script_stop: false
           script: |
-            mkdir -p /home/ubuntu/app/jar/build/libs /home/ubuntu/app/logs
-
-            echo "Stopping existing application..."
-            pkill -f "/home/ubuntu/app/jar/build/libs/app.jar" || true
-
-            echo "Starting new application..."
-            setsid nohup /usr/bin/java -jar /home/ubuntu/app/jar/build/libs/app.jar \
-              > /home/ubuntu/app/logs/app.log 2>&1 < /dev/null &
-
-            echo "Application started successfully"
+            sudo systemctl restart story
+            sudo systemctl status story --no-pager
