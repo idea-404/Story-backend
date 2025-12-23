@@ -46,10 +46,13 @@ jobs:
           host: ${{ secrets.EC2_HOST }}
           username: ${{ secrets.EC2_USER }}
           key: ${{ secrets.EC2_SSH_KEY }}
+          script_stop: false
           script: |
+            mkdir -p /home/ubuntu/app/jar /home/ubuntu/app/logs
+            
             echo "Stopping existing application..."
-            pkill -f app.jar || true
-
+            pkill -f "/home/ubuntu/app/jar/app.jar" || true
+            
             echo "Starting new application..."
-            nohup java -jar /home/ec2-user/app/jar/app.jar \
-              > /home/ec2-user/app/logs/app.log 2>&1 &
+            nohup java -jar /home/ubuntu/app/jar/app.jar \
+              > /home/ubuntu/app/logs/app.log 2>&1 &
