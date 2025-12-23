@@ -46,7 +46,7 @@ public class BlogCommentService {
         return new BlogCommentResponse(
                 comment.getId(),
                 comment.getBlog().getId(),
-                comment.getUser().getId(),
+                comment.getUser().getNickname(),
                 comment.getContent(),
                 comment.getCreatedAt()
         );
@@ -75,7 +75,7 @@ public class BlogCommentService {
                 .map(c -> new BlogCommentResponse(
                         c.getId(),
                         c.getBlog().getId(),
-                        c.getUser().getId(),
+                        c.getUser().getNickname(),
                         c.getContent(),
                         c.getCreatedAt()
                 ))

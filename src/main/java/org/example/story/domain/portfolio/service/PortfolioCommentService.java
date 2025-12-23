@@ -46,7 +46,7 @@ public class PortfolioCommentService {
         return new PortfolioCommentResponse(
                 comment.getId(),
                 comment.getPortfolio().getId(),
-                comment.getUser().getId(),
+                comment.getUser().getNickname(),
                 comment.getContent(),
                 comment.getCreatedAt()
         );
@@ -76,7 +76,7 @@ public class PortfolioCommentService {
                 .map(c -> new PortfolioCommentResponse(
                         c.getId(),
                         c.getPortfolio().getId(),
-                        c.getUser().getId(),
+                        c.getUser().getNickname(),
                         c.getContent(),
                         c.getCreatedAt()
                 ))

@@ -1,6 +1,5 @@
 package org.example.story.domain.blog.service;
 
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.example.story.domain.blog.entity.BlogJpaEntity;
 import org.example.story.domain.blog.entity.BlogLikeJpaEntity;
@@ -20,6 +19,7 @@ import org.example.story.domain.user.repository.UserRepository;
 import org.example.story.global.error.exception.ExpectedException;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.time.Instant;
@@ -56,7 +56,7 @@ public class BlogService {
 
         return new BlogResponse(
                 saved.getId(),
-                saved.getUser().getId(),
+                saved.getUser().getNickname(),
                 saved.getTitle(),
                 saved.getIntroduce(),
                 saved.getContent(),
@@ -78,7 +78,7 @@ public class BlogService {
 
         return new BlogResponse(
                 saved.getId(),
-                saved.getUser().getId(),
+                saved.getUser().getNickname(),
                 saved.getTitle(),
                 saved.getIntroduce(),
                 saved.getContent(),
@@ -133,7 +133,7 @@ public class BlogService {
 
         return new BlogLikeResponse(
                 blog.getId(),
-                blog.getUser().getId(),
+                blog.getUser().getNickname(),
                 blog.getTitle(),
                 blog.getContent(),
                 blog.getLike(),

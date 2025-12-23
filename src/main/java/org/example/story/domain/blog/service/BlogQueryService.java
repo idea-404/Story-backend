@@ -19,7 +19,7 @@ public class BlogQueryService {
                 .orElseThrow(() -> new ExpectedException(HttpStatus.NOT_FOUND, "존재하지 않는 블로그입니다."));
         return new BlogResponse(
                 blog.getId(),
-                blog.getUser().getId(),
+                blog.getUser().getNickname(),
                 blog.getTitle(),
                 blog.getIntroduce(),
                 blog.getContent(),
@@ -39,7 +39,7 @@ public class BlogQueryService {
 
         return new BlogResponse(
                 blog.getId(),
-                blog.getUser().getId(),
+                blog.getUser().getNickname(),
                 blog.getTitle(),
                 blog.getIntroduce(),
                 blog.getContent(),

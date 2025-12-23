@@ -20,7 +20,7 @@ public class PortfolioQueryService {
                 .orElseThrow(() -> new ExpectedException(HttpStatus.NOT_FOUND, "존재하지 않는 포트폴리오입니다."));
         return new PortfolioResponse(
                 portfolio.getId(),
-                portfolio.getUser().getId(),
+                portfolio.getUser().getNickname(),
                 portfolio.getTitle(),
                 portfolio.getIntroduce(),
                 portfolio.getContent(),
@@ -41,7 +41,7 @@ public class PortfolioQueryService {
 
         return new PortfolioResponse(
                 portfolio.getId(),
-                portfolio.getUser().getId(),
+                portfolio.getUser().getNickname(),
                 portfolio.getTitle(),
                 portfolio.getIntroduce(),
                 portfolio.getContent(),
