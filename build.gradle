@@ -14,6 +14,10 @@ java {
     }
 }
 
+springBoot {
+    mainClass = 'org.example.story.StoryApplication'
+}
+
 configurations {
     compileOnly {
         extendsFrom annotationProcessor
