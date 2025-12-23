@@ -4,11 +4,13 @@ import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.TypedQuery;
 import jakarta.persistence.criteria.*;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.ArrayList;
 import java.util.List;
 
 
+@Slf4j
 public class GenericCursorRepositoryCustom<T> implements GenericCursorRepository<T> {
 
     @PersistenceContext
@@ -62,7 +64,10 @@ public class GenericCursorRepositoryCustom<T> implements GenericCursorRepository
             if (zerodog != null) {
                 predicates.add(cb.equal(root.get("zerodog"), zerodog));
             }
-        } catch (IllegalArgumentException ignore) {}
+        } catch (IllegalArgumentException e) {
+            log.debug("Entity {} does not have field 'zerodog', skipping filter",
+                    domainClass.getSimpleName());
+        }
 
 
         /* ------------------------------
@@ -92,6 +97,8 @@ public class GenericCursorRepositoryCustom<T> implements GenericCursorRepository
                 }
 
             } catch (IllegalArgumentException e) {
+                log.debug("Entity {} does not support title/content search, skipping keyword match",
+                        domainClass.getSimpleName());
                 titleMatch = cb.literal(0);
                 contentMatch = cb.literal(0);
             }
