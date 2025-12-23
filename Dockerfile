@@ -1,6 +1,8 @@
 FROM gradle:8.5-jdk17 AS builder
 WORKDIR /app
-COPY . .
+COPY build.gradle settings.gradle ./
+RUN gradle dependencies
+COPY src ./src
 RUN gradle build -x test
 
 # 2단계: run
