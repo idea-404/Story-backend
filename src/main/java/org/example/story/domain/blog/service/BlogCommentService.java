@@ -12,9 +12,6 @@ import org.example.story.domain.blog.repository.BlogRepository;
 import org.example.story.domain.user.entity.UserJpaEntity;
 import org.example.story.domain.user.repository.UserRepository;
 import org.example.story.global.error.exception.ExpectedException;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -43,7 +40,7 @@ public class BlogCommentService {
                 .createdAt(Instant.now())
                 .build();
         blogCommentRepository.save(comment);
-        blogRepository.incrementComment(blog.getId());
+        blog.increaseComment();
         return new BlogCommentResponse(
                 comment.getId(),
                 comment.getBlog().getId(),
@@ -64,7 +61,7 @@ public class BlogCommentService {
             throw new ExpectedException(HttpStatus.FORBIDDEN, "댓글을 삭제할 권한이 없습니다.");
         }
         blogCommentRepository.delete(comment);
-        blogRepository.decrementComment(blog.getId());
+        blog.decreaseComment();
     }
 
     public BlogCommentListResponse getComments(Long blogId) {
