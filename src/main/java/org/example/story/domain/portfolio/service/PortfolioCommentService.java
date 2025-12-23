@@ -6,6 +6,7 @@ import org.example.story.domain.portfolio.entity.PortfolioJpaEntity;
 import org.example.story.domain.portfolio.record.request.PortfolioCommentRequest;
 import org.example.story.domain.portfolio.record.response.PortfolioCommentListResponse;
 import org.example.story.domain.portfolio.record.response.PortfolioCommentResponse;
+import org.example.story.domain.portfolio.record.response.PortfolioCommentViewResponse;
 import org.example.story.domain.portfolio.repository.PortfolioCommentRepository;
 import org.example.story.domain.portfolio.repository.PortfolioRepository;
 import org.example.story.domain.user.entity.UserJpaEntity;
@@ -67,16 +68,18 @@ public class PortfolioCommentService {
 
     }
 
-    public PortfolioCommentListResponse getComments(Long portfolioId, Long lastId, int size) {
-        Pageable pageable = PageRequest.of(0, size, Sort.by("id").descending());
+    public PortfolioCommentListResponse getComments(Long portfolioId) {
+        PortfolioJpaEntity portfolio = portfolioRepository.findById(portfolioId)
+                .orElseThrow(() -> new ExpectedException(HttpStatus.NOT_FOUND, "존재하지 않는 포트폴리오입니다."));
         List<PortfolioCommentJpaEntity> comments =
-                portfolioCommentRepository.findCommentsAfterCursor(portfolioId, lastId, pageable);
+                portfolioCommentRepository.findByPortfolioOrderByIdDesc(portfolio);
 
-        List<PortfolioCommentResponse> responses = comments.stream()
-                .map(c -> new PortfolioCommentResponse(
+        List<PortfolioCommentViewResponse> responses = comments.stream()
+                .map(c -> new PortfolioCommentViewResponse(
                         c.getId(),
                         c.getPortfolio().getId(),
                         c.getUser().getNickname(),
+                        c.getUser().getHakburn(),
                         c.getContent(),
                         c.getCreatedAt()
                 ))
