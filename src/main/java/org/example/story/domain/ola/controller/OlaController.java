@@ -5,10 +5,8 @@ import org.example.story.domain.ola.record.request.OlaRequest;
 import org.example.story.domain.ola.record.response.OlaListResponse;
 import org.example.story.domain.ola.record.response.OlaResponse;
 import org.example.story.domain.ola.service.OlaService;
-import org.example.story.global.security.auth.AuthUtils;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.concurrent.CompletableFuture;
 
 @RestController
 @RequiredArgsConstructor
