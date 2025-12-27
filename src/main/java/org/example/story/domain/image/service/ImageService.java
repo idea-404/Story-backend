@@ -25,13 +25,13 @@ public class ImageService {
 
     private final MinioClient minioClient;
 
-    @Value("${minio.bucket}")
+    @Value("${spring.minio.bucket}")
     private String bucket;
 
-    @Value("${minio.endpoint}")
+    @Value("${spring.minio.endpoint}")
     private String endpoint;
 
-    @Value("${minio.presigned-url-duration-minutes}")
+    @Value("${spring.minio.presigned-url-duration-minutes}")
     private long presignedUrlDuration;
 
     private static final String THUMBNAIL_DIRECTORY = "thumbnail/";

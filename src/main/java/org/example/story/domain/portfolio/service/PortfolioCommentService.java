@@ -42,8 +42,8 @@ public class PortfolioCommentService {
                 .content(request.content())
                 .createdAt(Instant.now())
                 .build();
-        portfolioCommentRepository.save(comment);
         portfolio.increaseComment();
+        portfolioCommentRepository.save(comment);
         return new PortfolioCommentResponse(
                 comment.getId(),
                 comment.getPortfolio().getId(),
@@ -63,9 +63,8 @@ public class PortfolioCommentService {
         if (!comment.getUser().getId().equals(userId)) {
             throw new ExpectedException(HttpStatus.FORBIDDEN, "댓글을 삭제할 권한이 없습니다.");
         }
-        portfolioCommentRepository.delete(comment);
         portfolio.decreaseComment();
-
+        portfolioCommentRepository.delete(comment);
     }
 
     public PortfolioCommentListResponse getComments(Long portfolioId) {

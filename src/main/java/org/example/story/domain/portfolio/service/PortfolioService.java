@@ -68,7 +68,7 @@ public class PortfolioService {
 
 
     public PortfolioResponse edit(Long userId, Long portfolioId, PortfolioRequest request) {
-        PortfolioJpaEntity portfolio = portfolioRepository.findByIdAndUserId(portfolioId, userId)
+        PortfolioJpaEntity portfolio = portfolioRepository.findByIdAndUser_Id(portfolioId, userId)
                 .orElseThrow(() -> new ExpectedException(HttpStatus.NOT_FOUND, "존재하지 않는 포트폴리오입니다."));
 
         portfolio.update(request.title(),request.content(),request.introduce());
@@ -92,12 +92,12 @@ public class PortfolioService {
 
     public void delete(Long userId, Long portfolioId) {
         List<PortfolioImageJpaEntity> images =
-                portfolioImageRepository.findByPortfolioId(portfolioId);
+                portfolioImageRepository.findByPortfolio_Id(portfolioId);
 
         for (PortfolioImageJpaEntity img : images) {
             imageService.deleteImage(img.getImageUrl());
         }
-        PortfolioJpaEntity portfolio = portfolioRepository.findByIdAndUserId(portfolioId, userId)
+        PortfolioJpaEntity portfolio = portfolioRepository.findByIdAndUser_Id(portfolioId, userId)
                 .orElseThrow(() -> new ExpectedException(HttpStatus.NOT_FOUND, "존재하지 않는 포트폴리오입니다."));
 
         portfolioRepository.delete(portfolio);
@@ -209,7 +209,7 @@ public class PortfolioService {
     public List<ImageResponse> getPortfolioImages(Long portfolioId) {
 
         List<PortfolioImageJpaEntity> images =
-                portfolioImageRepository.findByPortfolioId(portfolioId);
+                portfolioImageRepository.findByPortfolio_Id(portfolioId);
 
         return images.stream()
                 .map(img -> new ImageResponse(
