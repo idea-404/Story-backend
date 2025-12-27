@@ -25,7 +25,7 @@ public class GetAccountTokenService {
                 .orElseGet(() -> userRepository.save(
                         UserJpaEntity.builder()
                                 .email(email)
-                                .role("VERIFIED")
+                                .role("UNVERIFIED")
                                 .build()
                 ));
         return new TokenResDto(
