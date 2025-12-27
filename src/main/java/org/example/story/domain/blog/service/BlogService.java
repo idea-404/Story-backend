@@ -96,15 +96,16 @@ public class BlogService {
         List<BlogImageJpaEntity> images =
                 blogImageRepository.findByBlog_Id(blogId);
 
-        for (BlogImageJpaEntity img : images) {
-            imageService.deleteImage(img.getImageUrl());
-        }
-
         BlogJpaEntity blog = blogRepository.findByIdAndUser_Id(blogId, userId)
                 .orElseThrow(() -> new ExpectedException(HttpStatus.NOT_FOUND, "존재하지 않는 블로그입니다."));
         if (blog.getThumbnail() != null  && !blog.getThumbnail().isBlank()) {
             imageService.deleteImage(blog.getThumbnail());
         }
+
+        for (BlogImageJpaEntity img : images) {
+            imageService.deleteImage(img.getImageUrl());
+        }
+
         blogRepository.delete(blog);
     }
 
