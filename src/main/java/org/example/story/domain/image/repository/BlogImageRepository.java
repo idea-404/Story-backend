@@ -8,6 +8,6 @@ import java.util.List;
 
 @Repository
 public interface BlogImageRepository extends JpaRepository<BlogImageJpaEntity, Long> {
-    List<BlogImageJpaEntity> findByBlogId(Long blogId);
+    List<BlogImageJpaEntity> findByBlog_Id(Long blogId);
 
 }

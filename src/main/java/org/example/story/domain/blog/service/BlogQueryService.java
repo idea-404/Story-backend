@@ -16,7 +16,7 @@ public class BlogQueryService {
     private final BlogRepository blogRepository;
 
     public BlogResponse getForEdit(Long userId, Long blogId){
-        BlogJpaEntity blog = blogRepository.findByIdAndUserId(blogId, userId)
+        BlogJpaEntity blog = blogRepository.findByIdAndUser_Id(blogId, userId)
                 .orElseThrow(() -> new ExpectedException(HttpStatus.NOT_FOUND, "존재하지 않는 블로그입니다."));
         return new BlogResponse(
                 blog.getId(),
