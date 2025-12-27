@@ -40,7 +40,7 @@ public class SendEmailService {
                         null
                 ), 10L
         );
-        String verifyUrl = url + token;
+        String verifyUrl = url + "?token=" + token;
         try {
             MimeMessage mimeMessage = mailSender.createMimeMessage();
             MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, true, "UTF-8");
