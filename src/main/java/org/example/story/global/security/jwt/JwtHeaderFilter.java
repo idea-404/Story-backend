@@ -81,12 +81,11 @@ public class JwtHeaderFilter extends OncePerRequestFilter {
     protected boolean shouldNotFilter(HttpServletRequest request) {
         String uri = request.getRequestURI();
 
-        if (uri.startsWith("/api/v1/auth/sign")
+        if (uri.equals("/api/v1/auth/sign")
                 || uri.startsWith("/api/v1/auth/login")
                 || uri.startsWith("/api/v1/auth/verify")
                 || uri.startsWith("/api/v1/auth/google")
-                || uri.startsWith("/api/v1/auth/kakao")
-                || uri.startsWith("/api/v1/auth/signup/inform")) {
+                || uri.startsWith("/api/v1/auth/kakao")) {
             return true;
         } else if (request.getMethod().equals("GET") && (
                 uri.startsWith("/api/v1/main/")
