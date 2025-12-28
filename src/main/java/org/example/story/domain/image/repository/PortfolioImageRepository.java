@@ -8,6 +8,6 @@ import java.util.List;
 
 @Repository
 public interface PortfolioImageRepository extends JpaRepository<PortfolioImageJpaEntity, Long> {
-    List<PortfolioImageJpaEntity> findByPortfolioId(Long portfolioId);
+    List<PortfolioImageJpaEntity> findByPortfolio_Id(Long portfolioId);
 
 }

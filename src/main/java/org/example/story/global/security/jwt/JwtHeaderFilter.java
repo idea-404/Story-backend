@@ -76,4 +76,31 @@ public class JwtHeaderFilter extends OncePerRequestFilter {
         }
         filterChain.doFilter(request, response);
     }
+
+    @Override
+    protected boolean shouldNotFilter(HttpServletRequest request) {
+        String uri = request.getRequestURI();
+
+        if (uri.startsWith("/api/v1/auth/sign")
+                || uri.startsWith("/api/v1/auth/login")
+                || uri.startsWith("/api/v1/auth/verify")
+                || uri.startsWith("/api/v1/auth/google")
+                || uri.startsWith("/api/v1/auth/kakao")) {
+            return true;
+        } else if (request.getMethod().equals("GET") && (
+                uri.startsWith("/api/v1/main/")
+                        || uri.startsWith("/api/v1/profile/")
+                        || uri.startsWith("/api/v1/portfolio/view/")
+                        || uri.startsWith("/api/v1/portfolio/comment/")
+                        || uri.startsWith("/api/v1/blog/view/")
+                        || uri.startsWith("/api/v1/blog/comment/"))) {
+            return true;
+        }
+
+        if(request.getMethod().equals("OPTIONS")) {
+            return true;
+        }
+
+        return false;
+    }
 }

@@ -13,17 +13,7 @@ import java.util.Optional;
 
 @Repository
 public interface PortfolioRepository extends JpaRepository<PortfolioJpaEntity, Long> {
-    Optional<PortfolioJpaEntity> findByIdAndUserId(Long id, Long userId);
-
-    @Modifying
-    @Transactional
-    @Query("UPDATE PortfolioJpaEntity p SET p.comment = p.comment + 1 WHERE p.id = :portfolioId")
-    void incrementComment(Long portfolioId);
-
-    @Modifying
-    @Transactional
-    @Query("UPDATE PortfolioJpaEntity p SET p.comment = p.comment - 1 WHERE p.id = :portfolioId")
-    void decrementComment(Long portfolioId);
+    Optional<PortfolioJpaEntity> findByIdAndUser_Id(Long id, Long userId);
 
     @Query("""
             select p from PortfolioJpaEntity p

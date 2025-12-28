@@ -12,17 +12,7 @@ import java.util.Optional;
 
 @Repository
 public interface BlogRepository extends JpaRepository<BlogJpaEntity, Long> {
-    Optional<BlogJpaEntity> findByIdAndUserId(Long id, Long userId);
-
-    @Modifying
-    @Transactional
-    @Query("UPDATE BlogJpaEntity b SET b.comment = b.comment + 1 WHERE b.id = :blogId")
-    void incrementComment(Long blogId);
-
-    @Modifying
-    @Transactional
-    @Query("UPDATE BlogJpaEntity b SET b.comment = b.comment - 1 WHERE b.id = :blogId")
-    void decrementComment(Long blogId);
+    Optional<BlogJpaEntity> findByIdAndUser_Id(Long id, Long userId);
 
     @Query("""
             select b from BlogJpaEntity b

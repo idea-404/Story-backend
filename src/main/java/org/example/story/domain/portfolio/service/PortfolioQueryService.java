@@ -17,7 +17,7 @@ public class PortfolioQueryService {
     private final PortfolioRepository portfolioRepository;
 
     public PortfolioResponse getForEdit(Long userId, Long portfolioId){
-        PortfolioJpaEntity portfolio = portfolioRepository.findByIdAndUserId(portfolioId, userId)
+        PortfolioJpaEntity portfolio = portfolioRepository.findByIdAndUser_Id(portfolioId, userId)
                 .orElseThrow(() -> new ExpectedException(HttpStatus.NOT_FOUND, "존재하지 않는 포트폴리오입니다."));
         return new PortfolioResponse(
                 portfolio.getId(),

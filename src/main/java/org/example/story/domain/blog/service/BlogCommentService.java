@@ -39,8 +39,8 @@ public class BlogCommentService {
                 .content(request.content())
                 .createdAt(Instant.now())
                 .build();
-        blogCommentRepository.save(comment);
         blog.increaseComment();
+        blogCommentRepository.save(comment);
         return new BlogCommentResponse(
                 comment.getId(),
                 comment.getBlog().getId(),
@@ -60,8 +60,8 @@ public class BlogCommentService {
         if (!comment.getUser().getId().equals(userId)) {
             throw new ExpectedException(HttpStatus.FORBIDDEN, "댓글을 삭제할 권한이 없습니다.");
         }
-        blogCommentRepository.delete(comment);
         blog.decreaseComment();
+        blogCommentRepository.delete(comment);
     }
 
     public BlogCommentListResponse getComments(Long blogId) {
