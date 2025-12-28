@@ -53,7 +53,8 @@ public class SecurityConfig {
                                 "/",
                                 "/health",
                                 // 인증/회원가입 관련
-                                "/api/v1/auth/**"
+                                "/api/v1/auth/**",
+                                "/error"
                         ).permitAll()
                         .requestMatchers(
                                 HttpMethod.GET, // 아래 모든 경로 GET 요청에만 허용
