@@ -11,9 +11,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.example.story.global.error.exception.ExpectedException;
 import org.example.story.global.security.jwt.custom.CustomPrincipal;
-import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
@@ -70,7 +68,7 @@ public class JwtHeaderFilter extends OncePerRequestFilter {
                         SecurityContextHolder.getContext().setAuthentication(auth);
                     }
                 } catch (ClassCastException | NumberFormatException e) {
-                    throw new ExpectedException(HttpStatus.BAD_REQUEST, "잘못된 claim 형식입니다.");
+                    log.debug("JWT claims 파싱 실패 : {}", e.getMessage());
                 }
             }
         }
