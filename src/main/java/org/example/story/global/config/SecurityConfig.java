@@ -48,7 +48,7 @@ public class SecurityConfig {
                         // 아래 경로들은 인증 없이 접근 허용
                         .requestMatchers(
                                 "/api/v1/auth/signup/inform"
-                        ).hasAnyRole("UNVERIFIED")
+                        ).hasAnyRole("UNVERIFIED", "VERIFIED")
                         .requestMatchers(
                                 "/",
                                 "/health",
