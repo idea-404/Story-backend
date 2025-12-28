@@ -85,7 +85,8 @@ public class JwtHeaderFilter extends OncePerRequestFilter {
                 || uri.startsWith("/api/v1/auth/login")
                 || uri.startsWith("/api/v1/auth/verify")
                 || uri.startsWith("/api/v1/auth/google")
-                || uri.startsWith("/api/v1/auth/kakao")) {
+                || uri.startsWith("/api/v1/auth/kakao")
+                || uri.startsWith("/api/v1/auth/signup/inform")) {
             return true;
         } else if (request.getMethod().equals("GET") && (
                 uri.startsWith("/api/v1/main/")
@@ -97,7 +98,7 @@ public class JwtHeaderFilter extends OncePerRequestFilter {
             return true;
         }
 
-        if(request.getMethod().equals("OPTIONS")) {
+        if (request.getMethod().equals("OPTIONS")) {
             return true;
         }
 
