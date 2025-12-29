@@ -75,6 +75,10 @@ public class SecurityConfig {
                         // 나머지 모든 요청은 인증 필요
                         .anyRequest().hasAnyRole("VERIFIED", "ADMIN")
                 )
+                .oauth2Login(oauth -> oauth
+                        .successHandler((request, response, authentication) -> {
+                            response.sendRedirect("/");
+                        }))
                 .addFilterBefore(jwtHeaderFilter, UsernamePasswordAuthenticationFilter.class)
                 .exceptionHandling(ex -> ex
                         .authenticationEntryPoint(authenticationEntryPoint)
