@@ -1,6 +1,7 @@
 package org.example.story.global.config;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.example.story.domain.user.service.CustomOAuth2UserService;
 import org.example.story.global.config.handler.CustomAccessDeniedHandler;
 import org.example.story.global.config.handler.CustomAuthenticationEntryPoint;
@@ -19,6 +20,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
+@Slf4j
 public class SecurityConfig {
     private final JwtHeaderFilter jwtHeaderFilter;
     private final CustomAuthenticationEntryPoint authenticationEntryPoint;
@@ -88,7 +90,12 @@ public class SecurityConfig {
                                 userInfo.userService(customOAuth2UserService)
                         )
                         .successHandler((request, response, authentication) -> {
-                            response.sendRedirect(url + "/login");
+                            log.info("BASE_URL = [{}]", url);
+                            String target = url.endsWith("/")
+                                    ? url + "login"
+                                    : url + "/login";
+
+                            response.sendRedirect(target);
                         })
                 )
                 .addFilterBefore(jwtHeaderFilter, UsernamePasswordAuthenticationFilter.class)
