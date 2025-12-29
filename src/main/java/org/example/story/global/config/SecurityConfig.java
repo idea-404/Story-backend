@@ -1,9 +1,11 @@
 package org.example.story.global.config;
 
 import lombok.RequiredArgsConstructor;
+import org.example.story.domain.user.service.CustomOAuth2UserService;
 import org.example.story.global.config.handler.CustomAccessDeniedHandler;
 import org.example.story.global.config.handler.CustomAuthenticationEntryPoint;
 import org.example.story.global.security.jwt.JwtHeaderFilter;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -21,6 +23,10 @@ public class SecurityConfig {
     private final JwtHeaderFilter jwtHeaderFilter;
     private final CustomAuthenticationEntryPoint authenticationEntryPoint;
     private final CustomAccessDeniedHandler accessDeniedHandler;
+    private final CustomOAuth2UserService customOAuth2UserService;
+
+    @Value("${base.url}")
+    private String url;
 
     // Spring Security 필터 체인 설정
     @Bean
@@ -40,7 +46,7 @@ public class SecurityConfig {
 
                 // 세션을 사용하지 않고, 매 요청마다 토큰으로 인증 (STATELESS)
                 .sessionManagement(session ->
-                        session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                        session.sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED)
                 )
 
                 // 요청에 대한 인가 규칙 설정
@@ -54,7 +60,9 @@ public class SecurityConfig {
                                 "/health",
                                 // 인증/회원가입 관련
                                 "/api/v1/auth/**",
-                                "/error"
+                                "/error",
+                                "/oauth2/**",
+                                "/login/**"
                         ).permitAll()
                         .requestMatchers(
                                 HttpMethod.GET, // 아래 모든 경로 GET 요청에만 허용
@@ -74,6 +82,14 @@ public class SecurityConfig {
                         ).permitAll()
                         // 나머지 모든 요청은 인증 필요
                         .anyRequest().hasAnyRole("VERIFIED", "ADMIN")
+                )
+                .oauth2Login(oauth2 -> oauth2
+                        .userInfoEndpoint(userInfo ->
+                                userInfo.userService(customOAuth2UserService)
+                        )
+                        .successHandler((request, response, authentication) -> {
+                            response.sendRedirect(url + "/login");
+                        })
                 )
                 .addFilterBefore(jwtHeaderFilter, UsernamePasswordAuthenticationFilter.class)
                 .exceptionHandling(ex -> ex

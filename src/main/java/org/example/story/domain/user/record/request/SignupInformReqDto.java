@@ -7,7 +7,7 @@ public record SignupInformReqDto(
         @NotNull String nickname,
         @NotNull @Pattern(regexp = "^[0-9]{4}$") String studentId,
         @NotNull String major,
-        @NotNull String introduce,
+        String introduce,
         String profileImage
 ) {
 }

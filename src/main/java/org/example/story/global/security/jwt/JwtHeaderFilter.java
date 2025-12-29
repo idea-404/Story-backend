@@ -79,13 +79,20 @@ public class JwtHeaderFilter extends OncePerRequestFilter {
     protected boolean shouldNotFilter(HttpServletRequest request) {
         String uri = request.getRequestURI();
 
+        if(uri.startsWith("/oauth2/")
+        || uri.startsWith("/login")
+        || uri.startsWith("/error")
+        || uri.startsWith("/api/v1/auth/oauth/success")) {
+            return true;
+        }
         if (uri.equals("/api/v1/auth/sign")
                 || uri.startsWith("/api/v1/auth/login")
                 || uri.startsWith("/api/v1/auth/verify")
                 || uri.startsWith("/api/v1/auth/google")
                 || uri.startsWith("/api/v1/auth/kakao")) {
             return true;
-        } else if (request.getMethod().equals("GET") && (
+        }
+        if (request.getMethod().equals("GET") && (
                 uri.startsWith("/api/v1/main/")
                         || uri.startsWith("/api/v1/profile/")
                         || uri.startsWith("/api/v1/portfolio/view/")

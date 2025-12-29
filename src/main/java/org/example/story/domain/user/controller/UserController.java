@@ -2,7 +2,6 @@ package org.example.story.domain.user.controller;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.example.story.domain.user.record.common.CodeDto;
 import org.example.story.domain.user.record.common.EmailDto;
 import org.example.story.domain.user.record.common.TokenResDto;
 import org.example.story.domain.user.record.request.SignupInformReqDto;
@@ -10,6 +9,7 @@ import org.example.story.domain.user.service.*;
 import org.example.story.global.security.auth.AuthUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -20,8 +20,7 @@ public class UserController {
     private final SignUpService signUpService;
     private final LoginService loginService;
     private final VerifyService verifyService;
-    private final GoogleLoginService googleLoginService;
-    private final KakaoLoginService kakaoLoginService;
+    private final OAuthJwtService oAuthJwtService;
     private final GetInformationService getInformationService;
 
     @PostMapping("/sign")
@@ -45,17 +44,10 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.CREATED).body(dto);
     }
 
-    @PostMapping("/google")
-    public ResponseEntity<TokenResDto> googleLogin(
-            @RequestBody @Valid CodeDto reqDto) {
-        TokenResDto dto = googleLoginService.execute(reqDto.code());
-        return ResponseEntity.status(HttpStatus.CREATED).body(dto);
-    }
-
-    @PostMapping("/kakao")
-    public ResponseEntity<TokenResDto> kakaoLogin(
-            @RequestBody @Valid CodeDto reqDto) {
-        TokenResDto dto = kakaoLoginService.execute(reqDto.code());
+    @PostMapping("/oauth/success")
+    public ResponseEntity<TokenResDto> oauthSuccess(
+            Authentication authentication) {
+        TokenResDto dto = oAuthJwtService.execute(authentication);
         return ResponseEntity.status(HttpStatus.CREATED).body(dto);
     }
 
