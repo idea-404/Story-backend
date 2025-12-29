@@ -1,6 +1,7 @@
 package org.example.story.global.config;
 
 import lombok.RequiredArgsConstructor;
+import org.example.story.domain.user.service.CustomOAuth2UserService;
 import org.example.story.global.config.handler.CustomAccessDeniedHandler;
 import org.example.story.global.config.handler.CustomAuthenticationEntryPoint;
 import org.example.story.global.security.jwt.JwtHeaderFilter;
@@ -22,6 +23,7 @@ public class SecurityConfig {
     private final JwtHeaderFilter jwtHeaderFilter;
     private final CustomAuthenticationEntryPoint authenticationEntryPoint;
     private final CustomAccessDeniedHandler accessDeniedHandler;
+    private final CustomOAuth2UserService customOAuth2UserService;
 
     @Value("${base.url}")
     private String url;
@@ -44,7 +46,7 @@ public class SecurityConfig {
 
                 // 세션을 사용하지 않고, 매 요청마다 토큰으로 인증 (STATELESS)
                 .sessionManagement(session ->
-                        session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                        session.sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED)
                 )
 
                 // 요청에 대한 인가 규칙 설정
@@ -82,9 +84,13 @@ public class SecurityConfig {
                         .anyRequest().hasAnyRole("VERIFIED", "ADMIN")
                 )
                 .oauth2Login(oauth2 -> oauth2
+                        .userInfoEndpoint(userInfo ->
+                                userInfo.userService(customOAuth2UserService)
+                        )
                         .successHandler((request, response, authentication) -> {
                             response.sendRedirect(url + "/login");
-                        }))
+                        })
+                )
                 .addFilterBefore(jwtHeaderFilter, UsernamePasswordAuthenticationFilter.class)
                 .exceptionHandling(ex -> ex
                         .authenticationEntryPoint(authenticationEntryPoint)
