@@ -35,7 +35,7 @@ public class BlogJpaEntity {
     private String introduce;
 
     @Lob
-    @Column(name = "content", nullable = false)
+    @Column(name = "content", nullable = false, columnDefinition = "TEXT")
     private String content;
 
     @ColumnDefault("0")
