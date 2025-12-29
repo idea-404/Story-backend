@@ -90,7 +90,6 @@ public class OlaService {
 
         List<OlaResponse> responses = history.stream()
                 .map(c -> new OlaResponse(
-                        c.getId(),
                         c.getPortfolio().getId(),
                         c.getQuestion(),
                         c.getAnswer()
@@ -102,9 +101,6 @@ public class OlaService {
 
     @Transactional
     public OlaResponse doFeedOla(String question, Long portfolioId){
-        PortfolioJpaEntity portfolio = portfolioRepository.findById(portfolioId)
-                .orElseThrow(() -> new ExpectedException(HttpStatus.NOT_FOUND,"존재하지 않는 포트폴리오입니다"));
-
 
         ChatCompletionRequest request = ChatCompletionRequest.builder()
                 .model(model)
@@ -123,17 +119,9 @@ public class OlaService {
         }
         String feedback = choices.get(0).getMessage().getContent();
 
-        OlaHistoryJpaEntity saved = OlaHistoryJpaEntity.builder()
-                .portfolio(portfolio)
-                .question(question)
-                .answer(feedback)
-                .build();
-        olaRepository.save(saved);
-
         return new OlaResponse(
-                saved.getId(),
-                saved.getPortfolio().getId(),
-                saved.getQuestion(),
+                portfolioId,
+                question,
                 feedback
         );
     }
