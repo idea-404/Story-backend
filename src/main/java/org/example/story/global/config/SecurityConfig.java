@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.example.story.global.config.handler.CustomAccessDeniedHandler;
 import org.example.story.global.config.handler.CustomAuthenticationEntryPoint;
 import org.example.story.global.security.jwt.JwtHeaderFilter;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -21,6 +22,9 @@ public class SecurityConfig {
     private final JwtHeaderFilter jwtHeaderFilter;
     private final CustomAuthenticationEntryPoint authenticationEntryPoint;
     private final CustomAccessDeniedHandler accessDeniedHandler;
+
+    @Value("${base.url}")
+    private String url;
 
     // Spring Security 필터 체인 설정
     @Bean
@@ -54,7 +58,9 @@ public class SecurityConfig {
                                 "/health",
                                 // 인증/회원가입 관련
                                 "/api/v1/auth/**",
-                                "/error"
+                                "/error",
+                                "/oauth2/**",
+                                "/login/**"
                         ).permitAll()
                         .requestMatchers(
                                 HttpMethod.GET, // 아래 모든 경로 GET 요청에만 허용
@@ -75,6 +81,10 @@ public class SecurityConfig {
                         // 나머지 모든 요청은 인증 필요
                         .anyRequest().hasAnyRole("VERIFIED", "ADMIN")
                 )
+                .oauth2Login(oauth2 -> oauth2
+                        .successHandler((request, response, authentication) -> {
+                            response.sendRedirect(url + "/login");
+                        }))
                 .addFilterBefore(jwtHeaderFilter, UsernamePasswordAuthenticationFilter.class)
                 .exceptionHandling(ex -> ex
                         .authenticationEntryPoint(authenticationEntryPoint)
