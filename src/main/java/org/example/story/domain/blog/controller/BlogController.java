@@ -33,7 +33,7 @@ public class BlogController {
 
     // 포트폴리오 작성
     @PostMapping("/write")
-    @RateLimited(limit = 5, durationSeconds = 30)
+    //@RateLimited(limit = 5, durationSeconds = 30)
     public BlogResponse createBlog(
             @RequestBody BlogRequest request
     ) {
@@ -43,7 +43,7 @@ public class BlogController {
 
     // 수정 준비
     @GetMapping("/edit/{blogId}")
-    @RateLimited(limit = 5, durationSeconds = 30)
+    //@RateLimited(limit = 5, durationSeconds = 30)
     public BlogResponse getBlog(
             @PathVariable("blogId") Long blogId
     ) {
@@ -53,7 +53,7 @@ public class BlogController {
 
     // 포트폴리오 수정
     @PatchMapping("/edit/{blogId}")
-    @RateLimited(limit = 5, durationSeconds = 30)
+    //@RateLimited(limit = 5, durationSeconds = 30)
     public BlogResponse updateBlog(
             @PathVariable("blogId") Long blogId,
             @RequestBody BlogRequest request
@@ -64,14 +64,14 @@ public class BlogController {
 
     // 포트폴리오 조회 (토큰 필요 X)
     @GetMapping("/view/{blogId}")
-    @RateLimited(limit = 20, durationSeconds = 30)
+    //@RateLimited(limit = 20, durationSeconds = 30)
     public BlogViewResponse view(@PathVariable("blogId") Long blogId) {
         return blogQueryService.view(blogId);
     }
 
     // 포트폴리오 삭제
     @DeleteMapping("/delete/{blogId}")
-    @RateLimited(limit = 3, durationSeconds = 30)
+    //@RateLimited(limit = 3, durationSeconds = 30)
     public void deleteBlog(
             @PathVariable("blogId") Long blogId
     ) {
@@ -81,7 +81,7 @@ public class BlogController {
 
     // 좋아요 변경
     @PatchMapping("/like/{blogId}")
-    @RateLimited(limit = 10, durationSeconds = 30)
+    //@RateLimited(limit = 10, durationSeconds = 30)
     public BlogLikeResponse likeUp(
             @PathVariable("blogId") Long blogId
     ) {
@@ -92,7 +92,7 @@ public class BlogController {
 
     // 댓글 작성
     @PostMapping("/comment/{blogId}")
-    @RateLimited(limit = 10, durationSeconds = 30)
+    //@RateLimited(limit = 10, durationSeconds = 30)
     public BlogCommentResponse createComment(
             @PathVariable("blogId") Long blogId,
             @RequestBody BlogCommentRequest request
@@ -103,7 +103,7 @@ public class BlogController {
 
     // 댓글 삭제
     @DeleteMapping("/comment/{blogId}/{commentId}")
-    @RateLimited(limit = 5, durationSeconds = 30)
+    //@RateLimited(limit = 5, durationSeconds = 30)
     public void deleteComment(
             @PathVariable("blogId") Long blogId,
             @PathVariable("commentId") Long commentId
@@ -114,7 +114,7 @@ public class BlogController {
 
     // 포트폴리오 댓글 조회 (커서 페이징)
     @GetMapping("/comment/{blogId}")
-    @RateLimited(limit = 20, durationSeconds = 30)
+    //@RateLimited(limit = 20, durationSeconds = 30)
     public BlogCommentListResponse comment(
             @PathVariable("blogId") Long blogId
     ) {
@@ -122,7 +122,7 @@ public class BlogController {
     }
 
     @PostMapping("/image/upload")
-    @RateLimited(limit = 20, durationSeconds = 30)
+    //@RateLimited(limit = 20, durationSeconds = 30)
     public ImageResponse uploadBlogImage(
             @RequestPart("file") MultipartFile file
     ) {
@@ -130,7 +130,7 @@ public class BlogController {
     }
 
     @PostMapping("/image/save/{blogId}")
-    @RateLimited(limit = 15, durationSeconds = 30)
+    //@RateLimited(limit = 15, durationSeconds = 30)
     public void saveBlogImage(@RequestBody ImageRequest request,
                                    @PathVariable("blogId") Long blogId) {
         Long userId = authUtils.getCurrentUserId();
@@ -138,20 +138,20 @@ public class BlogController {
     }
 
     @DeleteMapping("/image/delete/{imageId}")
-    @RateLimited(limit = 20, durationSeconds = 30)
+    //@RateLimited(limit = 20, durationSeconds = 30)
     public void deleteBlogImage(@PathVariable Long imageId) {
         Long userId = authUtils.getCurrentUserId();
         blogService.deleteBlogImage(userId, imageId);
     }
 
     @GetMapping("/image/{blogId}")
-    @RateLimited(limit = 20, durationSeconds = 30)
+    //@RateLimited(limit = 20, durationSeconds = 30)
     public List<ImageResponse> getBlogImages(@PathVariable Long blogId) {
         return blogService.getBlogImages(blogId);
     }
 
     @PostMapping("/thumbnail")
-    @RateLimited(limit = 20, durationSeconds = 30)
+    //@RateLimited(limit = 20, durationSeconds = 30)
     public ImageKeyResponse uploadThumbnail(@RequestPart("file") MultipartFile file){
         return blogService.uploadBlogThumbnail(file);
     }
