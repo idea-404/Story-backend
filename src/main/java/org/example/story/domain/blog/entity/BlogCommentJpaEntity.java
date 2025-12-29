@@ -22,7 +22,7 @@ public class BlogCommentJpaEntity {
     @JoinColumn(name = "blog_id", nullable = false)
     private BlogJpaEntity blog;
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @ManyToOne(fetch = FetchType.EAGER, optional = false)
     @JoinColumn(name = "user_id", nullable = false)
     private UserJpaEntity user;
 
