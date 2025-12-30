@@ -64,7 +64,8 @@ public class SecurityConfig {
                                 "/api/v1/auth/**",
                                 "/error",
                                 "/oauth2/**",
-                                "/login/**"
+                                "/login/**",
+                                "/login/oauth2/**"
                         ).permitAll()
                         .requestMatchers(
                                 HttpMethod.GET, // 아래 모든 경로 GET 요청에만 허용

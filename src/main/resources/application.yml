@@ -68,6 +68,12 @@ openai:
 
 server:
   port: ${SERVER_PORT:8080}
+  forward-headers-strategy: framework
+  servlet:
+    session:
+      cookie:
+        secure: false
+        same-site: lax
 
 logging:
   level:
