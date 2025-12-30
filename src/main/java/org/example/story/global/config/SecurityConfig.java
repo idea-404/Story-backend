@@ -97,6 +97,10 @@ public class SecurityConfig {
 
                             response.sendRedirect(target);
                         })
+                        .failureHandler((request, response, exception) -> {
+                            exception.printStackTrace();
+                            response.sendRedirect("/login?error");
+                        })
                 )
                 .addFilterBefore(jwtHeaderFilter, UsernamePasswordAuthenticationFilter.class)
                 .exceptionHandling(ex -> ex
